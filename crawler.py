@@ -5,6 +5,11 @@ from ast import literal_eval
 import csv
 import xlrd
 import yaml
+import pandas
+import datetime
+import matplotlib.pyplot as plt
+from matplotlib.pyplot import MultipleLocator
+
 apikey = "ZF9TQA39PFPPUD7VCDK2Q9ZVD2M72N2HGZ"
 # apikey = "P3FE926UGARGQF8HKPM4XWJ38CJAGX5WHZ"
 
@@ -417,16 +422,64 @@ def getEtxs4():
                 print(url)
                 print(result)
                 print(addr)
-def test():
-    with open('ntx1.csv','r') as f:
-        print(len(f.readlines()))
-    with open('ntx2.csv','r') as f:
-        print(len(f.readlines()))
-    with open('ntx3.csv','r') as f:
-        print(len(f.readlines()))
-    with open('ntx4.csv','r') as f:
-        print(len(f.readlines()))
+#https://api.etherscan.io/api?module=account&action=tokentx&address=0x0f3257e9513f4812bf015efc5022f16bfef0cfa8&page=1&offset=100&startblock=0&endblock=27025780&sort=asc&apikey=YourApiKeyToken
+#https://api.etherscan.io/api?module=account&action=txlist&address=0xd0b0d5a8c0b40b7272115a23a2d5e36ad190f13c&startblock=0&endblock=99999999&page=1&offset=10000&sort=asc&apikey=YourApiKeyToken
+#fig2:每个地址首次欺诈交易的时间
+#fig3：每个月不同种交易的欺诈交易的数量
+#fig4：所有地址每个月欺诈交易的数量
+#fig5：2019年最多欺诈交易的地址，取出来分析交易数量
+#fig6：不同种交易地址的存活时间
+#fig7：欺诈地址的一般交易和内部交易的数量分布
 
+def fig3():
+    #统计每个月的欺诈交易数量，取出每行的时间戳进行转换，判断时间戳的月份，月份的欺诈交易数量+1
+    df1 = pandas.read_csv('ntx1.csv')
+    df2 = pandas.read_csv('ntx2.csv')
+    df3 = pandas.read_csv('ntx3.csv')
+    df4 = pandas.read_csv('ntx4.csv')
+    frames = [df1,df2,df3,df4]
+    df = pandas.concat(frames)
+    df['timeStamp'] = df['timeStamp'].map(lambda x:datetime.datetime.fromtimestamp(x).strftime("%Y-%m"))
+    dfsort = df.sort_values('timeStamp')
+    month2count = {}
+    for index,row in dfsort.iterrows():#桶计数，如果当前月份还没有对应的字典则初始化为0，如果已经有对应的字典则取出对应的数量然后在此基础上加1
+        month2count[row['timeStamp']] = month2count.get(row['timeStamp'],0) + 1
+    print(month2count)
+    x = month2count.keys()
+    y = month2count.values()
+    plt.plot(x,y)
+    plt.xticks(rotation=30)
+    x_major_locator = MultipleLocator(3)
+    ax = plt.gca()
+    ax.xaxis.set_major_locator(x_major_locator)
+    plt.show()
+    # print(df2)
+
+def test():
+    # with open('ntx1.csv','r') as f:
+    #     print(len(f.readlines()))
+    # with open('ntx2.csv','r') as f:
+    #     print(len(f.readlines()))
+    # with open('ntx3.csv','r') as f:
+    #     print(len(f.readlines()))
+    # with open('ntx4.csv','r') as f:
+    #     print(len(f.readlines()))
+    with open('itx1.csv','r') as f:
+        print(len(f.readlines()))
+    with open('itx2.csv','r') as f:
+        print(len(f.readlines()))
+    with open('itx3.csv','r') as f:
+        print(len(f.readlines()))
+    with open('itx4.csv','r') as f:
+        print(len(f.readlines()))
+    with open('etx1.csv','r',encoding='utf-8') as f:
+        print(len(f.readlines()))
+    with open('etx2.csv', 'r', encoding='utf-8') as f:
+        print(len(f.readlines()))
+    with open('etx3.csv','r',encoding='utf-8') as f:
+        print(len(f.readlines()))
+    with open('etx4.csv','r',encoding='utf-8') as f:
+        print(len(f.readlines()))
     # with open('addr.txt','r') as f:
     #     list = literal_eval(f.read())
     #     print(len(list))
@@ -435,6 +488,7 @@ def test():
     # session = requests.Session()
     # results = literal_eval(session.get(url).text)['result']
     # print(len(results))
+
 
 if __name__ == '__main__':
     # try:
@@ -458,8 +512,7 @@ if __name__ == '__main__':
     # except Exception:
     #     pass
 
-    # test()
-
+    fig3()
     # try:
     #     print("itxs1")
     #     getItxs1()
@@ -471,11 +524,11 @@ if __name__ == '__main__':
     #     getItxs2()
     # except Exception:
     #     print("itxs2")
-    try:
-        print("itxs3")
-        getItxs3()
-    except Exception:
-        print("itxs3")
+    # try:
+    #     print("itxs3")
+    #     getItxs3()
+    # except Exception:
+    #     print("itxs3")
     # try:
     #     print("itxs4")
     #     getItxs4()
