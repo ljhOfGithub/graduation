@@ -426,8 +426,8 @@ def getEtxs4():
                 print(url)
                 print(result)
                 print(addr)
-#https://api.etherscan.io/api?module=account&action=tokentx&address=0x0f3257e9513f4812bf015efc5022f16bfef0cfa8&page=1&offset=100&startblock=0&endblock=27025780&sort=asc&apikey=YourApiKeyToken
-#https://api.etherscan.io/api?module=account&action=txlist&address=0xd0b0d5a8c0b40b7272115a23a2d5e36ad190f13c&startblock=0&endblock=99999999&page=1&offset=10000&sort=asc&apikey=YourApiKeyToken
+# https://api.etherscan.io/api?module=account&action=tokentx&address=0x0f3257e9513f4812bf015efc5022f16bfef0cfa8&page=1&offset=100&startblock=0&endblock=27025780&sort=asc&apikey=YourApiKeyToken
+# https://api.etherscan.io/api?module=account&action=txlist&address=0xd0b0d5a8c0b40b7272115a23a2d5e36ad190f13c&startblock=0&endblock=99999999&page=1&offset=10000&sort=asc&apikey=YourApiKeyToken
 #fig2:每个地址首次欺诈交易的时间
 #fig3：每个月不同种交易的欺诈交易的数量
 #fig5：2019年最多欺诈交易的地址，取出来分析交易数量
@@ -515,47 +515,228 @@ def efig3():
     plt.yscale('log')
     plt.show()
 
-#fig4：所有地址每个月欺诈交易的数量
-def nfig4():
+#fig4：所有地址每个月欺诈交易的数量，根据txhash统计，存储to地址和txhash的列表的字典，然后去重，统计所有种类的交易
+def fig4():
     #只要涉及该地址的行都要统计
     df1 = pandas.read_csv('ntx1.csv')
     df2 = pandas.read_csv('ntx2.csv')
     df3 = pandas.read_csv('ntx3.csv')
     df4 = pandas.read_csv('ntx4.csv')
-    frames = [df1,df2,df3,df4]
+    df5 = pandas.read_csv('itx1.csv')
+    df6 = pandas.read_csv('itx2.csv')
+    df7 = pandas.read_csv('itx3.csv')
+    df8 = pandas.read_csv('itx4.csv')
+    df9 = pandas.read_csv('etx1.csv')
+    df10 = pandas.read_csv('etx2.csv')
+    df11 = pandas.read_csv('etx3.csv')
+    df12 = pandas.read_csv('etx4.csv')
+    frames = [df1,df2,df3,df4,df5,df6,df7,df8,df9,df10,df11,df12]
     df = pandas.concat(frames)
-    df = df.drop_duplicates()
+    df = df.drop_duplicates()#去重
     df['timeStamp'] = df['timeStamp'].map(lambda x:datetime.datetime.fromtimestamp(x).strftime("%Y-%m"))
-    dfsort = df.sort_values('timeStamp')
+    df = df.sort_values('timeStamp')
+    # toaddr = []
+    # for index, row in df.iterrows():
+    #     toaddr.append(row['to'])
+    pandas.set_option('display.max_columns', 40)  # 打印最大列数
+    # toaddr = list(set(toaddr))#地址去重
+    # addr2txhash = dict([(key,[]) for key in toaddr])#地址到
+    # for index, row in df.iterrows():#统计地址和交易的字典
+    #     addr2txhash[row['to']].append(row['hash'])
+    # for index, row in df.iterrows():
+    #     addr2txhash[row['to']] = list(set(addr2txhash[row['to']]))#去重
+    #月份2地址2交易数量，不同地址作为同x不同y的点
+    #地址2月份还是月份2地址都可以，地址2月份2交易数量方便
+    #先排序时间再统计交易数量
+    # addr2mon2num = {}
+    # for index, row in df.iterrows():
+    #     if row['to'] != 'NaN':
+    #         addr2mon2num[row['to']] = {}
+    # for index, row in df.iterrows():
+    #     if row['to'] != 'NaN':
+    #         addr2mon2num[row['to']][row['timeStamp']] = addr2mon2num[row['to']].get(row['timeStamp'],0) + 1
     mon2addr2num = {}
-    for index, row in dfsort.iterrows():
-        mon2addr2num[row['timeStamp']][row['to']] = mon2addr2num[row['timeStamp']].get(row['to']) + 1
-    print(mon2addr2num)
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN':
+            mon2addr2num[row['timeStamp']] = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN':
+            mon2addr2num[row['timeStamp']][row['to']] = mon2addr2num[row['timeStamp']].get(row['to'],0) + 1
+    #将月份和交易数量存入x轴和y轴
+    x = []
+    y = []
+    # for addr,mon2num in addr2mon2num.items():
+    #     for mon,num in mon2num.items():
+    #         x.append(mon)
+    #         y.append(num)
+    for mon,addr2num in mon2addr2num.items():
+        for addr,num in addr2num.items():
+            x.append(mon)
+            y.append(num)
+    # print(addr2mon2num)
+    plt.scatter(x, y,s=10)
+    plt.xticks(rotation=30)
+    x_major_locator = MultipleLocator(3)
+    ax = plt.gca()
+    ax.xaxis.set_major_locator(x_major_locator)
+    plt.yscale('log')
+    plt.show()
+def nfig6():
+    with open('addr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df1 = pandas.read_csv('ntx1.csv')
+    df2 = pandas.read_csv('ntx2.csv')
+    df3 = pandas.read_csv('ntx3.csv')
+    df4 = pandas.read_csv('ntx4.csv')
+    frames = [df1, df2, df3, df4]
+    df = pandas.concat(frames)
+    df = df.drop_duplicates()  # 去重
+    df = df.sort_values('timeStamp')
+    addr2time = {}#地址到交易时间戳的字典
+    addr2living = {}
+    for addr in addrlist:
+        addr2time[addr] = []
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            addr2time[row['to']].append(row['timeStamp'])
+    for addr,time in addr2time.items():#将时间列表排序，计算时间差
+        time.sort()
+    # print(addr2time)
+    x = ['<6h','6h≤time<12h','12h≤time<18h','18h≤time<24h','24h≤time<48h','48h≤time<1 week','1 week≤time<1 month','>1 month']
+    y = [0,0,0,0,0,0,0,0]
+    for addr, time in addr2time.items():
+        if len(time) > 0:
+            start = datetime.datetime.fromtimestamp(time[0])
+            end = datetime.datetime.fromtimestamp(time[-1])
+            addr2living[addr] = (end - start).days * 24 + (end - start).seconds / 3600
+
+
+    for addr,living in addr2living.items():
+        if living < 6:
+            y[0] += 1
+        if 6 <= living and living <12:
+            y[1] += 1
+        if 12 <= living and living < 18:
+            y[2] += 1
+        if 18 <= living and living < 24:
+            y[3] += 1
+        if 24 <= living and living < 48:
+            y[4] += 1
+        if 48 <= living and living < 168:
+            y[5] += 1
+        if 168 <= living and living < 720:
+            y[6] += 1
+        if 720 <= living:
+            y[7] += 1
+    print(y)
+    plt.bar(x, y)
+    plt.xticks(rotation=30)
+    ax = plt.gca()
+    plt.yscale('log')
+    plt.show()
+
+def ifig6():
+    with open('addr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
     df1 = pandas.read_csv('itx1.csv')
     df2 = pandas.read_csv('itx2.csv')
     df3 = pandas.read_csv('itx3.csv')
     df4 = pandas.read_csv('itx4.csv')
     frames = [df1, df2, df3, df4]
     df = pandas.concat(frames)
-    df = df.drop_duplicates()
-    df['timeStamp'] = df['timeStamp'].map(lambda x: datetime.datetime.fromtimestamp(x).strftime("%Y-%m"))
-    dfsort = df.sort_values('timeStamp')
-    for index, row in dfsort.iterrows():
-        mon2addr2num[row['timeStamp']][row['to']] = mon2addr2num[row['timeStamp']].get(row['to']) + 1
+    df = df.drop_duplicates()  # 去重
+    df = df.sort_values('timeStamp')
+    addr2time = {}#地址到交易时间戳的字典
+    addr2living = {}
+    for addr in addrlist:
+        addr2time[addr] = []
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            addr2time[row['to']].append(row['timeStamp'])
+    for addr,time in addr2time.items():#将时间列表排序，计算时间差
+        time.sort()
+    x = ['<6h','6h≤time<12h','12h≤time<18h','18h≤time<24h','24h≤time<48h','48h≤time<1 week','1 week≤time<1 month','>1 month']
+    y = [0,0,0,0,0,0,0,0]
+    for addr, time in addr2time.items():
+        if len(time) > 0:
+            start = datetime.datetime.fromtimestamp(time[0])
+            end = datetime.datetime.fromtimestamp(time[-1])
+            addr2living[addr] = (end - start).days * 24 + (end - start).seconds / 3600
+    for addr,living in addr2living.items():
+        if living < 6:
+            y[0] += 1
+        if 6 <= living and living <12:
+            y[1] += 1
+        if 12 <= living and living < 18:
+            y[2] += 1
+        if 18 <= living and living < 24:
+            y[3] += 1
+        if 24 <= living and living < 48:
+            y[4] += 1
+        if 48 <= living and living < 168:
+            y[5] += 1
+        if 168 <= living and living < 720:
+            y[6] += 1
+        if 720 <= living:
+            y[7] += 1
+    print(y)
+    plt.bar(x, y)
+    plt.xticks(rotation=30)
+    ax = plt.gca()
+    plt.yscale('log')
+    plt.show()
+
+def efig6():
+    with open('addr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
     df1 = pandas.read_csv('etx1.csv')
     df2 = pandas.read_csv('etx2.csv')
     df3 = pandas.read_csv('etx3.csv')
     df4 = pandas.read_csv('etx4.csv')
     frames = [df1, df2, df3, df4]
     df = pandas.concat(frames)
-    df = df.drop_duplicates()
-    df['timeStamp'] = df['timeStamp'].map(lambda x: datetime.datetime.fromtimestamp(x).strftime("%Y-%m"))
-    dfsort = df.sort_values('timeStamp')
-    for index, row in dfsort.iterrows():
-        mon2addr2num[row['timeStamp']][row['to']] = mon2addr2num[row['timeStamp']].get(row['to']) + 1
-
-
-
+    df = df.drop_duplicates()  # 去重
+    df = df.sort_values('timeStamp')
+    addr2time = {}#地址到交易时间戳的字典
+    addr2living = {}
+    for addr in addrlist:
+        addr2time[addr] = []
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            addr2time[row['to']].append(row['timeStamp'])
+    for addr,time in addr2time.items():#将时间列表排序，计算时间差
+        time.sort()
+    # print(addr2time)
+    x = ['<6h','6h≤time<12h','12h≤time<18h','18h≤time<24h','24h≤time<48h','48h≤time<1 week','1 week≤time<1 month','>1 month']
+    y = [0,0,0,0,0,0,0,0]
+    for addr, time in addr2time.items():
+        if len(time) > 0:
+            start = datetime.datetime.fromtimestamp(time[0])
+            end = datetime.datetime.fromtimestamp(time[-1])
+            addr2living[addr] = (end - start).days * 24 + (end - start).seconds / 3600
+    for addr,living in addr2living.items():
+        if living < 6:
+            y[0] += 1
+        if 6 <= living and living <12:
+            y[1] += 1
+        if 12 <= living and living < 18:
+            y[2] += 1
+        if 18 <= living and living < 24:
+            y[3] += 1
+        if 24 <= living and living < 48:
+            y[4] += 1
+        if 48 <= living and living < 168:
+            y[5] += 1
+        if 168 <= living and living < 720:
+            y[6] += 1
+        if 720 <= living:
+            y[7] += 1
+    print(y)
+    plt.bar(x, y)
+    plt.xticks(rotation=30)
+    ax = plt.gca()
+    plt.yscale('log')
+    plt.show()
 
 def test():
     # with open('ntx1.csv','r') as f:
@@ -614,11 +795,8 @@ if __name__ == '__main__':
     # except Exception:
     #     pass
 
-    # ifig3()
-    # test()
-    # efig3()
-    efig3()
-    # test()
+
+
     # try:
     #     print("itxs1")
     #     getItxs1()
@@ -658,3 +836,4 @@ if __name__ == '__main__':
     #     getEtxs4()
     # except Exception:
     #     pass
+    efig6()
