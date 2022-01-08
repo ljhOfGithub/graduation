@@ -972,6 +972,102 @@ def fig8():
     df8 = pandas.read_csv('itx4.csv')
     frames = [df5, df6, df7, df8]
     df = pandas.concat(frames)
+    for index, row in df.iterrows():
+        pass
+
+from scipy import stats
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
+import statsmodels.api as sm # recommended import according to the docs
+import matplotlib.pyplot as plt
+from scipy import stats
+
+
+def nfig9():
+    with open('addr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df1 = pandas.read_csv('ntx1.csv')
+    df2 = pandas.read_csv('ntx2.csv')
+    df3 = pandas.read_csv('ntx3.csv')
+    df4 = pandas.read_csv('ntx4.csv')
+    frames = [df1, df2, df3, df4]
+    df = pandas.concat(frames)
+    #欺诈地址作为接收方的欺诈交易数量
+    addr2num = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['to'], str):
+                    addr2num[row['to']] = addr2num.get(row['to'],0) + 1
+            except Exception:
+                print(row['to'])
+    print(addr2num)
+    # txnum2addrnum = {'1-10': 3447, '10-100': 1650, '100-1000': 228, '1000-5000': 24}
+    # #先画直方图，横轴是交易数量区间，纵轴是欺诈地址数
+    txnum2addrnum = {}
+    # txnum = ['1-10','10-100','100-1000','1000-5000']#原本要分的区间，不需要分区间，需要交易数量到地址数量的映射，如果该交易数量没有则构造
+    # print(list(txnum2addrnum.values()))
+    for addr,num in addr2num.items():
+        txnum2addrnum[num] = txnum2addrnum.get(num,0) + 1
+    print(txnum2addrnum)
+    zipped = zip(txnum2addrnum.keys(), txnum2addrnum.values())
+    sort_zipped = sorted(zipped, key=lambda x: (x[0]))
+    result = zip(*sort_zipped)
+    x, y = [list(x) for x in result]
+    print(x)
+    print(y)
+    # 构造数据
+    x = list(txnum2addrnum.keys())
+    res_freq = [value / sum(y) for value in y]
+    plt.bar(x, res_freq)
+    # plt.plot(x, cdf_value)
+    plt.xscale('log')
+    plt.xticks(rotation=30)
+    plt.show()
+
+def ifig9():
+    with open('addr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df1 = pandas.read_csv('itx1.csv')
+    df2 = pandas.read_csv('itx2.csv')
+    df3 = pandas.read_csv('itx3.csv')
+    df4 = pandas.read_csv('itx4.csv')
+    frames = [df1, df2, df3, df4]
+    df = pandas.concat(frames)
+    #欺诈地址作为接收方的欺诈交易数量
+    addr2num = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['to'], str):
+                    addr2num[row['to']] = addr2num.get(row['to'],0) + 1
+            except Exception:
+                print(row['to'])
+    print(addr2num)
+    # txnum2addrnum = {'1-10': 3447, '10-100': 1650, '100-1000': 228, '1000-5000': 24}
+    # #先画直方图，横轴是交易数量区间，纵轴是欺诈地址数
+    txnum2addrnum = {}
+    # txnum = ['1-10','10-100','100-1000','1000-5000']#原本要分的区间，不需要分区间，需要交易数量到地址数量的映射，如果该交易数量没有则构造
+    # print(list(txnum2addrnum.values()))
+    for addr,num in addr2num.items():
+        txnum2addrnum[num] = txnum2addrnum.get(num,0) + 1
+    print(txnum2addrnum)
+    zipped = zip(txnum2addrnum.keys(), txnum2addrnum.values())
+    sort_zipped = sorted(zipped, key=lambda x: (x[0]))
+    result = zip(*sort_zipped)
+    x, y = [list(x) for x in result]
+    print(x)
+    print(y)
+    # 构造数据
+    x = list(txnum2addrnum.keys())
+    res_freq = [value / sum(y) for value in y]
+    plt.bar(x, res_freq)
+    # plt.plot(x, cdf_value)
+    plt.xscale('log')
+    plt.xticks(rotation=30)
+    plt.show()
+
 
 
 
@@ -1074,5 +1170,6 @@ if __name__ == '__main__':
     # except Exception:
     #     pass
     # efig6()
-    nfig7()
-    ifig7()
+    # nfig7()
+    # ifig7()
+    nfig9()
