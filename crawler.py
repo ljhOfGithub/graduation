@@ -437,6 +437,15 @@ def getEtxs4():
 #fig6：不同种交易地址的存活时间
 #fig7：欺诈地址的一般交易和内部交易的数量分布
 def fig2():
+    # A = [1,3,2]
+    # B = [4,5,6]
+    # zipped = zip(A, B)
+    # sort_zipped = sorted(zipped, key=lambda x: (x[0]))
+    # result = zip(*sort_zipped)
+    # x_axis, y_axis = [list(x) for x in result]
+    # print(x_axis)
+    # print(y_axis)
+    # return
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
     #找每个地址第一次收到钱的时间戳，包括一般交易和内部交易
@@ -464,7 +473,8 @@ def fig2():
     print(addr2time)
     addr2mon = {}
     for addr,time in addr2time.items():
-        addr2mon[addr] = time[0]
+        if len(time) > 0:
+            addr2mon[addr] = time[0]
     print(addr2mon)
     mon2count = {}
     for addr,mon in addr2mon.items():
@@ -472,6 +482,11 @@ def fig2():
     print(mon2count)
     x = mon2count.keys()
     y = mon2count.values()
+    zipped = zip(x, y)
+    sort_zipped = sorted(zipped, key=lambda x: (x[0]))
+    result = zip(*sort_zipped)
+    x, y = [list(x) for x in result]
+    print(result)
     plt.plot(x,y)
     plt.xticks(rotation=30)
     x_major_locator = MultipleLocator(3)
@@ -783,6 +798,134 @@ def fig6():
     plt.legend()
     plt.show()
 
+def nfig7():
+    with open('addr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df1 = pandas.read_csv('ntx1.csv')
+    df2 = pandas.read_csv('ntx2.csv')
+    df3 = pandas.read_csv('ntx3.csv')
+    df4 = pandas.read_csv('ntx4.csv')
+    frames = [df1, df2, df3, df4]
+    df = pandas.concat(frames)
+    df = df.drop_duplicates()  # 去重
+    df = df.sort_values('timeStamp')
+    addr2prof = {}
+    url = "https://api.coingecko.com/api/v3/exchange_rates"
+    session = requests.Session()
+    res = literal_eval(session.get(url).text)['rates']
+    usd = res['usd']['value']  # 一个比特币的价格
+    rates = {}
+    for name, dic in res.items():
+        rates[name] = usd / dic['value']
+    eth = rates['eth']  # 一个以太币的价格
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            addr2prof[row['to']] = 0
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['value'],str):
+                    addr2prof[row['to']] += int(row['value']) * eth / 1000000000000000000
+            except Exception:
+                print(row['value'])
+    print(addr2prof)
+    prof2num = {}
+    profaxis = ['0-1k','1k-2k','2k-3k','3k-4k','4k-5k','5k-10k','10k-15k','>15k']
+    for prof in profaxis:
+        prof2num[prof] = 0
+    for addr,prof in addr2prof.items():
+        if prof / 1000 <= 1:
+            prof2num['0-1k'] += 1
+        if prof / 1000 > 1 and prof / 1000 <= 2:
+            prof2num['1k-2k'] += 1
+        if prof / 1000 > 2 and prof / 1000 <= 3:
+            prof2num['2k-3k'] += 1
+        if prof / 1000 > 3 and prof / 1000 <= 4:
+            prof2num['3k-4k'] += 1
+        if prof / 1000 > 4 and prof / 1000 <= 5:
+            prof2num['4k-5k'] += 1
+        if prof / 1000 > 5 and prof / 1000 < 10:
+            prof2num['5k-10k'] += 1
+        if prof / 1000 > 10 and prof / 1000 < 15:
+            prof2num['10k-15k'] += 1
+        if prof / 1000 > 15:
+            prof2num['>15k'] += 1
+    x = []
+    y = []
+    for prof in profaxis:
+        x.append(prof)
+        y.append(prof2num[prof])
+    plt.bar(x,y)
+    plt.xticks(rotation=30)
+    plt.yscale('log')
+    plt.show()
+    print(prof2num)
+
+def ifig7():
+    with open('addr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df1 = pandas.read_csv('itx1.csv')
+    df2 = pandas.read_csv('itx2.csv')
+    df3 = pandas.read_csv('itx3.csv')
+    df4 = pandas.read_csv('itx4.csv')
+    frames = [df1, df2, df3, df4]
+    df = pandas.concat(frames)
+    df = df.drop_duplicates()  # 去重
+    df = df.sort_values('timeStamp')
+    addr2prof = {}
+    url = "https://api.coingecko.com/api/v3/exchange_rates"
+    session = requests.Session()
+    res = literal_eval(session.get(url).text)['rates']
+    usd = res['usd']['value']  # 一个比特币的价格
+    rates = {}
+    for name, dic in res.items():
+        rates[name] = usd / dic['value']
+    eth = rates['eth']  # 一个以太币的价格
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            addr2prof[row['to']] = 0
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['value'],str):
+                    addr2prof[row['to']] += int(row['value']) * eth / 1000000000000000000
+            except Exception:
+                print(row['value'])
+    print(addr2prof)
+    prof2num = {}
+    profaxis = ['0-1k','1k-2k','2k-3k','3k-4k','4k-5k','5k-10k','10k-15k','>15k']
+    for prof in profaxis:
+        prof2num[prof] = 0
+    for addr,prof in addr2prof.items():
+        if prof / 1000 <= 1:
+            prof2num['0-1k'] += 1
+        if prof / 1000 > 1 and prof / 1000 <= 2:
+            prof2num['1k-2k'] += 1
+        if prof / 1000 > 2 and prof / 1000 <= 3:
+            prof2num['2k-3k'] += 1
+        if prof / 1000 > 3 and prof / 1000 <= 4:
+            prof2num['3k-4k'] += 1
+        if prof / 1000 > 4 and prof / 1000 <= 5:
+            prof2num['4k-5k'] += 1
+        if prof / 1000 > 5 and prof / 1000 < 10:
+            prof2num['5k-10k'] += 1
+        if prof / 1000 > 10 and prof / 1000 < 15:
+            prof2num['10k-15k'] += 1
+        if prof / 1000 > 15:
+            prof2num['>15k'] += 1
+    x = []
+    y = []
+    for prof in profaxis:
+        x.append(prof)
+        y.append(prof2num[prof])
+    plt.bar(x,y)
+    plt.xticks(rotation=30)
+    plt.yscale('log')
+    plt.show()
+    print(prof2num)
+
+
+
 def fig8():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
@@ -931,4 +1074,5 @@ if __name__ == '__main__':
     # except Exception:
     #     pass
     # efig6()
-    fig2()
+    nfig7()
+    ifig7()
