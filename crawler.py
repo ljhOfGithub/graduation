@@ -8,6 +8,8 @@ import yaml
 import pandas
 import datetime
 import matplotlib.pyplot as plt
+import numpy
+import math
 from matplotlib.pyplot import MultipleLocator
 
 apikey = "ZF9TQA39PFPPUD7VCDK2Q9ZVD2M72N2HGZ"
@@ -428,11 +430,54 @@ def getEtxs4():
                 print(addr)
 # https://api.etherscan.io/api?module=account&action=tokentx&address=0x0f3257e9513f4812bf015efc5022f16bfef0cfa8&page=1&offset=100&startblock=0&endblock=27025780&sort=asc&apikey=YourApiKeyToken
 # https://api.etherscan.io/api?module=account&action=txlist&address=0xd0b0d5a8c0b40b7272115a23a2d5e36ad190f13c&startblock=0&endblock=99999999&page=1&offset=10000&sort=asc&apikey=YourApiKeyToken
+# https://api.etherscan.io/api?module=account&action=txlistinternal&address=0xe81ad9c0b999222bfe4060ef36b9fef995bad9f9&startblock=0&endblock=99999999&page=1&offset=10000&sort=asc&apikey=ZF9TQA39PFPPUD7VCDK2Q9ZVD2M72N2HGZ
 #fig2:每个地址首次欺诈交易的时间
 #fig3：每个月不同种交易的欺诈交易的数量
 #fig5：2019年最多欺诈交易的地址，取出来分析交易数量
 #fig6：不同种交易地址的存活时间
 #fig7：欺诈地址的一般交易和内部交易的数量分布
+def fig2():
+    with open('addr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    #找每个地址第一次收到钱的时间戳，包括一般交易和内部交易
+    df1 = pandas.read_csv('ntx1.csv')
+    df2 = pandas.read_csv('ntx2.csv')
+    df3 = pandas.read_csv('ntx3.csv')
+    df4 = pandas.read_csv('ntx4.csv')
+    df5 = pandas.read_csv('itx1.csv')
+    df6 = pandas.read_csv('itx2.csv')
+    df7 = pandas.read_csv('itx3.csv')
+    df8 = pandas.read_csv('itx4.csv')
+    frames = [df1,df2,df3,df4,df5,df6,df7,df8]
+    df = pandas.concat(frames)
+    df = df.drop_duplicates()#去重
+    df['timeStamp'] = df['timeStamp'].map(lambda x:datetime.datetime.fromtimestamp(x).strftime("%Y-%m"))
+    df = df.sort_values('timeStamp')
+    addr2time = {}
+    for addr in addrlist:
+        addr2time[addr] = []
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            addr2time[row['to']].append(row['timeStamp'])
+    for addr,time in addr2time.items():
+        time.sort()
+    print(addr2time)
+    addr2mon = {}
+    for addr,time in addr2time.items():
+        addr2mon[addr] = time[0]
+    print(addr2mon)
+    mon2count = {}
+    for addr,mon in addr2mon.items():
+        mon2count[mon] = mon2count.get(mon,0) + 1
+    print(mon2count)
+    x = mon2count.keys()
+    y = mon2count.values()
+    plt.plot(x,y)
+    plt.xticks(rotation=30)
+    x_major_locator = MultipleLocator(3)
+    ax = plt.gca()
+    ax.xaxis.set_major_locator(x_major_locator)
+    plt.show()
 
 def nfig3():
     #统计每个月的欺诈交易数量，取出每行的时间戳进行转换，判断时间戳的月份，月份的欺诈交易数量+1
@@ -517,7 +562,8 @@ def efig3():
 
 #fig4：所有地址每个月欺诈交易的数量，根据txhash统计，存储to地址和txhash的列表的字典，然后去重，统计所有种类的交易
 def fig4():
-    #只要涉及该地址的行都要统计
+    with open('addr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
     df1 = pandas.read_csv('ntx1.csv')
     df2 = pandas.read_csv('ntx2.csv')
     df3 = pandas.read_csv('ntx3.csv')
@@ -535,52 +581,32 @@ def fig4():
     df = df.drop_duplicates()#去重
     df['timeStamp'] = df['timeStamp'].map(lambda x:datetime.datetime.fromtimestamp(x).strftime("%Y-%m"))
     df = df.sort_values('timeStamp')
-    # toaddr = []
-    # for index, row in df.iterrows():
-    #     toaddr.append(row['to'])
     pandas.set_option('display.max_columns', 40)  # 打印最大列数
-    # toaddr = list(set(toaddr))#地址去重
-    # addr2txhash = dict([(key,[]) for key in toaddr])#地址到
-    # for index, row in df.iterrows():#统计地址和交易的字典
-    #     addr2txhash[row['to']].append(row['hash'])
-    # for index, row in df.iterrows():
-    #     addr2txhash[row['to']] = list(set(addr2txhash[row['to']]))#去重
     #月份2地址2交易数量，不同地址作为同x不同y的点
     #地址2月份还是月份2地址都可以，地址2月份2交易数量方便
     #先排序时间再统计交易数量
-    # addr2mon2num = {}
-    # for index, row in df.iterrows():
-    #     if row['to'] != 'NaN':
-    #         addr2mon2num[row['to']] = {}
-    # for index, row in df.iterrows():
-    #     if row['to'] != 'NaN':
-    #         addr2mon2num[row['to']][row['timeStamp']] = addr2mon2num[row['to']].get(row['timeStamp'],0) + 1
     mon2addr2num = {}
     for index, row in df.iterrows():
-        if row['to'] != 'NaN':
+        if row['to'] != 'NaN' and row['to'] in addrlist:
             mon2addr2num[row['timeStamp']] = {}
     for index, row in df.iterrows():
-        if row['to'] != 'NaN':
+        if row['to'] != 'NaN' and row['to'] in addrlist:
             mon2addr2num[row['timeStamp']][row['to']] = mon2addr2num[row['timeStamp']].get(row['to'],0) + 1
     #将月份和交易数量存入x轴和y轴
     x = []
     y = []
-    # for addr,mon2num in addr2mon2num.items():
-    #     for mon,num in mon2num.items():
-    #         x.append(mon)
-    #         y.append(num)
     for mon,addr2num in mon2addr2num.items():
         for addr,num in addr2num.items():
             x.append(mon)
             y.append(num)
-    # print(addr2mon2num)
-    plt.scatter(x, y,s=10)
+    plt.scatter(x, y,s=9)
     plt.xticks(rotation=30)
     x_major_locator = MultipleLocator(3)
     ax = plt.gca()
     ax.xaxis.set_major_locator(x_major_locator)
     plt.yscale('log')
     plt.show()
+
 def nfig6():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
@@ -601,7 +627,6 @@ def nfig6():
             addr2time[row['to']].append(row['timeStamp'])
     for addr,time in addr2time.items():#将时间列表排序，计算时间差
         time.sort()
-    # print(addr2time)
     x = ['<6h','6h≤time<12h','12h≤time<18h','18h≤time<24h','24h≤time<48h','48h≤time<1 week','1 week≤time<1 month','>1 month']
     y = [0,0,0,0,0,0,0,0]
     for addr, time in addr2time.items():
@@ -609,8 +634,6 @@ def nfig6():
             start = datetime.datetime.fromtimestamp(time[0])
             end = datetime.datetime.fromtimestamp(time[-1])
             addr2living[addr] = (end - start).days * 24 + (end - start).seconds / 3600
-
-
     for addr,living in addr2living.items():
         if living < 6:
             y[0] += 1
@@ -628,6 +651,7 @@ def nfig6():
             y[6] += 1
         if 720 <= living:
             y[7] += 1
+    return x,y
     print(y)
     plt.bar(x, y)
     plt.xticks(rotation=30)
@@ -679,6 +703,7 @@ def ifig6():
             y[6] += 1
         if 720 <= living:
             y[7] += 1
+    return x,y
     print(y)
     plt.bar(x, y)
     plt.xticks(rotation=30)
@@ -731,12 +756,81 @@ def efig6():
             y[6] += 1
         if 720 <= living:
             y[7] += 1
+    return x,y
     print(y)
     plt.bar(x, y)
     plt.xticks(rotation=30)
     ax = plt.gca()
     plt.yscale('log')
     plt.show()
+
+def fig6():
+    nx,ny = nfig6()
+    ny = numpy.array(ny)
+    ix,iy = ifig6()
+    iy = numpy.array(iy)
+    ex,ey = efig6()
+    ey = numpy.array(ey)
+    y = numpy.array([1,1,1,1,1,1,1,1])
+    x = ['<6h','6h≤time<12h','12h≤time<18h','18h≤time<24h','24h≤time<48h','48h≤time<1 week','1 week≤time<1 month','>1 month']
+    x = numpy.arange(len(x))
+    width = 0.2
+    plt.bar(nx, ny, width, color='r', label="normal txs")
+    plt.bar(x+width, iy, width, color='g', label="internal txs")
+    plt.bar(x+width+width, ey, width, color='b', label="erc20 txs")
+    plt.xticks(rotation=30)
+    plt.yscale('log')
+    plt.legend()
+    plt.show()
+
+def fig8():
+    with open('addr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    url = "https://api.coingecko.com/api/v3/exchange_rates"
+    session = requests.Session()
+    res = literal_eval(session.get(url).text)['rates']
+    usd = res['usd']['value']#一个比特币的价格
+    rates = {}
+    for name,dic in res.items():
+        rates[name] = usd / dic['value']
+    eth = rates['eth']#一个以太币的价格
+    print(res)
+    print(usd)
+    print(rates)
+    print(eth)
+    df1 = pandas.read_csv('etx1.csv')
+    df2 = pandas.read_csv('etx2.csv')
+    df3 = pandas.read_csv('etx3.csv')
+    df4 = pandas.read_csv('etx4.csv')
+    frames = [df1, df2, df3, df4]
+    df = pandas.concat(frames)
+    addr2profit = {}
+    for index, row in df.iterrows():
+        try:
+            if row['to'] != 'NaN' and row['to'] in addrlist:
+                if isinstance(row['tokenSymbol'],str) and row['tokenSymbol'].lower() in rates.keys():
+                    addr2profit[row['to']] = int(row['value']) * rates[row['tokenSymbol'].lower()] / 1000000000000000000
+                elif not isinstance(row['tokenSymbol'],str) and not math.isnan((row['tokenSymbol'])):
+                    continue
+        except Exception:
+            # print(index)
+            print(math.isnan((row['tokenSymbol'])))
+            print(row)
+            print(type(row['tokenSymbol']))
+            print(numpy.isnan(row['tokenSymbol']))
+            # print(row['tokenSymbol'])
+    print(addr2profit)
+    print(len(addr2profit.keys()))
+
+    return
+    df5 = pandas.read_csv('itx1.csv')
+    df6 = pandas.read_csv('itx2.csv')
+    df7 = pandas.read_csv('itx3.csv')
+    df8 = pandas.read_csv('itx4.csv')
+    frames = [df5, df6, df7, df8]
+    df = pandas.concat(frames)
+
+
 
 def test():
     # with open('ntx1.csv','r') as f:
@@ -766,11 +860,11 @@ def test():
     # with open('addr.txt','r') as f:
     #     list = literal_eval(f.read())
     #     print(len(list))
-
     # url = "https://api.etherscan.io/api?module=account&action=txlistinternal&address=0x2c1ba59d6f58433fb1eaee7d20b26ed83bda51a3&startblock=0&endblock=99999999&page=1&offset=10000&sort=asc&apikey=ZF9TQA39PFPPUD7VCDK2Q9ZVD2M72N2HGZ"
     # session = requests.Session()
     # results = literal_eval(session.get(url).text)['result']
     # print(len(results))
+
 
 
 if __name__ == '__main__':
@@ -836,4 +930,5 @@ if __name__ == '__main__':
     #     getEtxs4()
     # except Exception:
     #     pass
-    efig6()
+    # efig6()
+    fig2()
