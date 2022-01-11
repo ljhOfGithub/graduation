@@ -11,9 +11,25 @@ import matplotlib.pyplot as plt
 import numpy
 import math
 from matplotlib.pyplot import MultipleLocator
-
+from bs4 import BeautifulSoup
 apikey = "ZF9TQA39PFPPUD7VCDK2Q9ZVD2M72N2HGZ"
 # apikey = "P3FE926UGARGQF8HKPM4XWJ38CJAGX5WHZ"
+def bloxy():
+    xpath = "/html/body/div[1]/div[2]/div[6]/div/div/div[2]/div[1]/table/tbody"
+    url = "https://bloxy.info/tokens?annotation_page=2&blockchain_id=1&q=hack"
+    session = requests.session()
+    resp = session.get(url)
+    html = resp.text
+    bs = BeautifulSoup(html,features="lxml")
+    tbody = bs.select('body > div.wrapper > div:nth-child(5) > div:nth-child(8) > div > div > div.panel-body > div.table-responsive > table > tbody')[0]
+    for tr in tbody:
+        for tag in tr:
+            # # print(tag)
+            # print(type(tag))
+            # print(len(tag))
+            if not isinstance(tag,str) and tag.name == "td":
+                # print('!!')
+                print(tag.string)
 
 def deduplicate():
     with open('bitpoint.txt','r') as f:
@@ -1270,4 +1286,5 @@ if __name__ == '__main__':
     # nfig7()
     # ifig7()
     # nfig9()
-    tofig9()
+    # tofig9()
+    bloxy()
