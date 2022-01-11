@@ -982,7 +982,7 @@ import seaborn as sns
 import statsmodels.api as sm # recommended import according to the docs
 import matplotlib.pyplot as plt
 from scipy import stats
-
+from statsmodels.distributions.empirical_distribution import ECDF
 
 def nfig9():
     with open('addr.txt','r',encoding='utf-8') as f:
@@ -1002,7 +1002,7 @@ def nfig9():
                     addr2num[row['to']] = addr2num.get(row['to'],0) + 1
             except Exception:
                 print(row['to'])
-    print(addr2num)
+    # print(addr2num)
     # txnum2addrnum = {'1-10': 3447, '10-100': 1650, '100-1000': 228, '1000-5000': 24}
     # #先画直方图，横轴是交易数量区间，纵轴是欺诈地址数
     txnum2addrnum = {}
@@ -1010,21 +1010,49 @@ def nfig9():
     # print(list(txnum2addrnum.values()))
     for addr,num in addr2num.items():
         txnum2addrnum[num] = txnum2addrnum.get(num,0) + 1
-    print(txnum2addrnum)
+    # print(txnum2addrnum)
     zipped = zip(txnum2addrnum.keys(), txnum2addrnum.values())
     sort_zipped = sorted(zipped, key=lambda x: (x[0]))
     result = zip(*sort_zipped)
     x, y = [list(x) for x in result]
-    print(x)
-    print(y)
+    # y = numpy.array(y)
+    # name = x
+
+    # ecdf = ECDF(x)
+    # x = numpy.linspace(min(x),max(x),len(x))
+    # y = ecdf(x)
+
+    # ysum = sum(y)
+    # y = numpy.cumsum(y)
     # 构造数据
-    x = list(txnum2addrnum.keys())
-    res_freq = [value / sum(y) for value in y]
-    plt.bar(x, res_freq)
-    # plt.plot(x, cdf_value)
+    # x = list(txnum2addrnum.keys())
+    # res_freq = [value / ysum for value in y]#频率
+    # print(res_freq)
+
+    # plt.bar(list(range(len(res_freq))),res_freq,tick_label=x,width=0.6)
+    # plt.xscale('log')
+    # plt.xticks(rotation=30)
+    # plt.show()
+    # plt.plot(x,y,label=name)
+
+    # df_participant_pair = pd.read_sql(sqls_participant_pair, db)
+    # df_participant_pair['cumsum'] = numpy.cumsum(df_participant_pair['count'])
+    # df_participant_pair['percentage'] = df_participant_pair['cumsum'] / list(df_participant_pair['cumsum'])[-1]
+    # line2 = ax.plot(df_participant_pair['involve_pairs'], df_participant_pair['percentage'], color='black',
+    #                 label='Participants')
+
+
+    fig, ax = plt.subplots()
+    cum = numpy.cumsum(y)
+    percentage = cum / list(cum)[-1]
+    line = ax.plot(x,percentage)
     plt.xscale('log')
-    plt.xticks(rotation=30)
     plt.show()
+
+    # plt.plot(x,y)
+    # plt.xticks(rotation=30)
+    # plt.xscale('log')
+    # plt.show()
 
 def ifig9():
     with open('addr.txt','r',encoding='utf-8') as f:
@@ -1035,7 +1063,6 @@ def ifig9():
     df4 = pandas.read_csv('itx4.csv')
     frames = [df1, df2, df3, df4]
     df = pandas.concat(frames)
-    #欺诈地址作为接收方的欺诈交易数量
     addr2num = {}
     for index, row in df.iterrows():
         if row['to'] != 'NaN' and row['to'] in addrlist:
@@ -1044,28 +1071,101 @@ def ifig9():
                     addr2num[row['to']] = addr2num.get(row['to'],0) + 1
             except Exception:
                 print(row['to'])
-    print(addr2num)
-    # txnum2addrnum = {'1-10': 3447, '10-100': 1650, '100-1000': 228, '1000-5000': 24}
-    # #先画直方图，横轴是交易数量区间，纵轴是欺诈地址数
     txnum2addrnum = {}
-    # txnum = ['1-10','10-100','100-1000','1000-5000']#原本要分的区间，不需要分区间，需要交易数量到地址数量的映射，如果该交易数量没有则构造
-    # print(list(txnum2addrnum.values()))
     for addr,num in addr2num.items():
         txnum2addrnum[num] = txnum2addrnum.get(num,0) + 1
-    print(txnum2addrnum)
+    # print(txnum2addrnum)
     zipped = zip(txnum2addrnum.keys(), txnum2addrnum.values())
     sort_zipped = sorted(zipped, key=lambda x: (x[0]))
     result = zip(*sort_zipped)
     x, y = [list(x) for x in result]
-    print(x)
-    print(y)
-    # 构造数据
-    x = list(txnum2addrnum.keys())
-    res_freq = [value / sum(y) for value in y]
-    plt.bar(x, res_freq)
-    # plt.plot(x, cdf_value)
+
+    fig, ax = plt.subplots()
+    cum = numpy.cumsum(y)
+    percentage = cum / list(cum)[-1]
+    line = ax.plot(x, percentage)
     plt.xscale('log')
-    plt.xticks(rotation=30)
+    plt.show()
+
+    # print(x)
+    # print(y)
+    # # 构造数据
+    # x = list(txnum2addrnum.keys())
+    # res_freq = [value / sum(y) for value in y]
+    # plt.bar(x, res_freq)
+    # # plt.plot(x, cdf_value)
+    # plt.xscale('log')
+    # plt.xticks(rotation=30)
+    # plt.show()
+
+def tofig9():
+    with open('addr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df1 = pandas.read_csv('ntx1.csv')
+    df2 = pandas.read_csv('ntx2.csv')
+    df3 = pandas.read_csv('ntx3.csv')
+    df4 = pandas.read_csv('ntx4.csv')
+    df5 = pandas.read_csv('itx1.csv')
+    df6 = pandas.read_csv('itx2.csv')
+    df7 = pandas.read_csv('itx3.csv')
+    df8 = pandas.read_csv('itx4.csv')
+    frames = [df1, df2, df3, df4,df5,df6,df7,df8]
+    df = pandas.concat(frames)
+    addr2num = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['to'], str):
+                    addr2num[row['to']] = addr2num.get(row['to'],0) + 1
+            except Exception:
+                print(row['to'])
+    txnum2addrnum = {}
+    for addr,num in addr2num.items():
+        txnum2addrnum[num] = txnum2addrnum.get(num,0) + 1
+    # print(txnum2addrnum)
+    zipped = zip(txnum2addrnum.keys(), txnum2addrnum.values())
+    sort_zipped = sorted(zipped, key=lambda x: (x[0]))
+    result = zip(*sort_zipped)
+    x, y = [list(x) for x in result]
+    fig, ax = plt.subplots()
+    cum = numpy.cumsum(y)
+    percentage = cum / list(cum)[-1]
+    line = ax.plot(x, percentage)
+    plt.xscale('log')
+    plt.show()
+def fromfig9():
+    with open('addr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df1 = pandas.read_csv('ntx1.csv')
+    df2 = pandas.read_csv('ntx2.csv')
+    df3 = pandas.read_csv('ntx3.csv')
+    df4 = pandas.read_csv('ntx4.csv')
+    df5 = pandas.read_csv('itx1.csv')
+    df6 = pandas.read_csv('itx2.csv')
+    df7 = pandas.read_csv('itx3.csv')
+    df8 = pandas.read_csv('itx4.csv')
+    frames = [df1, df2, df3, df4,df5,df6,df7,df8]
+    df = pandas.concat(frames)
+    addr2num = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['from'] in addrlist:
+            try:
+                if isinstance(row['from'], str):
+                    addr2num[row['from']] = addr2num.get(row['from'],0) + 1
+            except Exception:
+                print(row['from'])
+    txnum2addrnum = {}
+    for addr,num in addr2num.items():
+        txnum2addrnum[num] = txnum2addrnum.get(num,0) + 1
+    zipped = zip(txnum2addrnum.keys(), txnum2addrnum.values())
+    sort_zipped = sorted(zipped, key=lambda x: (x[0]))
+    result = zip(*sort_zipped)
+    x, y = [list(x) for x in result]
+    fig, ax = plt.subplots()
+    cum = numpy.cumsum(y)
+    percentage = cum / list(cum)[-1]
+    line = ax.plot(x, percentage)
+    plt.xscale('log')
     plt.show()
 
 
@@ -1127,9 +1227,6 @@ if __name__ == '__main__':
     #     getNtxs4()
     # except Exception:
     #     pass
-
-
-
     # try:
     #     print("itxs1")
     #     getItxs1()
@@ -1172,5 +1269,5 @@ if __name__ == '__main__':
     # efig6()
     # nfig7()
     # ifig7()
-    nfig9()
-
+    # nfig9()
+    tofig9()
