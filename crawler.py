@@ -15,27 +15,34 @@ from bs4 import BeautifulSoup
 apikey = "ZF9TQA39PFPPUD7VCDK2Q9ZVD2M72N2HGZ"
 # apikey = "P3FE926UGARGQF8HKPM4XWJ38CJAGX5WHZ"
 def bloxy():
-    xpath = "/html/body/div[1]/div[2]/div[6]/div/div/div[2]/div[1]/table/tbody"
-    url = "https://bloxy.info/tokens?annotation_page=2&blockchain_id=1&q=hack"
-    session = requests.session()
-    resp = session.get(url)
-    html = resp.text
-    bs = BeautifulSoup(html,features="lxml")
-    tbody = bs.select('body > div.wrapper > div:nth-child(5) > div:nth-child(8) > div > div > div.panel-body > div.table-responsive > table > tbody')[0]
-
-    for tr in tbody:
-        for tag in tr:
-            if not isinstance(tag, str):#排除空行换行符等特殊的tag
-                if not tag.select("a") and 'Hack' in tag.string and not 'HackerGold' in tag.string:#如果包含Hack则将下一行的a中的链接存入列表，如果不包含则跳过
-                    continue#不能是HackerGold，如果是HackerGold则需要连续跳过两行
-                elif tag.select("a"):#包含hack地址的url的特征是以/address/开头
-                    url = tag.select("a")[0].get('href')
-                    if url.startswith('/address/'):
-                        print(url[9:])
-                    elif url.startswith('/tx'):
-                        continue
-
-
+    pagenum = 177
+    url2type = {}  # 将所有的链接和种类注解存入字典中再进行筛选
+    hacktype = ['Phish/Hack', 'Coinrail_Hack', 'Cryptopia Hack', 'Cryptopia_Hack', 'EtherDelta Hack', 'EtherDelta_Hack',
+                'BrowserExtention_Hack', 'SpankChain_Hack']
+    notType = ['Hack', 'Hacking', 'HackToken', 'HackDao', 'HackerGold', 'Hacken', 'HackerSpaceBarneysToken']
+    for i in range(1,178):
+        print(i)
+        url = "https://bloxy.info/tokens?annotation_page=" + str(i) + "&blockchain_id=1&q=hack"
+        session = requests.session()
+        resp = session.get(url)
+        html = resp.text
+        bs = BeautifulSoup(html,features="lxml")
+        tbody = bs.select('body > div.wrapper > div:nth-child(5) > div:nth-child(8) > div > div > div.panel-body > div.table-responsive > table > tbody')[0]
+        for tr in tbody:
+            num = 0
+            for tag in tr:
+                if not isinstance(tag, str):#排除空行换行符等特殊的tag
+                    if not tag.select("a") and num % 2 == 0:
+                        num += 1
+                        mytype = tag.string
+                    elif tag.select("a") and num % 2 == 1:
+                        num += 1
+                        url = tag.select("a")[0].get('href')
+                        url2type[url] = mytype
+    with open('bloxy.txt','w',encoding='utf-8') as f:
+        print(url2type,file=f)
+#需要排除的：HackToken，HackDao，HackerGold，Hacken
+#不能是HackerGold，如果是HackerGold则需要连续跳过两行
 def deduplicate():
     with open('bitpoint.txt','r') as f:
         list1 = literal_eval(f.read())
