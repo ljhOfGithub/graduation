@@ -22,14 +22,19 @@ def bloxy():
     html = resp.text
     bs = BeautifulSoup(html,features="lxml")
     tbody = bs.select('body > div.wrapper > div:nth-child(5) > div:nth-child(8) > div > div > div.panel-body > div.table-responsive > table > tbody')[0]
+
     for tr in tbody:
         for tag in tr:
-            # # print(tag)
-            # print(type(tag))
-            # print(len(tag))
-            if not isinstance(tag,str) and tag.name == "td":
-                # print('!!')
-                print(tag.string)
+            if not isinstance(tag, str):#排除空行换行符等特殊的tag
+                if not tag.select("a") and 'Hack' in tag.string and not 'HackerGold' in tag.string:#如果包含Hack则将下一行的a中的链接存入列表，如果不包含则跳过
+                    continue#不能是HackerGold，如果是HackerGold则需要连续跳过两行
+                elif tag.select("a"):#包含hack地址的url的特征是以/address/开头
+                    url = tag.select("a")[0].get('href')
+                    if url.startswith('/address/'):
+                        print(url[9:])
+                    elif url.startswith('/tx'):
+                        continue
+
 
 def deduplicate():
     with open('bitpoint.txt','r') as f:
