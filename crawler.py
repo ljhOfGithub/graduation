@@ -92,10 +92,18 @@ def bloxymalware():
 def bloxy2():
     with open('bloxy.txt','r',encoding='utf-8') as f:
         dict1 = literal_eval(f.read())
+    with open('bloxyscam.txt','r',encoding='utf-8') as f:
+        dict2 = literal_eval(f.read())
+    with open('bloxymalware.txt','r',encoding='utf-8') as f:
+        dict3 = literal_eval(f.read())
+    mydict = {}
+    mydict.update(dict1)
+    mydict.update(dict2)
+    mydict.update(dict3)
     hacktype = ['Phish', 'Coinrail', 'Cryptopia', 'EtherDelta', 'Browser', 'SpankChain', 'Upbit', 'Scam']
     notType = ['Hacking', 'HackToken', 'HackDao', 'HackerGold', 'Hacken', 'HackerSpaceBarneysToken']
     addrlist = []
-    for url,type in dict1.items():
+    for url,type in mydict.items():
         for key in hacktype:
             for key2 in notType:
                 if key.lower() in type.lower() and key.lower() not in key2:
@@ -111,7 +119,6 @@ def bloxy2():
     list1 = list(set(dict1.values()))
     with open('bloxyAddr.txt','w',encoding='utf-8') as f:
         print(addrlist,file=f)
-
     # print(list1)
     # print(len(dict1))
 def differSetNtx():
@@ -227,9 +234,9 @@ def deduplicate():
     alladdr1 = list(set(list1 + list2 + list3 + list4 + list5 + list6 + list7 + list8 + list9))
     alladdr2 = list(set(list1 + list2 + list3 + list4 + list5 + list6 + list7 + list8))
     ret = [i for i in alladdr1 if i not in alladdr2]
-    return ret
     print(ret)
     print(len(alladdr1))
+    return ret
     # with open('addr.txt','w',encoding='utf-8') as f:
     #     print(alladdr,file=f)
 
@@ -644,7 +651,9 @@ def fig2():
     df6 = pandas.read_csv('itx2.csv')
     df7 = pandas.read_csv('itx3.csv')
     df8 = pandas.read_csv('itx4.csv')
-    frames = [df1,df2,df3,df4,df5,df6,df7,df8]
+    df9 = pandas.read_csv('bntx1.csv')
+    df10 = pandas.read_csv('bitx1.csv')
+    frames = [df1,df2,df3,df4,df5,df6,df7,df8,df9,df10]
     df = pandas.concat(frames)
     df = df.drop_duplicates()#去重
     df['timeStamp'] = df['timeStamp'].map(lambda x:datetime.datetime.fromtimestamp(x).strftime("%Y-%m"))
@@ -687,7 +696,8 @@ def nfig3():
     df2 = pandas.read_csv('ntx2.csv')
     df3 = pandas.read_csv('ntx3.csv')
     df4 = pandas.read_csv('ntx4.csv')
-    frames = [df1,df2,df3,df4]
+    df5 = pandas.read_csv('bntx1.csv')
+    frames = [df1,df2,df3,df4,df5]
     df = pandas.concat(frames)
     df['timeStamp'] = df['timeStamp'].map(lambda x:datetime.datetime.fromtimestamp(x).strftime("%Y-%m"))
     dfsort = df.sort_values('timeStamp')
@@ -711,6 +721,7 @@ def ifig3():
     df2 = pandas.read_csv('itx2.csv')
     df3 = pandas.read_csv('itx3.csv')
     df4 = pandas.read_csv('itx4.csv')
+    df5 = pandas.read_csv('bitx1.csv')
     frames = [df1,df2,df3,df4]
     df = pandas.concat(frames)
     df = df.drop_duplicates()
@@ -737,6 +748,7 @@ def efig3():
     df2 = pandas.read_csv('etx2.csv')
     df3 = pandas.read_csv('etx3.csv')
     df4 = pandas.read_csv('etx4.csv')
+    df5 = pandas.read_csv('betx1.csv')
     print(df1.shape[0])
     print(df2.shape[0])
     print(df3.shape[0])
@@ -778,7 +790,10 @@ def fig4():
     df10 = pandas.read_csv('etx2.csv')
     df11 = pandas.read_csv('etx3.csv')
     df12 = pandas.read_csv('etx4.csv')
-    frames = [df1,df2,df3,df4,df5,df6,df7,df8,df9,df10,df11,df12]
+    df13 = pandas.read_csv('bntx1.csv')
+    df14 = pandas.read_csv('bitx1.csv')
+    df15 = pandas.read_csv('betx1.csv')
+    frames = [df1,df2,df3,df4,df5,df6,df7,df8,df9,df10,df11,df12,df13,df14,df15]
     df = pandas.concat(frames)
     df = df.drop_duplicates()#去重
     df['timeStamp'] = df['timeStamp'].map(lambda x:datetime.datetime.fromtimestamp(x).strftime("%Y-%m"))
@@ -816,7 +831,8 @@ def nfig6():
     df2 = pandas.read_csv('ntx2.csv')
     df3 = pandas.read_csv('ntx3.csv')
     df4 = pandas.read_csv('ntx4.csv')
-    frames = [df1, df2, df3, df4]
+    df5 = pandas.read_csv('bntx1.csv')
+    frames = [df1, df2, df3, df4, df5]
     df = pandas.concat(frames)
     df = df.drop_duplicates()  # 去重
     df = df.sort_values('timeStamp')
@@ -868,7 +884,8 @@ def ifig6():
     df2 = pandas.read_csv('itx2.csv')
     df3 = pandas.read_csv('itx3.csv')
     df4 = pandas.read_csv('itx4.csv')
-    frames = [df1, df2, df3, df4]
+    df5 = pandas.read_csv('bitx1.csv')
+    frames = [df1, df2, df3, df4, df5]
     df = pandas.concat(frames)
     df = df.drop_duplicates()  # 去重
     df = df.sort_values('timeStamp')
@@ -920,7 +937,8 @@ def efig6():
     df2 = pandas.read_csv('etx2.csv')
     df3 = pandas.read_csv('etx3.csv')
     df4 = pandas.read_csv('etx4.csv')
-    frames = [df1, df2, df3, df4]
+    df5 = pandas.read_csv('betx1.csv')
+    frames = [df1, df2, df3, df4, df5]
     df = pandas.concat(frames)
     df = df.drop_duplicates()  # 去重
     df = df.sort_values('timeStamp')
@@ -992,7 +1010,8 @@ def nfig7():
     df2 = pandas.read_csv('ntx2.csv')
     df3 = pandas.read_csv('ntx3.csv')
     df4 = pandas.read_csv('ntx4.csv')
-    frames = [df1, df2, df3, df4]
+    df5 = pandas.read_csv('bntx1.csv')
+    frames = [df1, df2, df3, df4, df5]
     df = pandas.concat(frames)
     df = df.drop_duplicates()  # 去重
     df = df.sort_values('timeStamp')
@@ -1055,7 +1074,8 @@ def ifig7():
     df2 = pandas.read_csv('itx2.csv')
     df3 = pandas.read_csv('itx3.csv')
     df4 = pandas.read_csv('itx4.csv')
-    frames = [df1, df2, df3, df4]
+    df5 = pandas.read_csv('bitx1.csv')
+    frames = [df1, df2, df3, df4, df5]
     df = pandas.concat(frames)
     df = df.drop_duplicates()  # 去重
     df = df.sort_values('timeStamp')
@@ -1132,7 +1152,8 @@ def fig8():
     df2 = pandas.read_csv('etx2.csv')
     df3 = pandas.read_csv('etx3.csv')
     df4 = pandas.read_csv('etx4.csv')
-    frames = [df1, df2, df3, df4]
+    df5 = pandas.read_csv('betx1.csv')
+    frames = [df1, df2, df3, df4, df5]
     df = pandas.concat(frames)
     addr2profit = {}
     for index, row in df.iterrows():
@@ -1178,7 +1199,8 @@ def nfig9():
     df2 = pandas.read_csv('ntx2.csv')
     df3 = pandas.read_csv('ntx3.csv')
     df4 = pandas.read_csv('ntx4.csv')
-    frames = [df1, df2, df3, df4]
+    df5 = pandas.read_csv('bntx1.csv')
+    frames = [df1, df2, df3, df4, df5]
     df = pandas.concat(frames)
     #欺诈地址作为接收方的欺诈交易数量
     addr2num = {}
@@ -1248,7 +1270,8 @@ def ifig9():
     df2 = pandas.read_csv('itx2.csv')
     df3 = pandas.read_csv('itx3.csv')
     df4 = pandas.read_csv('itx4.csv')
-    frames = [df1, df2, df3, df4]
+    df5 = pandas.read_csv('bitx1.csv')
+    frames = [df1, df2, df3, df4, df5]
     df = pandas.concat(frames)
     addr2num = {}
     for index, row in df.iterrows():
@@ -1296,7 +1319,9 @@ def tofig9():
     df6 = pandas.read_csv('itx2.csv')
     df7 = pandas.read_csv('itx3.csv')
     df8 = pandas.read_csv('itx4.csv')
-    frames = [df1, df2, df3, df4,df5,df6,df7,df8]
+    df9 = pandas.read_csv('bntx1.csv')
+    df10 = pandas.read_csv('bitx1.csv')
+    frames = [df1, df2, df3, df4,df5,df6,df7,df8,df9,df10]
     df = pandas.concat(frames)
     addr2num = {}
     for index, row in df.iterrows():
@@ -1331,7 +1356,9 @@ def fromfig9():
     df6 = pandas.read_csv('itx2.csv')
     df7 = pandas.read_csv('itx3.csv')
     df8 = pandas.read_csv('itx4.csv')
-    frames = [df1, df2, df3, df4,df5,df6,df7,df8]
+    df9 = pandas.read_csv('bntx1.csv')
+    df10 = pandas.read_csv('bitx1.csv')
+    frames = [df1, df2, df3, df4,df5,df6,df7,df8,df9,df10]
     df = pandas.concat(frames)
     addr2num = {}
     for index, row in df.iterrows():
@@ -1469,5 +1496,5 @@ if __name__ == '__main__':
     # tofig9()
     # bloxymalware()
     # bloxy2()
-    # deduplicate()
-    differSetEtx()
+    deduplicate()
+    # differSetEtx()
