@@ -4,6 +4,14 @@ for(let i = 0; i < trlist.length; i++){
     let addr = trlist[i].firstChild.innerText
     array.push(addr)
 }
+let trlist = document.querySelector("#table-subcatid-0 > tbody").children
+let array = []
+for(let i = 0; i < trlist.length; i++){
+    let addr = trlist[i].children[1].innerText
+    array.push(addr)
+}
+console.log(array)
+
 console.log(array)
 [
     "0x9f26ae5cd245bfeeb5926d61497550f79d9c6c1c",
