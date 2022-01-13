@@ -14,13 +14,11 @@ from matplotlib.pyplot import MultipleLocator
 from bs4 import BeautifulSoup
 apikey = "ZF9TQA39PFPPUD7VCDK2Q9ZVD2M72N2HGZ"
 # apikey = "P3FE926UGARGQF8HKPM4XWJ38CJAGX5WHZ"
-def bloxy():
+import json
+def bloxyhack():
     pagenum = 177
     url2type = {}  # 将所有的链接和种类注解存入字典中再进行筛选
-    hacktype = ['Phish/Hack', 'Coinrail_Hack', 'Cryptopia Hack', 'Cryptopia_Hack', 'EtherDelta Hack', 'EtherDelta_Hack',
-                'BrowserExtention_Hack', 'SpankChain_Hack']
-    notType = ['Hack', 'Hacking', 'HackToken', 'HackDao', 'HackerGold', 'Hacken', 'HackerSpaceBarneysToken']
-    for i in range(1,178):
+    for i in range(1,pagenum+1):
         print(i)
         url = "https://bloxy.info/tokens?annotation_page=" + str(i) + "&blockchain_id=1&q=hack"
         session = requests.session()
@@ -29,20 +27,174 @@ def bloxy():
         bs = BeautifulSoup(html,features="lxml")
         tbody = bs.select('body > div.wrapper > div:nth-child(5) > div:nth-child(8) > div > div > div.panel-body > div.table-responsive > table > tbody')[0]
         for tr in tbody:
-            num = 0
             for tag in tr:
                 if not isinstance(tag, str):#排除空行换行符等特殊的tag
-                    if not tag.select("a") and num % 2 == 0:
-                        num += 1
-                        mytype = tag.string
-                    elif tag.select("a") and num % 2 == 1:
-                        num += 1
-                        url = tag.select("a")[0].get('href')
+                    if tag.select("a"):
+                        atag = tag.select("a")[0]
+                        url = atag.get('href')
+                        mytype = atag.string
                         url2type[url] = mytype
+        # print(url2type)
     with open('bloxy.txt','w',encoding='utf-8') as f:
         print(url2type,file=f)
-#需要排除的：HackToken，HackDao，HackerGold，Hacken
-#不能是HackerGold，如果是HackerGold则需要连续跳过两行
+    json_str = json.dumps(url2type)
+    with open('bloxy.json', 'w') as json_file:
+        json_file.write(json_str)
+def bloxyscam():
+    pagenum = 56
+    url2type = {}  # 将所有的链接和种类注解存入字典中再进行筛选
+    for i in range(1,pagenum+1):
+        print(i)
+        url = "https://bloxy.info/tokens?annotation_page=" + str(i) + "&blockchain_id=1&q=hack"
+        session = requests.session()
+        resp = session.get(url)
+        html = resp.text
+        bs = BeautifulSoup(html,features="lxml")
+        tbody = bs.select('body > div.wrapper > div:nth-child(5) > div:nth-child(8) > div > div > div.panel-body > div.table-responsive > table > tbody')[0]
+        for tr in tbody:
+            for tag in tr:
+                if not isinstance(tag, str):#排除空行换行符等特殊的tag
+                    if tag.select("a"):
+                        atag = tag.select("a")[0]
+                        url = atag.get('href')
+                        mytype = atag.string
+                        url2type[url] = mytype
+    with open('bloxyscam.txt','w',encoding='utf-8') as f:
+        print(url2type,file=f)
+    json_str = json.dumps(url2type)
+    with open('bloxyscam.json', 'w') as json_file:
+        json_file.write(json_str)
+def bloxymalware():
+    pagenum = 1
+    url2type = {}  # 将所有的链接和种类注解存入字典中再进行筛选
+    for i in range(1,pagenum+1):
+        print(i)
+        url = "https://bloxy.info/tokens?annotation_page=" + str(i) + "&blockchain_id=1&q=hack"
+        session = requests.session()
+        resp = session.get(url)
+        html = resp.text
+        bs = BeautifulSoup(html,features="lxml")
+        tbody = bs.select('body > div.wrapper > div:nth-child(5) > div:nth-child(8) > div > div > div.panel-body > div.table-responsive > table > tbody')[0]
+        for tr in tbody:
+            for tag in tr:
+                if not isinstance(tag, str):#排除空行换行符等特殊的tag
+                    if tag.select("a"):
+                        atag = tag.select("a")[0]
+                        url = atag.get('href')
+                        mytype = atag.string
+                        url2type[url] = mytype
+    with open('bloxymalware.txt','w',encoding='utf-8') as f:
+        print(url2type,file=f)
+    json_str = json.dumps(url2type)
+    with open('bloxymalware.json', 'w') as json_file:
+        json_file.write(json_str)
+
+def bloxy2():
+    with open('bloxy.txt','r',encoding='utf-8') as f:
+        dict1 = literal_eval(f.read())
+    hacktype = ['Phish', 'Coinrail', 'Cryptopia', 'EtherDelta', 'Browser', 'SpankChain', 'Upbit', 'Scam']
+    notType = ['Hacking', 'HackToken', 'HackDao', 'HackerGold', 'Hacken', 'HackerSpaceBarneysToken']
+    addrlist = []
+    for url,type in dict1.items():
+        for key in hacktype:
+            for key2 in notType:
+                if key.lower() in type.lower() and key.lower() not in key2:
+                    if url.startswith('/address'):
+                        addr = url[9:]
+                    elif url.startswith('/tx'):
+                        addr = url[4:]
+                    if len(addr) == 42:
+                        addrlist.append(addr)
+    addrlist = list(set(addrlist))
+    # print(addrlist)
+    print(len(addrlist))
+    list1 = list(set(dict1.values()))
+    with open('bloxyAddr.txt','w',encoding='utf-8') as f:
+        print(addrlist,file=f)
+
+    # print(list1)
+    # print(len(dict1))
+def differSetNtx():
+    addrlist = deduplicate()
+    session = requests.Session()
+    with open('bntx1.csv', 'w', encoding='utf-8', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(["blockNumber", "timeStamp", "hash", "nonce", "blockHash", "transactionIndex",
+                         "from", "to", "value", "gas", "gasPrice", "isError", "txreceipt_status", "input",
+                         "contractAddress", "cumulativeGasUsed", "gasUsed", "confirmations"])
+        number = 0
+        for addr in addrlist:
+            url = "https://api.etherscan.io/api?module=account&action=txlist&address=" + addr + "&startblock=0&endblock=99999999&page=1&offset=10000&sort=asc&apikey=" + apikey
+            results = literal_eval(session.get(url).text)['result']
+            number += 1
+            print(number)
+            try:
+                if len(results):
+                    for result in results:
+                        writer.writerow([result['blockNumber'], result['timeStamp'], result['hash'], result['nonce'],
+                                         result['blockHash'],
+                                         result['transactionIndex'], result['from'], result['to'], result['value'],
+                                         result['gas'], result['gasPrice'],
+                                         result['isError'], result['txreceipt_status'], result['input'],
+                                         result['contractAddress'], result['cumulativeGasUsed'],
+                                         result['gasUsed'], result['confirmations']])
+            except Exception:
+                print(Exception)
+                print(url)
+                print(result)
+                print(addr)
+def differSetItx():
+    addrlist = deduplicate()
+    session = requests.Session()
+    with open('bitx1.csv','w',encoding='utf-8',newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(["blockNumber","timeStamp","hash","from","to","value",
+                         "contractAddress","input","type","gas","gasUsed","traceId",
+                         "isError","errCode"])
+        number = 0
+        for addr in addrlist:
+            url = "https://api.etherscan.io/api?module=account&action=txlistinternal&address=" + addr + "&startblock=0&endblock=99999999&page=1&offset=10000&sort=asc&apikey=" + apikey
+            results = literal_eval(session.get(url).text)['result']
+            number += 1
+            print(number)
+            print(url)
+            try:
+                if len(results):
+                    for result in results:
+                        writer.writerow([result['blockNumber'],result['timeStamp'],result['hash'],result['from'],
+                                         result['to'],result['value'],result['contractAddress'],result['input'],result['type'],
+                                         result['gas'],result['gasUsed'],result['traceId'],result['isError'],result['errCode']])
+            except Exception:
+                print(Exception)
+                print(url)
+                print(result)
+                print(addr)
+def differSetEtx():
+    addrlist = deduplicate()
+    session = requests.Session()
+    with open('betx1.csv','w',encoding='utf-8',newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(["blockNumber","timeStamp","hash","nonce","blockHash","from",
+                         "contractAddress","to","value","tokenName","tokenSymbol","tokenDecimal",
+                         "transactionIndex","gas","gasPrice","gasUsed","cumulativeGasUsed","input","confirmations"])
+        number = 0
+        for addr in addrlist:
+            url = "https://api.etherscan.io/api?module=account&action=tokentx&address=" + addr + "&page=1&offset=10000&startblock=0&endblock=99999999&sort=asc&apikey=" + apikey
+            results = literal_eval(session.get(url).text)['result']
+            number += 1
+            print(number)
+            try:
+                if len(results):
+                    for result in results:
+                        writer.writerow([result['blockNumber'],result['timeStamp'],result['hash'],result['nonce'],
+                                         result['blockHash'],result['from'],result['contractAddress'],result['to'],result['value'],
+                                         result['tokenName'],result['tokenSymbol'],result['tokenDecimal'],result['transactionIndex'],result['gas'],
+                                         result['gasPrice'],result['gasUsed'],result['cumulativeGasUsed'],result['input'],result['confirmations']])
+            except Exception:
+                print(Exception)
+                print(url)
+                print(result)
+                print(addr)
 def deduplicate():
     with open('bitpoint.txt','r') as f:
         list1 = literal_eval(f.read())
@@ -68,11 +220,18 @@ def deduplicate():
     with open('db.txt','r') as f:
         list8 = literal_eval(f.read())
         list8 = [addr.lower() for addr in list8]
-    print(type(list1))
-    alladdr = list(set(list1 + list2 + list3 + list4 + list5 + list6 + list7 + list8))
-    print(len(alladdr))
-    with open('addr.txt','w',encoding='utf-8') as f:
-        print(alladdr,file=f)
+    with open('bloxyAddr.txt','r') as f:
+        list9 = literal_eval(f.read())
+        list9 = [addr.lower() for addr in list9]
+    # print(type(list1))
+    alladdr1 = list(set(list1 + list2 + list3 + list4 + list5 + list6 + list7 + list8 + list9))
+    alladdr2 = list(set(list1 + list2 + list3 + list4 + list5 + list6 + list7 + list8))
+    ret = [i for i in alladdr1 if i not in alladdr2]
+    return ret
+    print(ret)
+    print(len(alladdr1))
+    # with open('addr.txt','w',encoding='utf-8') as f:
+    #     print(alladdr,file=f)
 
 def readxlsx():
     workbook = xlrd.open_workbook('scam.xlsx')
@@ -1195,6 +1354,15 @@ def fromfig9():
     line = ax.plot(x, percentage)
     plt.xscale('log')
     plt.show()
+def getnormaladdr():
+    df = pandas.read_csv('ethereum_tagged_address.csv')
+    normalAddr = []
+    for index, row in df.iterrows():
+        if row['label'] == 'Blacklist':
+            normalAddr.append(row['addr'])
+    with open('normalAddr.txt') as f:
+        print(normalAddr,file=f)
+
 
 
 
@@ -1299,4 +1467,7 @@ if __name__ == '__main__':
     # ifig7()
     # nfig9()
     # tofig9()
-    bloxy()
+    # bloxymalware()
+    # bloxy2()
+    # deduplicate()
+    differSetEtx()
