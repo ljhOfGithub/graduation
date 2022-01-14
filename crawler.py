@@ -1418,7 +1418,7 @@ def getnormaladdrNtxs1():
     #     print(mylist,file=f)
     with open('normalAddr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    addrlist = addrlist[0:5000]
+    addrlist = addrlist[0:1500]
     session = requests.Session()
     with open('normalntx1.csv','w',encoding='utf-8',newline='') as f:
         writer = csv.writer(f)
@@ -1446,14 +1446,14 @@ def getnormaladdrNtxs1():
 def getnormaladdrNtxs2():
     with open('normalAddr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    addrlist = addrlist[5000:10000]
+    addrlist = addrlist[1500:3000]
     session = requests.Session()
     with open('normalntx2.csv','w',encoding='utf-8',newline='') as f:
         writer = csv.writer(f)
         writer.writerow(["blockNumber","timeStamp","hash","nonce","blockHash","transactionIndex",
                          "from","to","value","gas","gasPrice","isError","txreceipt_status","input",
                          "contractAddress","cumulativeGasUsed","gasUsed","confirmations"])
-        number = 0
+        number = 1500
         for addr in addrlist:
             url = "https://api.etherscan.io/api?module=account&action=txlist&address="+addr+"&startblock=0&endblock=99999999&page=1&offset=10000&sort=asc&apikey=" + apikey
             results = literal_eval(session.get(url).text)['result']
@@ -1474,14 +1474,14 @@ def getnormaladdrNtxs2():
 def getnormaladdrNtxs3():
     with open('normalAddr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    addrlist = addrlist[10000:15000]
+    addrlist = addrlist[3000:4500]
     session = requests.Session()
     with open('normalntx3.csv','w',encoding='utf-8',newline='') as f:
         writer = csv.writer(f)
         writer.writerow(["blockNumber","timeStamp","hash","nonce","blockHash","transactionIndex",
                          "from","to","value","gas","gasPrice","isError","txreceipt_status","input",
                          "contractAddress","cumulativeGasUsed","gasUsed","confirmations"])
-        number = 0
+        number = 3000
         for addr in addrlist:
             url = "https://api.etherscan.io/api?module=account&action=txlist&address="+addr+"&startblock=0&endblock=99999999&page=1&offset=10000&sort=asc&apikey=" + apikey
             results = literal_eval(session.get(url).text)['result']
@@ -1502,14 +1502,70 @@ def getnormaladdrNtxs3():
 def getnormaladdrNtxs4():
     with open('normalAddr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    addrlist = addrlist[15000:]
+    addrlist = addrlist[4500:6000]
     session = requests.Session()
     with open('normalntx4.csv','w',encoding='utf-8',newline='') as f:
         writer = csv.writer(f)
         writer.writerow(["blockNumber","timeStamp","hash","nonce","blockHash","transactionIndex",
                          "from","to","value","gas","gasPrice","isError","txreceipt_status","input",
                          "contractAddress","cumulativeGasUsed","gasUsed","confirmations"])
-        number = 0
+        number = 4500
+        for addr in addrlist:
+            url = "https://api.etherscan.io/api?module=account&action=txlist&address="+addr+"&startblock=0&endblock=99999999&page=1&offset=10000&sort=asc&apikey=" + apikey
+            results = literal_eval(session.get(url).text)['result']
+            number += 1
+            print(number)
+            try:
+                if len(results):
+                    for result in results:
+                        writer.writerow([result['blockNumber'],result['timeStamp'],result['hash'],result['nonce'],result['blockHash'],
+                                        result['transactionIndex'],result['from'],result['to'],result['value'],result['gas'],result['gasPrice'],
+                                        result['isError'],result['txreceipt_status'],result['input'],result['contractAddress'],result['cumulativeGasUsed'],
+                                        result['gasUsed'],result['confirmations']])
+            except Exception:
+                print(Exception)
+                print(url)
+                print(result)
+                print(addr)
+def getnormaladdrNtxs5():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    addrlist = addrlist[6000:7500]
+    session = requests.Session()
+    with open('normalntx5.csv','w',encoding='utf-8',newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(["blockNumber","timeStamp","hash","nonce","blockHash","transactionIndex",
+                         "from","to","value","gas","gasPrice","isError","txreceipt_status","input",
+                         "contractAddress","cumulativeGasUsed","gasUsed","confirmations"])
+        number = 6000
+        for addr in addrlist:
+            url = "https://api.etherscan.io/api?module=account&action=txlist&address="+addr+"&startblock=0&endblock=99999999&page=1&offset=10000&sort=asc&apikey=" + apikey
+            results = literal_eval(session.get(url).text)['result']
+            number += 1
+            print(number)
+            try:
+                if len(results):
+                    for result in results:
+                        writer.writerow([result['blockNumber'],result['timeStamp'],result['hash'],result['nonce'],result['blockHash'],
+                                        result['transactionIndex'],result['from'],result['to'],result['value'],result['gas'],result['gasPrice'],
+                                        result['isError'],result['txreceipt_status'],result['input'],result['contractAddress'],result['cumulativeGasUsed'],
+                                        result['gasUsed'],result['confirmations']])
+            except Exception:
+                print(Exception)
+                print(url)
+                print(result)
+                print(addr)
+def getnormaladdrNtxs6():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    addrlist = addrlist[7500:9000]
+    session = requests.Session()
+    with open('normalntx6.csv','w',encoding='utf-8',newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(["blockNumber","timeStamp","hash","nonce","blockHash","transactionIndex",
+                         "from","to","value","gas","gasPrice","isError","txreceipt_status","input",
+                         "contractAddress","cumulativeGasUsed","gasUsed","confirmations"])
+        number = 7500
         for addr in addrlist:
             url = "https://api.etherscan.io/api?module=account&action=txlist&address="+addr+"&startblock=0&endblock=99999999&page=1&offset=10000&sort=asc&apikey=" + apikey
             results = literal_eval(session.get(url).text)['result']
@@ -1795,19 +1851,29 @@ if __name__ == '__main__':
     #     pass
     # try:
     #     print("ntxs2")
-    #     getNtxs2()
+    #     getnormaladdrNtxs2()
     # except Exception:
     #     pass
     # try:
     #     print("ntxs3")
-    #     getNtxs3()
+    #     getnormaladdrNtxs3()
     # except Exception:
     #     pass
     # try:
     #     print("ntxs4")
-    #     getNtxs4()
+    #     getnormaladdrNtxs4()
     # except Exception:
     #     pass
+    try:
+        print("ntxs5")
+        getnormaladdrNtxs5()
+    except Exception:
+        pass
+    try:
+        print("ntxs6")
+        getnormaladdrNtxs6()
+    except Exception:
+        pass
     # try:
     #     print("itxs1")
     #     getItxs1()
@@ -1855,6 +1921,5 @@ if __name__ == '__main__':
     # bloxymalware()
     # bloxy2()
     # getnormaladdr()
-    getnormaladdrNtxs1()
+    # getnormaladdrNtxs2()
     # differSetEtx()
-    
