@@ -13,7 +13,7 @@ import math
 from matplotlib.pyplot import MultipleLocator
 from bs4 import BeautifulSoup
 apikey = "ZF9TQA39PFPPUD7VCDK2Q9ZVD2M72N2HGZ"
-# apikey = "P3FE926UGARGQF8HKPM4XWJ38CJAGX5WHZ"
+apikey = "P3FE926UGARGQF8HKPM4XWJ38CJAGX5WHZ"
 import json
 def bloxyhack():
     pagenum = 177
@@ -2283,6 +2283,62 @@ def getnormaladdrEtxs8():
                 print(url)
                 print(result)
                 print(addr)
+def getnormaladdrEtxs9():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    addrlist = addrlist[16000:]
+    session = requests.Session()
+    with open('normaletx9.csv','w',encoding='utf-8',newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(["blockNumber","timeStamp","hash","nonce","blockHash","from",
+                         "contractAddress","to","value","tokenName","tokenSymbol","tokenDecimal",
+                         "transactionIndex","gas","gasPrice","gasUsed","cumulativeGasUsed","input","confirmations"])
+        number = 16000
+        for addr in addrlist:
+            url = "https://api.etherscan.io/api?module=account&action=tokentx&address=" + addr + "&page=1&offset=10000&startblock=0&endblock=99999999&sort=asc&apikey=" + apikey
+            results = literal_eval(session.get(url).text)['result']
+            number += 1
+            print(number)
+            try:
+                if len(results):
+                    for result in results:
+                        writer.writerow([result['blockNumber'],result['timeStamp'],result['hash'],result['nonce'],
+                                         result['blockHash'],result['from'],result['contractAddress'],result['to'],result['value'],
+                                         result['tokenName'],result['tokenSymbol'],result['tokenDecimal'],result['transactionIndex'],result['gas'],
+                                         result['gasPrice'],result['gasUsed'],result['cumulativeGasUsed'],result['input'],result['confirmations']])
+            except Exception:
+                print(Exception)
+                print(url)
+                print(result)
+                print(addr)
+def getnormaladdrEtxs10():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    addrlist = ['0xc46ac314fa9ce95667031a26fffe05827af6f192','0x07c0201aa56fb130a4d6cd99e9ef7efb55fc6219','0x5e44d890f52432a01d467730672325184f521ae7']
+    session = requests.Session()
+    with open('normaletx9.csv','w',encoding='utf-8',newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(["blockNumber","timeStamp","hash","nonce","blockHash","from",
+                         "contractAddress","to","value","tokenName","tokenSymbol","tokenDecimal",
+                         "transactionIndex","gas","gasPrice","gasUsed","cumulativeGasUsed","input","confirmations"])
+        number = 16000
+        for addr in addrlist:
+            url = "https://api.etherscan.io/api?module=account&action=tokentx&address=" + addr + "&page=1&offset=10000&startblock=0&endblock=99999999&sort=asc&apikey=" + apikey
+            results = literal_eval(session.get(url).text)['result']
+            number += 1
+            print(number)
+            try:
+                if len(results):
+                    for result in results:
+                        writer.writerow([result['blockNumber'],result['timeStamp'],result['hash'],result['nonce'],
+                                         result['blockHash'],result['from'],result['contractAddress'],result['to'],result['value'],
+                                         result['tokenName'],result['tokenSymbol'],result['tokenDecimal'],result['transactionIndex'],result['gas'],
+                                         result['gasPrice'],result['gasUsed'],result['cumulativeGasUsed'],result['input'],result['confirmations']])
+            except Exception:
+                print(Exception)
+                print(url)
+                print(result)
+                print(addr)
 def test():
     # with open('ntx1.csv','r') as f:
     #     print(len(f.readlines()))
@@ -2450,31 +2506,37 @@ if __name__ == '__main__':
     #     getnormaladdrEtxs3()
     # except Exception:
     #     pass
-    try:
-        print("etxs4")
-        getnormaladdrEtxs4()
-    except Exception:
-        pass
-    try:
-        print("etxs5")
-        getnormaladdrEtxs5()
-    except Exception:
-        pass
-    try:
-        print("etxs6")
-        getnormaladdrEtxs6()
-    except Exception:
-        pass
-    try:
-        print("etxs7")
-        getnormaladdrEtxs7()
-    except Exception:
-        pass
-    try:
-        print("etxs8")
-        getnormaladdrEtxs8()
-    except Exception:
-        pass
+    # try:
+    #     print("etxs4")
+    #     getnormaladdrEtxs4()
+    # except Exception:
+    #     pass
+    # try:
+    #     print("etxs5")
+    #     getnormaladdrEtxs5()
+    # except Exception:
+    #     pass
+    # try:
+    #     print("etxs6")
+    #     getnormaladdrEtxs6()
+    # except Exception:
+    #     pass
+    # try:
+    #     print("etxs7")
+    #     getnormaladdrEtxs7()
+    # except Exception:
+    #     pass
+    # try:
+    #     print("etxs8")
+    #     getnormaladdrEtxs8()
+    # except Exception:
+    #     pass
+    # try:
+    #     print("etxs")
+    #     getnormaladdrEtxs9()
+    # except Exception:
+    #     pass
+    pass
     # try:
     #     print("itxs1")
     #     getItxs1()
