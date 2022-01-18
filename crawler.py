@@ -15,6 +15,16 @@ from bs4 import BeautifulSoup
 apikey = "ZF9TQA39PFPPUD7VCDK2Q9ZVD2M72N2HGZ"
 apikey = "P3FE926UGARGQF8HKPM4XWJ38CJAGX5WHZ"
 import json
+import traceback
+from scipy import stats
+import matplotlib.pyplot as plt
+import numpy as np
+import seaborn as sns
+import statsmodels.api as sm # recommended import according to the docs
+import matplotlib.pyplot as plt
+from scipy import stats
+from statsmodels.distributions.empirical_distribution import ECDF
+
 def bloxyhack():
     pagenum = 177
     url2type = {}  # 将所有的链接和种类注解存入字典中再进行筛选
@@ -1002,7 +1012,6 @@ def fig6():
     plt.yscale('log')
     plt.legend()
     plt.show()
-
 def nfig7():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
@@ -1131,8 +1140,6 @@ def ifig7():
     plt.show()
     print(prof2num)
 
-
-
 def fig8():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
@@ -1183,14 +1190,6 @@ def fig8():
     for index, row in df.iterrows():
         pass
 
-from scipy import stats
-import matplotlib.pyplot as plt
-import numpy as np
-import seaborn as sns
-import statsmodels.api as sm # recommended import according to the docs
-import matplotlib.pyplot as plt
-from scipy import stats
-from statsmodels.distributions.empirical_distribution import ECDF
 
 def nfig9():
     with open('addr.txt','r',encoding='utf-8') as f:
@@ -1284,7 +1283,6 @@ def ifig9():
     txnum2addrnum = {}
     for addr,num in addr2num.items():
         txnum2addrnum[num] = txnum2addrnum.get(num,0) + 1
-    # print(txnum2addrnum)
     zipped = zip(txnum2addrnum.keys(), txnum2addrnum.values())
     sort_zipped = sorted(zipped, key=lambda x: (x[0]))
     result = zip(*sort_zipped)
@@ -2566,6 +2564,173 @@ def getnormaladdrEtxs10():
                 print(url)
                 print(result)
                 print(addr)
+def scamAvgIn():
+    with open('addr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df1 = pandas.read_csv('ntx1.csv')
+    df2 = pandas.read_csv('ntx2.csv')
+    df3 = pandas.read_csv('ntx3.csv')
+    df4 = pandas.read_csv('ntx4.csv')
+    df5 = pandas.read_csv('itx1.csv')
+    df6 = pandas.read_csv('itx2.csv')
+    df7 = pandas.read_csv('itx3.csv')
+    df8 = pandas.read_csv('itx4.csv')
+    df9 = pandas.read_csv('bntx1.csv')
+    df10 = pandas.read_csv('bitx1.csv')
+    frames = [df1, df2, df3, df4, df5, df6, df7, df8, df9, df10]
+    df = pandas.concat(frames)
+    addr2income = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['to'], str):
+                    addr2income[row['to']] = addr2income.get(row['to'],0) + int(row['value']) / 1000000000000000000
+            except Exception:
+                print(row['to'])
+                print(row['value'])
+                traceback.print_exc()
+    with open('scamAvgIn.txt','w',encoding='utf-8') as f:
+        print(addr2income,file=f)
+
+def scamAvgOut():
+    with open('addr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df1 = pandas.read_csv('ntx1.csv')
+    df2 = pandas.read_csv('ntx2.csv')
+    df3 = pandas.read_csv('ntx3.csv')
+    df4 = pandas.read_csv('ntx4.csv')
+    df5 = pandas.read_csv('itx1.csv')
+    df6 = pandas.read_csv('itx2.csv')
+    df7 = pandas.read_csv('itx3.csv')
+    df8 = pandas.read_csv('itx4.csv')
+    df9 = pandas.read_csv('bntx1.csv')
+    df10 = pandas.read_csv('bitx1.csv')
+    frames = [df1, df2, df3, df4, df5, df6, df7, df8, df9, df10]
+    df = pandas.concat(frames)
+    addr2outcome = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['to'], str):
+                    addr2outcome[row['to']] = addr2outcome.get(row['to'],0) + int(row['value']) / 1000000000000000000
+            except Exception:
+                print(row['to'])
+                print(row['value'])
+                traceback.print_exc()
+    with open('scamAvgOut.txt','w',encoding='utf-8') as f:
+        print(addr2outcome,file=f)
+def mixScamAvg():
+    with open('scamAvgIn.txt','r',encoding='utf-8') as f:
+        addr2income = literal_eval(f.read())
+    zipped1 = zip(addr2income.keys(), addr2income.values())
+    sort_zipped1 = sorted(zipped1, key=lambda x: (x[0]))
+    result1 = zip(*sort_zipped1)
+    x1, y1 = [list(x) for x in result1]
+    cum = numpy.cumsum(y1)
+    percentage1 = cum / list(cum)[-1]
+    with open('scamAvgOut.txt','r',encoding='utf-8') as f:
+        addr2outcome = literal_eval(f.read())
+    zipped2 = zip(addr2outcome.keys(), addr2outcome.values())
+    sort_zipped2 = sorted(zipped2, key=lambda x: (x[0]))
+    result2 = zip(*sort_zipped2)
+    x2, y2 = [list(x) for x in result2]
+    fig, ax = plt.subplots()
+    cum = numpy.cumsum(y2)
+    percentage2 = cum / list(cum)[-1]
+    line1 = ax.plot(x1, percentage1, label='Avg Income Of scam addresses', color='black')
+    line2 = ax.plot(x2, percentage2, label='Avg Outcome Of scam addresses', linestyle="--", color='black')
+    ax.set_xlabel('Average Income/Outcome of Addresses (ETH)')
+    ax.set_ylabel('CDF of Addresses')
+    plt.xscale('log')
+    plt.legend()
+    plt.show()
+def normalAvgIn():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df1 = pandas.read_csv('normalntx1.csv', low_memory=False, usecols=[7, 8])
+    df2 = pandas.read_csv('normalntx2.csv', low_memory=False, usecols=[7, 8])
+    df3 = pandas.read_csv('normalntx3.csv', low_memory=False, usecols=[7, 8])
+    df4 = pandas.read_csv('normalntx4.csv', low_memory=False, usecols=[7, 8])
+    df5 = pandas.read_csv('normalntx5.csv', low_memory=False, usecols=[7, 8])
+    df6 = pandas.read_csv('normalntx6.csv', low_memory=False, usecols=[7, 8])
+    df7 = pandas.read_csv('normalntx7.csv', low_memory=False, usecols=[7, 8])
+    df8 = pandas.read_csv('normalntx8.csv', low_memory=False, usecols=[7, 8])
+    df9 = pandas.read_csv('normalntx9.csv', low_memory=False, usecols=[7, 8])
+    df10 = pandas.read_csv('normalntx10.csv', low_memory=False, usecols=[7, 8])
+    df11 = pandas.read_csv('normalntx11.csv', low_memory=False, usecols=[7, 8])
+    df12 = pandas.read_csv('normalntx12.csv', low_memory=False, usecols=[7, 8])
+    df13 = pandas.read_csv('normalntx13.csv', low_memory=False, usecols=[7, 8])
+    frames = [df1, df2, df3, df4, df5, df6, df7, df8, df9, df10, df11, df12, df13]
+    df = pandas.concat(frames)
+    addr2income = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['to'], str):
+                    addr2income[row['to']] = addr2income.get(row['to'], 0) + int(row['value']) / 1000000000000000000
+            except Exception:
+                print(row['to'])
+                print(row['value'])
+                traceback.print_exc()
+    with open('normalAvgIn.txt', 'w', encoding='utf-8') as f:
+        print(addr2income, file=f)
+
+
+def normalAvgOut():
+    with open('normalAddr.txt', 'r', encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df1 = pandas.read_csv('normalntx1.csv', low_memory=False, usecols=[7, 8])
+    df2 = pandas.read_csv('normalntx2.csv', low_memory=False, usecols=[7, 8])
+    df3 = pandas.read_csv('normalntx3.csv', low_memory=False, usecols=[7, 8])
+    df4 = pandas.read_csv('normalntx4.csv', low_memory=False, usecols=[7, 8])
+    df5 = pandas.read_csv('normalntx5.csv', low_memory=False, usecols=[7, 8])
+    df6 = pandas.read_csv('normalntx6.csv', low_memory=False, usecols=[7, 8])
+    df7 = pandas.read_csv('normalntx7.csv', low_memory=False, usecols=[7, 8])
+    df8 = pandas.read_csv('normalntx8.csv', low_memory=False, usecols=[7, 8])
+    df9 = pandas.read_csv('normalntx9.csv', low_memory=False, usecols=[7, 8])
+    df10 = pandas.read_csv('normalntx10.csv', low_memory=False, usecols=[7, 8])
+    df11 = pandas.read_csv('normalntx11.csv', low_memory=False, usecols=[7, 8])
+    df12 = pandas.read_csv('normalntx12.csv', low_memory=False, usecols=[7, 8])
+    df13 = pandas.read_csv('normalntx13.csv', low_memory=False, usecols=[7, 8])
+    frames = [df1, df2, df3, df4, df5, df6, df7, df8, df9, df10, df11, df12, df13]
+    df = pandas.concat(frames)
+    addr2outcome = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['to'], str):
+                    addr2outcome[row['to']] = addr2outcome.get(row['to'], 0) + int(row['value']) / 1000000000000000000
+            except Exception:
+                print(row['to'])
+                print(row['value'])
+                traceback.print_exc()
+    with open('normalAvgOut.txt', 'w', encoding='utf-8') as f:
+        print(addr2outcome, file=f)
+def mixNormalAvg():
+    with open('normalAvgIn.txt', 'w', encoding='utf-8') as f:
+        addr2income = literal_eval(f.read())
+    zipped1 = zip(addr2income.keys(), addr2income.values())
+    sort_zipped1 = sorted(zipped1, key=lambda x: (x[0]))
+    result1 = zip(*sort_zipped1)
+    x1, y1 = [list(x) for x in result1]
+    cum = numpy.cumsum(y1)
+    percentage1 = cum / list(cum)[-1]
+    with open('normalAvgOut.txt','r',encoding='utf-8') as f:
+        addr2outcome = literal_eval(f.read())
+    zipped2 = zip(addr2outcome.keys(), addr2outcome.values())
+    sort_zipped2 = sorted(zipped2, key=lambda x: (x[0]))
+    result2 = zip(*sort_zipped2)
+    x2, y2 = [list(x) for x in result2]
+    fig, ax = plt.subplots()
+    cum = numpy.cumsum(y2)
+    percentage2 = cum / list(cum)[-1]
+    line1 = ax.plot(x1, percentage1, label='Avg Income Of scam addresses', color='black')
+    line2 = ax.plot(x2, percentage2, label='Avg Outcome Of scam addresses', linestyle="--", color='black')
+    ax.set_xlabel('Average Income/Outcome of Addresses (ETH)')
+    ax.set_ylabel('CDF of Addresses')
+    plt.xscale('log')
+    plt.legend()
+    plt.show()
 
 def test():
     # with open('ntx1.csv','r') as f:
@@ -2599,7 +2764,7 @@ def test():
     # session = requests.Session()
     # results = literal_eval(session.get(url).text)['result']
     # print(len(results))
-def mixnormalAddrFig9():
+def mixAddrFig9():
     # with open('normalAddrNFig9.txt') as f:
     #     txnum2addrnum1 = literal_eval(f.read())
     # with open('normalAddrIFig9.txt') as f:
@@ -2618,14 +2783,13 @@ def mixnormalAddrFig9():
     # fig, ax = plt.subplots()
     # cum = numpy.cumsum(y2)
     # percentage2 = cum / list(cum)[-1]
-
     with open('scamAddrNFig9.txt',encoding='utf-8') as f:
         txnum2addrnum3 = literal_eval(f.read())
     zipped3 = zip(txnum2addrnum3.keys(), txnum2addrnum3.values())
     sort_zipped3 = sorted(zipped3, key=lambda x: (x[0]))
     result3 = zip(*sort_zipped3)
     x3, y3 = [list(x) for x in result3]
-    fig, ax = plt.subplots()
+    # fig, ax = plt.subplots()
     cum = numpy.cumsum(y3)
     percentage3 = cum / list(cum)[-1]
     with open('scamAddrIFig9.txt',encoding='utf-8') as f:
@@ -2637,12 +2801,68 @@ def mixnormalAddrFig9():
     fig, ax = plt.subplots()
     cum = numpy.cumsum(y4)
     percentage4 = cum / list(cum)[-1]
-    #
     # line1 = ax.plot(x1, percentage1)
     # line2 = ax.plot(x2, percentage2)
-    line3 = ax.plot(x3, percentage3, label='t')
-    line4 = ax.plot(x4, percentage4, label='e')
+    line3 = ax.plot(x3, percentage3, label='In txs Of scam addresses',color='black')
+    line4 = ax.plot(x4, percentage4, label='Out txs Of scam addresses',linestyle="--",color='black')
+    ax.set_xlabel('# of Transactions (Txs)')
+    ax.set_ylabel('CDF of Addresses')
     plt.xscale('log')
+    plt.legend()
+    plt.title('test')
+    plt.show()
+def scamLive():#living time
+    with open('addr.txt', 'r', encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df1 = pandas.read_csv('ntx1.csv')
+    df2 = pandas.read_csv('ntx2.csv')
+    df3 = pandas.read_csv('ntx3.csv')
+    df4 = pandas.read_csv('ntx4.csv')
+    df5 = pandas.read_csv('bntx1.csv')
+    frames = [df1, df2, df3, df4, df5]
+    df = pandas.concat(frames)
+    df = df.drop_duplicates()  # 去重
+    df = df.sort_values('timeStamp')
+    addr2day = {}  # 地址到交易时间戳的字典
+    addr2living = {}
+    for addr in addrlist:
+        addr2day[addr] = []
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            addr2day[row['to']].append(row['timeStamp'])
+    for addr, time in addr2day.items():  # 将时间列表排序，计算时间差
+        time.sort()
+    x = ['<6h', '6h≤time<12h', '12h≤time<18h', '18h≤time<24h', '24h≤time<48h', '48h≤time<1 week', '1 week≤time<1 month',
+         '>1 month']
+    y = [0] * 8
+    for addr, time in addr2day.items():
+        if len(time) > 0:
+            start = datetime.datetime.fromtimestamp(time[0])
+            end = datetime.datetime.fromtimestamp(time[-1])
+            addr2living[addr] = (end - start).days
+    for addr, living in addr2living.items():
+        if living < 250:
+            y[0] += 1
+        if 250 <= living and living < 500:
+            y[1] += 1
+        if 500 <= living and living < 750:
+            y[2] += 1
+        if 750 <= living and living < 1000:
+            y[3] += 1
+        if 1000 <= living and living < 1250:
+            y[4] += 1
+        if 1250 <= living and living < 1500:
+            y[5] += 1
+        if 1500 <= living and living < 1750:
+            y[6] += 1
+        if 1750 <= living and living < 2000:
+            y[7] += 1
+
+    fig, ax = plt.subplots()
+    cum = numpy.cumsum(y)
+    percentage = cum / list(cum)[-1]
+    line = ax.plot(x, percentage)
+    # plt.xscale('log')
     plt.show()
 
 if __name__ == '__main__':
@@ -2862,4 +3082,7 @@ if __name__ == '__main__':
     # normalAddrIFig9()
     # normalAddrNFig9()
     # normalAddrTofig9()
-    mixnormalAddrFig9()
+    # mixAddrFig9()
+    # scamAvgIn()
+    # scamAvgOut()
+    scamLive()
