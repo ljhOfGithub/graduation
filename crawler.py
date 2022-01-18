@@ -2818,8 +2818,14 @@ def scamLive():#living time
     df2 = pandas.read_csv('ntx2.csv')
     df3 = pandas.read_csv('ntx3.csv')
     df4 = pandas.read_csv('ntx4.csv')
-    df5 = pandas.read_csv('bntx1.csv')
-    frames = [df1, df2, df3, df4, df5]
+    df5 = pandas.read_csv('itx1.csv')
+    df6 = pandas.read_csv('itx2.csv')
+    df7 = pandas.read_csv('itx3.csv')
+    df8 = pandas.read_csv('itx4.csv')
+    df9 = pandas.read_csv('bntx1.csv')
+    df10 = pandas.read_csv('bitx1.csv')
+    frames = [df1, df2, df3, df4, df5, df6, df7, df8, df9, df10]
+    frames = [df1]
     df = pandas.concat(frames)
     df = df.drop_duplicates()  # 去重
     df = df.sort_values('timeStamp')
@@ -2832,37 +2838,25 @@ def scamLive():#living time
             addr2day[row['to']].append(row['timeStamp'])
     for addr, time in addr2day.items():  # 将时间列表排序，计算时间差
         time.sort()
-    x = ['<6h', '6h≤time<12h', '12h≤time<18h', '18h≤time<24h', '24h≤time<48h', '48h≤time<1 week', '1 week≤time<1 month',
-         '>1 month']
-    y = [0] * 8
+    x = ['0', '250', '500', '750', '1000', '1250', '1500', '1750']
     for addr, time in addr2day.items():
         if len(time) > 0:
             start = datetime.datetime.fromtimestamp(time[0])
             end = datetime.datetime.fromtimestamp(time[-1])
             addr2living[addr] = (end - start).days
-    for addr, living in addr2living.items():
-        if living < 250:
-            y[0] += 1
-        if 250 <= living and living < 500:
-            y[1] += 1
-        if 500 <= living and living < 750:
-            y[2] += 1
-        if 750 <= living and living < 1000:
-            y[3] += 1
-        if 1000 <= living and living < 1250:
-            y[4] += 1
-        if 1250 <= living and living < 1500:
-            y[5] += 1
-        if 1500 <= living and living < 1750:
-            y[6] += 1
-        if 1750 <= living and living < 2000:
-            y[7] += 1
-
+    livingtime2num = {}
+    for addr,livingtime in addr2living.items():
+        livingtime2num[livingtime] = livingtime2num.get(livingtime,0) + 1
+    zipped = zip(livingtime2num.keys(), livingtime2num.values())
+    sort_zipped = sorted(zipped, key=lambda x: (x[0]))
+    result = zip(*sort_zipped)
+    x, y = [list(x) for x in result]
     fig, ax = plt.subplots()
     cum = numpy.cumsum(y)
     percentage = cum / list(cum)[-1]
     line = ax.plot(x, percentage)
-    # plt.xscale('log')
+    x_major_locator = MultipleLocator(250)
+    ax.xaxis.set_major_locator(x_major_locator)
     plt.show()
 
 if __name__ == '__main__':
