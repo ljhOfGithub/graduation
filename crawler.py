@@ -2825,7 +2825,6 @@ def scamLive():#living time
     df9 = pandas.read_csv('bntx1.csv')
     df10 = pandas.read_csv('bitx1.csv')
     frames = [df1, df2, df3, df4, df5, df6, df7, df8, df9, df10]
-    frames = [df1]
     df = pandas.concat(frames)
     df = df.drop_duplicates()  # 去重
     df = df.sort_values('timeStamp')
@@ -2838,15 +2837,17 @@ def scamLive():#living time
             addr2day[row['to']].append(row['timeStamp'])
     for addr, time in addr2day.items():  # 将时间列表排序，计算时间差
         time.sort()
-    x = ['0', '250', '500', '750', '1000', '1250', '1500', '1750']
+    # x = ['0', '250', '500', '750', '1000', '1250', '1500', '1750']
     for addr, time in addr2day.items():
         if len(time) > 0:
             start = datetime.datetime.fromtimestamp(time[0])
             end = datetime.datetime.fromtimestamp(time[-1])
             addr2living[addr] = (end - start).days
+    print(addr2living)
     livingtime2num = {}
     for addr,livingtime in addr2living.items():
         livingtime2num[livingtime] = livingtime2num.get(livingtime,0) + 1
+    print(livingtime2num)
     zipped = zip(livingtime2num.keys(), livingtime2num.values())
     sort_zipped = sorted(zipped, key=lambda x: (x[0]))
     result = zip(*sort_zipped)
