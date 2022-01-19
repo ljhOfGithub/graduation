@@ -1383,24 +1383,42 @@ def fromfig9():
     line = ax.plot(x, percentage)
     plt.xscale('log')
     plt.show()
+def normalAddrtx2csv1():
+    df1 = pandas.read_csv('normalntx1.csv', low_memory=False, usecols=[7, 8])
+    df2 = pandas.read_csv('normalntx2.csv', low_memory=False, usecols=[7, 8])
+    df3 = pandas.read_csv('normalntx3.csv', low_memory=False, usecols=[7, 8])
+    df4 = pandas.read_csv('normalntx4.csv', low_memory=False, usecols=[7, 8])
+    df5 = pandas.read_csv('normalntx5.csv', low_memory=False, usecols=[7, 8])
+    df6 = pandas.read_csv('normalntx6.csv', low_memory=False, usecols=[7, 8])
+    df7 = pandas.read_csv('normalntx7.csv', low_memory=False, usecols=[7, 8])
+    df8 = pandas.read_csv('normalntx8.csv', low_memory=False, usecols=[7, 8])
+    df9 = pandas.read_csv('normalntx9.csv', low_memory=False, usecols=[7, 8])
+    df10 = pandas.read_csv('normalntx10.csv', low_memory=False, usecols=[7, 8])
+    df11 = pandas.read_csv('normalntx11.csv', low_memory=False, usecols=[7, 8])
+    df12 = pandas.read_csv('normalntx12.csv', low_memory=False, usecols=[7, 8])
+    df13 = pandas.read_csv('normalntx13.csv', low_memory=False, usecols=[7, 8])
+    frames = [df1, df2, df3, df4, df5, df6, df7, df8, df9, df10, df11, df12, df13]
+    df = pandas.concat(frames)
+    df.to_csv('normalAddrntx.csv')
+def normalAddrtx2csv2():
+    df14 = pandas.read_csv('normalitx1.csv', low_memory=False, usecols=[3, 4])
+    df15 = pandas.read_csv('normalitx2.csv', low_memory=False, usecols=[3, 4])
+    df16 = pandas.read_csv('normalitx3.csv', low_memory=False, usecols=[3, 4])
+    df17 = pandas.read_csv('normalitx4.csv', low_memory=False, usecols=[3, 4])
+    df18 = pandas.read_csv('normalitx5.csv', low_memory=False, usecols=[3, 4])
+    df19 = pandas.read_csv('normalitx6.csv', low_memory=False, usecols=[3, 4])
+    df20 = pandas.read_csv('normalitx7.csv', low_memory=False, usecols=[3, 4])
+    df21 = pandas.read_csv('normalitx8.csv', low_memory=False, usecols=[3, 4])
+    df22 = pandas.read_csv('normalitx9.csv', low_memory=False, usecols=[3, 4])
+    df23 = pandas.read_csv('normalitx10.csv', low_memory=False, usecols=[3, 4])
+    frames = [df14, df15, df16, df17, df18, df19, df20, df21, df22, df23]
+    df = pandas.concat(frames)
+    df.to_csv('normalAddritx.csv')
+
 def normalAddrNFig9():
     with open('normalAddr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    df1 = pandas.read_csv('normalntx1.csv',low_memory=False,usecols=[7,8])
-    df2 = pandas.read_csv('normalntx2.csv',low_memory=False,usecols=[7,8])
-    df3 = pandas.read_csv('normalntx3.csv',low_memory=False,usecols=[7,8])
-    df4 = pandas.read_csv('normalntx4.csv',low_memory=False,usecols=[7,8])
-    df5 = pandas.read_csv('normalntx5.csv',low_memory=False,usecols=[7,8])
-    df6 = pandas.read_csv('normalntx6.csv',low_memory=False,usecols=[7,8])
-    df7 = pandas.read_csv('normalntx7.csv',low_memory=False,usecols=[7,8])
-    df8 = pandas.read_csv('normalntx8.csv',low_memory=False,usecols=[7,8])
-    df9 = pandas.read_csv('normalntx9.csv',low_memory=False,usecols=[7,8])
-    df10 = pandas.read_csv('normalntx10.csv',low_memory=False,usecols=[7,8])
-    df11 = pandas.read_csv('normalntx11.csv',low_memory=False,usecols=[7,8])
-    df12 = pandas.read_csv('normalntx12.csv',low_memory=False,usecols=[7,8])
-    df13 = pandas.read_csv('normalntx13.csv',low_memory=False,usecols=[7,8])
-    frames = [df1, df2, df3, df4, df5, df6, df7, df8, df9, df10, df11, df12, df13]
-    df = pandas.concat(frames)
+    df = pandas.read_csv('normalAddrntx.csv')
     #欺诈地址作为接收方的欺诈交易数量
     addr2num = {}
     for index, row in df.iterrows():
@@ -1410,6 +1428,7 @@ def normalAddrNFig9():
                     addr2num[row['to']] = addr2num.get(row['to'],0) + 1
             except Exception:
                 print(row['to'])
+        print(index)
     # print(addr2num)
     # txnum2addrnum = {'1-10': 3447, '10-100': 1650, '100-1000': 228, '1000-5000': 24}
     # #先画直方图，横轴是交易数量区间，纵轴是欺诈地址数
@@ -1418,7 +1437,6 @@ def normalAddrNFig9():
     # print(list(txnum2addrnum.values()))
     for addr,num in addr2num.items():
         txnum2addrnum[num] = txnum2addrnum.get(num,0) + 1
-    # print(txnum2addrnum)
     zipped = zip(txnum2addrnum.keys(), txnum2addrnum.values())
     sort_zipped = sorted(zipped, key=lambda x: (x[0]))
     result = zip(*sort_zipped)
@@ -1427,7 +1445,6 @@ def normalAddrNFig9():
         print(txnum2addrnum,file=f)
     # y = numpy.array(y)
     # name = x
-
     # ecdf = ECDF(x)
     # x = numpy.linspace(min(x),max(x),len(x))
     # y = ecdf(x)
@@ -1450,8 +1467,6 @@ def normalAddrNFig9():
     # df_participant_pair['percentage'] = df_participant_pair['cumsum'] / list(df_participant_pair['cumsum'])[-1]
     # line2 = ax.plot(df_participant_pair['involve_pairs'], df_participant_pair['percentage'], color='black',
     #                 label='Participants')
-
-
     fig, ax = plt.subplots()
     cum = numpy.cumsum(y)
     percentage = cum / list(cum)[-1]
@@ -1462,18 +1477,7 @@ def normalAddrNFig9():
 def normalAddrIFig9():
     with open('normalAddr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    df14 = pandas.read_csv('normalitx1.csv', low_memory=False, usecols=[3, 4])
-    df15 = pandas.read_csv('normalitx2.csv', low_memory=False, usecols=[3, 4])
-    df16 = pandas.read_csv('normalitx3.csv', low_memory=False, usecols=[3, 4])
-    df17 = pandas.read_csv('normalitx4.csv', low_memory=False, usecols=[3, 4])
-    df18 = pandas.read_csv('normalitx5.csv', low_memory=False, usecols=[3, 4])
-    df19 = pandas.read_csv('normalitx6.csv', low_memory=False, usecols=[3, 4])
-    df20 = pandas.read_csv('normalitx7.csv', low_memory=False, usecols=[3, 4])
-    df21 = pandas.read_csv('normalitx8.csv', low_memory=False, usecols=[3, 4])
-    df22 = pandas.read_csv('normalitx9.csv', low_memory=False, usecols=[3, 4])
-    df23 = pandas.read_csv('normalitx10.csv', low_memory=False, usecols=[3, 4])
-    frames = [df14, df15, df16, df17, df18, df19, df20, df21, df22, df23]
-    df = pandas.concat(frames)
+    df = pandas.read_csv('normalAddritx.csv')
     addr2num = {}
     for index, row in df.iterrows():
         if row['to'] != 'NaN' and row['to'] in addrlist:
@@ -1482,6 +1486,7 @@ def normalAddrIFig9():
                     addr2num[row['to']] = addr2num.get(row['to'],0) + 1
             except Exception:
                 print(row['to'])
+        print(index)
     txnum2addrnum = {}
     for addr,num in addr2num.items():
         txnum2addrnum[num] = txnum2addrnum.get(num,0) + 1
@@ -1500,31 +1505,9 @@ def normalAddrIFig9():
 def normalAddrTofig9():
     with open('normalAddr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    df1 = pandas.read_csv('normalntx1.csv',low_memory=False)
-    df2 = pandas.read_csv('normalntx2.csv',low_memory=False)
-    df3 = pandas.read_csv('normalntx3.csv',low_memory=False)
-    df4 = pandas.read_csv('normalntx4.csv',low_memory=False)
-    df5 = pandas.read_csv('normalntx5.csv',low_memory=False)
-    df6 = pandas.read_csv('normalntx6.csv',low_memory=False)
-    df7 = pandas.read_csv('normalntx7.csv',low_memory=False)
-    df8 = pandas.read_csv('normalntx8.csv',low_memory=False)
-    df9 = pandas.read_csv('normalntx9.csv',low_memory=False)
-    df10 = pandas.read_csv('normalntx10.csv',low_memory=False)
-    df11 = pandas.read_csv('normalntx11.csv',low_memory=False)
-    df12 = pandas.read_csv('normalntx12.csv',low_memory=False)
-    df13 = pandas.read_csv('normalntx13.csv',low_memory=False)
-    df14 = pandas.read_csv('normalitx1.csv',low_memory=False)
-    df15 = pandas.read_csv('normalitx2.csv',low_memory=False)
-    df16 = pandas.read_csv('normalitx3.csv',low_memory=False)
-    df17 = pandas.read_csv('normalitx4.csv',low_memory=False)
-    df18 = pandas.read_csv('normalitx5.csv',low_memory=False)
-    df19 = pandas.read_csv('normalitx6.csv',low_memory=False)
-    df20 = pandas.read_csv('normalitx7.csv',low_memory=False)
-    df21 = pandas.read_csv('normalitx8.csv',low_memory=False)
-    df22 = pandas.read_csv('normalitx9.csv',low_memory=False)
-    df23 = pandas.read_csv('normalitx10.csv',low_memory=False)
-    frames = [df1, df2, df3, df4, df5, df6, df7, df8, df9, df10, df11, df12, df13,
-              df14, df15, df16, df17, df18, df19, df20, df21, df22, df23]
+    df1 = pandas.read_csv('normalAddrntx.csv')
+    df2 = pandas.read_csv('normalAddritx.csv')
+    frames = [df1, df2]
     df = pandas.concat(frames)
     addr2num = {}
     for index, row in df.iterrows():
@@ -1537,7 +1520,7 @@ def normalAddrTofig9():
     txnum2addrnum = {}
     for addr,num in addr2num.items():
         txnum2addrnum[num] = txnum2addrnum.get(num,0) + 1
-    with open('normalAddrNFig9.txt') as f:
+    with open('normalAddrToFig9.txt') as f:
         print(txnum2addrnum,file=f)
     zipped = zip(txnum2addrnum.keys(), txnum2addrnum.values())
     sort_zipped = sorted(zipped, key=lambda x: (x[0]))
@@ -1552,32 +1535,10 @@ def normalAddrTofig9():
 def normalAddrFromfig9():
     with open('normalAddr.txt', 'r', encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    df1 = pandas.read_csv('normalntx1.csv',low_memory=False,usecols=[7,8])
-    df2 = pandas.read_csv('normalntx2.csv',low_memory=False,usecols=[7,8])
-    df3 = pandas.read_csv('normalntx3.csv',low_memory=False,usecols=[7,8])
-    df4 = pandas.read_csv('normalntx4.csv',low_memory=False,usecols=[7,8])
-    df5 = pandas.read_csv('normalntx5.csv',low_memory=False,usecols=[7,8])
-    df6 = pandas.read_csv('normalntx6.csv',low_memory=False,usecols=[7,8])
-    df7 = pandas.read_csv('normalntx7.csv',low_memory=False,usecols=[7,8])
-    df8 = pandas.read_csv('normalntx8.csv',low_memory=False,usecols=[7,8])
-    df9 = pandas.read_csv('normalntx9.csv',low_memory=False,usecols=[7,8])
-    df10 = pandas.read_csv('normalntx10.csv',low_memory=False,usecols=[7,8])
-    df11 = pandas.read_csv('normalntx11.csv',low_memory=False,usecols=[7,8])
-    df12 = pandas.read_csv('normalntx12.csv',low_memory=False,usecols=[7,8])
-    df13 = pandas.read_csv('normalntx13.csv',low_memory=False,usecols=[7,8])
 
-    df14 = pandas.read_csv('normalitx1.csv',low_memory=False,usecols=[3,4])
-    df15 = pandas.read_csv('normalitx2.csv',low_memory=False,usecols=[3,4])
-    df16 = pandas.read_csv('normalitx3.csv',low_memory=False,usecols=[3,4])
-    df17 = pandas.read_csv('normalitx4.csv',low_memory=False,usecols=[3,4])
-    df18 = pandas.read_csv('normalitx5.csv',low_memory=False,usecols=[3,4])
-    df19 = pandas.read_csv('normalitx6.csv',low_memory=False,usecols=[3,4])
-    df20 = pandas.read_csv('normalitx7.csv',low_memory=False,usecols=[3,4])
-    df21 = pandas.read_csv('normalitx8.csv',low_memory=False,usecols=[3,4])
-    df22 = pandas.read_csv('normalitx9.csv',low_memory=False,usecols=[3,4])
-    df23 = pandas.read_csv('normalitx10.csv',low_memory=False,usecols=[3,4])
-    frames = [df1, df2, df3, df4, df5, df6, df7, df8, df9, df10, df11, df12, df13,
-              df14, df15, df16, df17, df18, df19, df20, df21, df22, df23]
+    df1 = pandas.read_csv('normalAddrntx.csv')
+    df2 = pandas.read_csv('normalAddritx.csv')
+    frames = [df1, df2]
     pandas.set_option('display.max_columns', None)
     df = pandas.concat(frames)
     # print(df)
@@ -1595,6 +1556,8 @@ def normalAddrFromfig9():
     txnum2addrnum = {}
     for addr,num in addr2num.items():
         txnum2addrnum[num] = txnum2addrnum.get(num,0) + 1
+    with open('normalAddrFromFig9.txt') as f:
+        print(txnum2addrnum,file=f)
     zipped = zip(txnum2addrnum.keys(), txnum2addrnum.values())
     sort_zipped = sorted(zipped, key=lambda x: (x[0]))
     result = zip(*sort_zipped)
@@ -3080,4 +3043,8 @@ if __name__ == '__main__':
     # mixAddrFig9()
     # scamAvgIn()
     # scamAvgOut()
-    scamLive()
+    # scamLive()
+    # normalAddrtx2csv1()
+    # normalAddrtx2csv2()
+    normalAddrNFig9()
+    # normalAddrIFig9()
