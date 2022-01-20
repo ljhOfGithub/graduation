@@ -1399,7 +1399,7 @@ def normalAddrtx2csv1():
     df13 = pandas.read_csv('normalntx13.csv', low_memory=False, usecols=[7, 8])
     frames = [df1, df2, df3, df4, df5, df6, df7, df8, df9, df10, df11, df12, df13]
     df = pandas.concat(frames)
-    df.to_csv('normalAddrntx.csv')
+    # df.to_csv('normalAddrntx.csv')
 def normalAddrtx2csv2():
     df14 = pandas.read_csv('normalitx1.csv', low_memory=False, usecols=[3, 4])
     df15 = pandas.read_csv('normalitx2.csv', low_memory=False, usecols=[3, 4])
@@ -1413,7 +1413,7 @@ def normalAddrtx2csv2():
     df23 = pandas.read_csv('normalitx10.csv', low_memory=False, usecols=[3, 4])
     frames = [df14, df15, df16, df17, df18, df19, df20, df21, df22, df23]
     df = pandas.concat(frames)
-    df.to_csv('normalAddritx.csv')
+    # df.to_csv('normalAddritx.csv')
 
 def normalAddrNFig9():
     with open('normalAddr.txt','r',encoding='utf-8') as f:
@@ -1461,7 +1461,6 @@ def normalAddrNFig9():
     # plt.xticks(rotation=30)
     # plt.show()
     # plt.plot(x,y,label=name)
-
     # df_participant_pair = pd.read_sql(sqls_participant_pair, db)
     # df_participant_pair['cumsum'] = numpy.cumsum(df_participant_pair['count'])
     # df_participant_pair['percentage'] = df_participant_pair['cumsum'] / list(df_participant_pair['cumsum'])[-1]
@@ -1517,10 +1516,11 @@ def normalAddrTofig9():
                     addr2num[row['to']] = addr2num.get(row['to'],0) + 1
             except Exception:
                 print(row['to'])
+        print(index)
     txnum2addrnum = {}
     for addr,num in addr2num.items():
         txnum2addrnum[num] = txnum2addrnum.get(num,0) + 1
-    with open('normalAddrToFig9.txt') as f:
+    with open('normalAddrToFig9.txt','w',encoding='utf-8') as f:
         print(txnum2addrnum,file=f)
     zipped = zip(txnum2addrnum.keys(), txnum2addrnum.values())
     sort_zipped = sorted(zipped, key=lambda x: (x[0]))
@@ -1535,7 +1535,6 @@ def normalAddrTofig9():
 def normalAddrFromfig9():
     with open('normalAddr.txt', 'r', encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-
     df1 = pandas.read_csv('normalAddrntx.csv')
     df2 = pandas.read_csv('normalAddritx.csv')
     frames = [df1, df2]
@@ -1553,10 +1552,11 @@ def normalAddrFromfig9():
                 print(row['from'])
             num += 1
             print(num)
+        print(index)
     txnum2addrnum = {}
     for addr,num in addr2num.items():
         txnum2addrnum[num] = txnum2addrnum.get(num,0) + 1
-    with open('normalAddrFromFig9.txt') as f:
+    with open('normalAddrFromFig9.txt','w',encoding='utf-8') as f:
         print(txnum2addrnum,file=f)
     zipped = zip(txnum2addrnum.keys(), txnum2addrnum.values())
     sort_zipped = sorted(zipped, key=lambda x: (x[0]))
@@ -2582,6 +2582,47 @@ def scamAvgOut():
                 traceback.print_exc()
     with open('scamAvgOut.txt','w',encoding='utf-8') as f:
         print(addr2outcome,file=f)
+def normalAvgIn():
+    with open('normalAddr.txt', 'r', encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df1 = pandas.read_csv('normalAddrntx.csv')
+    df2 = pandas.read_csv('normalAddritx.csv')
+    frames = [df1, df2]
+    pandas.set_option('display.max_columns', None)
+    df = pandas.concat(frames)
+    num = 0
+    addr2income = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['to'], str):
+                    addr2income[row['to']] = addr2income.get(row['to'], 0) + int(row['value']) / 1000000000000000000
+            except Exception:
+                print(row['to'])
+                print(row['value'])
+                traceback.print_exc()
+        print(index)
+    with open('normalAvgIn.txt','w',encoding='utf-8') as f:
+        print(addr2income,file=f)
+def normalAvgOut():
+    with open('normalAddr.txt', 'r', encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df1 = pandas.read_csv('normalAddrntx.csv')
+    df2 = pandas.read_csv('normalAddritx.csv')
+    frames = [df1, df2]
+    df = pandas.concat(frames)
+    addr2outcome = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['to'], str):
+                    addr2outcome[row['to']] = addr2outcome.get(row['to'], 0) + int(row['value']) / 1000000000000000000
+            except Exception:
+                print(row['to'])
+                print(row['value'])
+                traceback.print_exc()
+    with open('normalAvgOut.txt', 'w', encoding='utf-8') as f:
+        print(addr2outcome, file=f)
 def mixScamAvg():
     with open('scamAvgIn.txt','r',encoding='utf-8') as f:
         addr2income = literal_eval(f.read())
@@ -2607,68 +2648,8 @@ def mixScamAvg():
     plt.xscale('log')
     plt.legend()
     plt.show()
-def normalAvgIn():
-    with open('normalAddr.txt','r',encoding='utf-8') as f:
-        addrlist = literal_eval(f.read())
-    df1 = pandas.read_csv('normalntx1.csv', low_memory=False, usecols=[7, 8])
-    df2 = pandas.read_csv('normalntx2.csv', low_memory=False, usecols=[7, 8])
-    df3 = pandas.read_csv('normalntx3.csv', low_memory=False, usecols=[7, 8])
-    df4 = pandas.read_csv('normalntx4.csv', low_memory=False, usecols=[7, 8])
-    df5 = pandas.read_csv('normalntx5.csv', low_memory=False, usecols=[7, 8])
-    df6 = pandas.read_csv('normalntx6.csv', low_memory=False, usecols=[7, 8])
-    df7 = pandas.read_csv('normalntx7.csv', low_memory=False, usecols=[7, 8])
-    df8 = pandas.read_csv('normalntx8.csv', low_memory=False, usecols=[7, 8])
-    df9 = pandas.read_csv('normalntx9.csv', low_memory=False, usecols=[7, 8])
-    df10 = pandas.read_csv('normalntx10.csv', low_memory=False, usecols=[7, 8])
-    df11 = pandas.read_csv('normalntx11.csv', low_memory=False, usecols=[7, 8])
-    df12 = pandas.read_csv('normalntx12.csv', low_memory=False, usecols=[7, 8])
-    df13 = pandas.read_csv('normalntx13.csv', low_memory=False, usecols=[7, 8])
-    frames = [df1, df2, df3, df4, df5, df6, df7, df8, df9, df10, df11, df12, df13]
-    df = pandas.concat(frames)
-    addr2income = {}
-    for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
-            try:
-                if isinstance(row['to'], str):
-                    addr2income[row['to']] = addr2income.get(row['to'], 0) + int(row['value']) / 1000000000000000000
-            except Exception:
-                print(row['to'])
-                print(row['value'])
-                traceback.print_exc()
-    with open('normalAvgIn.txt', 'w', encoding='utf-8') as f:
-        print(addr2income, file=f)
 
 
-def normalAvgOut():
-    with open('normalAddr.txt', 'r', encoding='utf-8') as f:
-        addrlist = literal_eval(f.read())
-    df1 = pandas.read_csv('normalntx1.csv', low_memory=False, usecols=[7, 8])
-    df2 = pandas.read_csv('normalntx2.csv', low_memory=False, usecols=[7, 8])
-    df3 = pandas.read_csv('normalntx3.csv', low_memory=False, usecols=[7, 8])
-    df4 = pandas.read_csv('normalntx4.csv', low_memory=False, usecols=[7, 8])
-    df5 = pandas.read_csv('normalntx5.csv', low_memory=False, usecols=[7, 8])
-    df6 = pandas.read_csv('normalntx6.csv', low_memory=False, usecols=[7, 8])
-    df7 = pandas.read_csv('normalntx7.csv', low_memory=False, usecols=[7, 8])
-    df8 = pandas.read_csv('normalntx8.csv', low_memory=False, usecols=[7, 8])
-    df9 = pandas.read_csv('normalntx9.csv', low_memory=False, usecols=[7, 8])
-    df10 = pandas.read_csv('normalntx10.csv', low_memory=False, usecols=[7, 8])
-    df11 = pandas.read_csv('normalntx11.csv', low_memory=False, usecols=[7, 8])
-    df12 = pandas.read_csv('normalntx12.csv', low_memory=False, usecols=[7, 8])
-    df13 = pandas.read_csv('normalntx13.csv', low_memory=False, usecols=[7, 8])
-    frames = [df1, df2, df3, df4, df5, df6, df7, df8, df9, df10, df11, df12, df13]
-    df = pandas.concat(frames)
-    addr2outcome = {}
-    for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
-            try:
-                if isinstance(row['to'], str):
-                    addr2outcome[row['to']] = addr2outcome.get(row['to'], 0) + int(row['value']) / 1000000000000000000
-            except Exception:
-                print(row['to'])
-                print(row['value'])
-                traceback.print_exc()
-    with open('normalAvgOut.txt', 'w', encoding='utf-8') as f:
-        print(addr2outcome, file=f)
 def mixNormalAvg():
     with open('normalAvgIn.txt', 'w', encoding='utf-8') as f:
         addr2income = literal_eval(f.read())
@@ -3046,5 +3027,8 @@ if __name__ == '__main__':
     # scamLive()
     # normalAddrtx2csv1()
     # normalAddrtx2csv2()
-    normalAddrNFig9()
+    # normalAddrNFig9()
     # normalAddrIFig9()
+    # normalAddrTofig9()
+    # normalAddrFromfig9()
+    normalAvgIn()
