@@ -1415,7 +1415,7 @@ def normalAddrtx2csv2():#内部交易的from，to，value列
 def norAddrNFig9Intxs1():#统计normalAddrntx.csv里面的In Txs of normal Addresses（一般交易）
     with open('normalAddr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    df = pandas.read_csv('normalAddrntx.csv',nrows=7500000)
+    df = pandas.read_csv('normalAddrntx2.csv',nrows=3000000)
     #欺诈地址作为接收方的欺诈交易数量
     addr2num = {}
     for index, row in df.iterrows():
@@ -1426,8 +1426,7 @@ def norAddrNFig9Intxs1():#统计normalAddrntx.csv里面的In Txs of normal Addre
             except Exception:
                 print(row['to'])
         print(index)
-    return
-    with open('nor2numNIntx.txt','w',encoding='utf-8') as f:
+    with open('nor2numNIntx1.txt','w',encoding='utf-8') as f:
         print(addr2num,file=f)
     return
     # 统计交易数量和地址数量的映射
@@ -1449,6 +1448,116 @@ def norAddrNFig9Intxs1():#统计normalAddrntx.csv里面的In Txs of normal Addre
     line = ax.plot(x,percentage)
     plt.xscale('log')
     plt.show()
+def norAddrNFig9Intxs2():#统计normalAddrntx.csv里面的In Txs of normal Addresses（一般交易）
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv')
+    df = df.ilco[3000000:6000000]
+    #欺诈地址作为接收方的欺诈交易数量
+    addr2num = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['to'], str):
+                    addr2num[row['to']] = addr2num.get(row['to'],0) + 1
+            except Exception:
+                print(row['to'])
+        print(index)
+    with open('nor2numNIntx2.txt','w',encoding='utf-8') as f:
+        print(addr2num,file=f)
+    return
+    # 统计交易数量和地址数量的映射
+    # #先画直方图，横轴是交易数量区间，纵轴是欺诈地址数
+    txnum2addrnum = {}
+    # txnum = ['1-10','10-100','100-1000','1000-5000']#原本要分的区间，不需要分区间，需要交易数量到地址数量的映射，如果该交易数量没有则构造
+    # print(list(txnum2addrnum.values()))
+    for addr,num in addr2num.items():
+        txnum2addrnum[num] = txnum2addrnum.get(num,0) + 1
+    zipped = zip(txnum2addrnum.keys(), txnum2addrnum.values())
+    sort_zipped = sorted(zipped, key=lambda x: (x[0]))
+    result = zip(*sort_zipped)
+    x, y = [list(x) for x in result]
+    with open('norAddrNFig9Intxs.txt','w',encoding='utf-8') as f:
+        print(txnum2addrnum,file=f)
+    fig, ax = plt.subplots()
+    cum = numpy.cumsum(y)
+    percentage = cum / list(cum)[-1]
+    line = ax.plot(x,percentage)
+    plt.xscale('log')
+    plt.show()
+def norAddrNFig9Intxs3():#统计normalAddrntx.csv里面的In Txs of normal Addresses（一般交易）
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv')
+    df = df.ilco[6000000:9000000]
+    #欺诈地址作为接收方的欺诈交易数量
+    addr2num = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['to'], str):
+                    addr2num[row['to']] = addr2num.get(row['to'],0) + 1
+            except Exception:
+                print(row['to'])
+        print(index)
+    with open('nor2numNIntx3.txt','w',encoding='utf-8') as f:
+        print(addr2num,file=f)
+    return
+    # 统计交易数量和地址数量的映射
+    # #先画直方图，横轴是交易数量区间，纵轴是欺诈地址数
+    txnum2addrnum = {}
+    # txnum = ['1-10','10-100','100-1000','1000-5000']#原本要分的区间，不需要分区间，需要交易数量到地址数量的映射，如果该交易数量没有则构造
+    # print(list(txnum2addrnum.values()))
+    for addr,num in addr2num.items():
+        txnum2addrnum[num] = txnum2addrnum.get(num,0) + 1
+    zipped = zip(txnum2addrnum.keys(), txnum2addrnum.values())
+    sort_zipped = sorted(zipped, key=lambda x: (x[0]))
+    result = zip(*sort_zipped)
+    x, y = [list(x) for x in result]
+    with open('norAddrNFig9Intxs.txt','w',encoding='utf-8') as f:
+        print(txnum2addrnum,file=f)
+    fig, ax = plt.subplots()
+    cum = numpy.cumsum(y)
+    percentage = cum / list(cum)[-1]
+    line = ax.plot(x,percentage)
+    plt.xscale('log')
+    plt.show()
+def norAddrNFig9Intxs4():#统计normalAddrntx.csv里面的In Txs of normal Addresses（一般交易）
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv')
+    df = df.ilco[9000000:12000000]
+    #欺诈地址作为接收方的欺诈交易数量
+    addr2num = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['to'], str):
+                    addr2num[row['to']] = addr2num.get(row['to'],0) + 1
+            except Exception:
+                print(row['to'])
+        print(index)
+    with open('nor2numNIntx4.txt','w',encoding='utf-8') as f:
+        print(addr2num,file=f)
+    return
+def norAddrNFig9Intxs5():#统计normalAddrntx.csv里面的In Txs of normal Addresses（一般交易）
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv')
+    df = df.ilco[12000000:]
+    #欺诈地址作为接收方的欺诈交易数量
+    addr2num = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['to'], str):
+                    addr2num[row['to']] = addr2num.get(row['to'],0) + 1
+            except Exception:
+                print(row['to'])
+        print(index)
+    with open('nor2numNIntx5.txt','w',encoding='utf-8') as f:
+        print(addr2num,file=f)
+    return
 #internal tx不需要分段分析交易
 def norAddrIFig9Intxs():#统计normalAddritx.csv里面的In Txs of normal Addresses（内部交易）
     with open('normalAddr.txt','r',encoding='utf-8') as f:
@@ -1479,41 +1588,15 @@ def norAddrIFig9Intxs():#统计normalAddritx.csv里面的In Txs of normal Addres
     plt.xscale('log')
     plt.show()
 
-def normalAddrTofig9N():#统计两个文件中的in txs
-    df1 = pandas.read_csv('normalAddrntx2.csv')
-    frames = [df1]
-    df = pandas.concat(frames)
-    addr2num = {}
-    for index, row in df.iterrows():
-        if row['to'] != 'NaN':
-            try:
-                if isinstance(row['to'], str):
-                    addr2num[row['to']] = addr2num.get(row['to'],0) + 1
-            except Exception:
-                print(row['to'])
-        print(index)
-    txnum2addrnum = {}
-    for addr,num in addr2num.items():
-        txnum2addrnum[num] = txnum2addrnum.get(num,0) + 1
-    with open('normalAddrToFig9.txt','w',encoding='utf-8') as f:
-        print(txnum2addrnum,file=f)
-    zipped = zip(txnum2addrnum.keys(), txnum2addrnum.values())
-    sort_zipped = sorted(zipped, key=lambda x: (x[0]))
-    result = zip(*sort_zipped)
-    x, y = [list(x) for x in result]
-    fig, ax = plt.subplots()
-    cum = numpy.cumsum(y)
-    percentage = cum / list(cum)[-1]
-    line = ax.plot(x, percentage)
-    plt.xscale('log')
-    plt.show()
-def norAddrFromFig9N1():#统计两个文件的out txs
-    df = pandas.read_csv('normalAddrntx.csv',nrows=7500000)
+def norAddrNFig9Outtxs1():#统计两个文件的out txs
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx.csv',nrows=3000000)#读取去重交易后的正常地址交易
     pandas.set_option('display.max_columns', None)
     num = 0
     addr2num = {}
     for index, row in df.iterrows():
-        if row['to'] != 'NaN':
+        if row['from'] != 'NaN' and row['from'] in addrlist:
             try:
                 if isinstance(row['from'], str):
                     addr2num[row['from']] = addr2num.get(row['from'],0) + 1
@@ -1540,20 +1623,20 @@ def norAddrFromFig9N1():#统计两个文件的out txs
     line = ax.plot(x, percentage)
     plt.xscale('log')
     plt.show()
-def norAddrFromFig9N2():#统计两个文件的out txs
-    df = pandas.read_csv('normalAddrntx.csv',skip=7500000)
+def norAddrNFig9Outtxs2():#统计两个文件的out txs
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv')
+    df = df.iloc[3000000:6000000]
     pandas.set_option('display.max_columns', None)
-    num = 0
     addr2num = {}
     for index, row in df.iterrows():
-        if row['to'] != 'NaN':
+        if row['from'] != 'NaN' and row['from'] in addrlist:
             try:
                 if isinstance(row['from'], str):
                     addr2num[row['from']] = addr2num.get(row['from'],0) + 1
             except Exception:
                 print(row['from'])
-            num += 1
-            print(num)
         print(index)
     txnum2addrnum = {}
     with open('nor2numNOuttx2.txt','w',encoding='utf-8') as f:
@@ -1573,6 +1656,77 @@ def norAddrFromFig9N2():#统计两个文件的out txs
     line = ax.plot(x, percentage)
     plt.xscale('log')
     plt.show()
+def norAddrNFig9Outtxs3():#统计两个文件的out txs
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv')
+    df = df.iloc[6000000:9000000]
+    pandas.set_option('display.max_columns', None)
+    addr2num = {}
+    for index, row in df.iterrows():
+        if row['from'] != 'NaN' and row['from'] in addrlist:
+            try:
+                if isinstance(row['from'], str):
+                    addr2num[row['from']] = addr2num.get(row['from'],0) + 1
+            except Exception:
+                print(row['from'])
+        print(index)
+    txnum2addrnum = {}
+    with open('nor2numNOuttx3.txt','w',encoding='utf-8') as f:
+        print(addr2num,file=f)
+    return
+    for addr,num in addr2num.items():
+        txnum2addrnum[num] = txnum2addrnum.get(num,0) + 1
+    with open('normalAddrFromFig92.txt','w',encoding='utf-8') as f:
+        print(txnum2addrnum,file=f)
+    zipped = zip(txnum2addrnum.keys(), txnum2addrnum.values())
+    sort_zipped = sorted(zipped, key=lambda x: (x[0]))
+    result = zip(*sort_zipped)
+    x, y = [list(x) for x in result]
+    fig, ax = plt.subplots()
+    cum = numpy.cumsum(y)
+    percentage = cum / list(cum)[-1]
+    line = ax.plot(x, percentage)
+    plt.xscale('log')
+    plt.show()
+def norAddrNFig9Outtxs4():#统计两个文件的out txs
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv')
+    df = df.iloc[9000000:12000000]
+    pandas.set_option('display.max_columns', None)
+    addr2num = {}
+    for index, row in df.iterrows():
+        if row['from'] != 'NaN' and row['from'] in addrlist:
+            try:
+                if isinstance(row['from'], str):
+                    addr2num[row['from']] = addr2num.get(row['from'],0) + 1
+            except Exception:
+                print(row['from'])
+        print(index)
+    txnum2addrnum = {}
+    with open('nor2numNOuttx4.txt','w',encoding='utf-8') as f:
+        print(addr2num,file=f)
+    return
+def norAddrNFig9Outtxs5():#统计两个文件的out txs
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv')
+    df = df.iloc[12000000:]
+    pandas.set_option('display.max_columns', None)
+    addr2num = {}
+    for index, row in df.iterrows():
+        if row['from'] != 'NaN' and row['from'] in addrlist:
+            try:
+                if isinstance(row['from'], str):
+                    addr2num[row['from']] = addr2num.get(row['from'],0) + 1
+            except Exception:
+                print(row['from'])
+        print(index)
+    txnum2addrnum = {}
+    with open('nor2numNOuttx5.txt','w',encoding='utf-8') as f:
+        print(addr2num,file=f)
+    return
 def getnormaladdr():
     df = pandas.read_csv('ethereum_tagged_address.csv',encoding='ISO-8859-1')
     normalAddr = []
@@ -2826,7 +2980,23 @@ def txdedupI():
     df = pandas.read_csv('normalAddritx.csv')
     df = df.drop_duplicates(subset=['hash'],keep='first')
     df.to_csv('normalAddritx2.csv')
-def filterAddr():
+def filterAddr1():
+    with open('nor2numNOuttx1.txt','r',encoding='utf-8') as f:
+        addr2tx2 = literal_eval(f.read())
+    with open('nor2numNOuttx2.txt','r',encoding='utf-8') as f:
+        addr2tx3 = literal_eval(f.read())
+    with open('nor2numNOuttx3.txt','r',encoding='utf-8') as f:
+        addr2tx4 = literal_eval(f.read())
+    addr2tx = addr2tx2 + addr2tx3 + addr2tx4
+    addrlist = []
+    for addr,tx in addr2tx.items():
+        if tx > 20000:
+            addrlist.append(addr)
+    for addr in addrlist:
+        addr2tx.pop(addr)
+    with open('filterAddr.txt','w',encoding='utf-8') as f:
+        print(list(addr2tx.keys()),file=f)
+def filterAddr2():
     with open('nor2numNIntx.txt','r',encoding='utf-8') as f:
         addr2tx = literal_eval(f.read())
     addrlist = []
@@ -2837,7 +3007,6 @@ def filterAddr():
         addr2tx.pop(addr)
     with open('filterAddr.txt','w',encoding='utf-8') as f:
         print(list(addr2tx.keys()),file=f)
-
 
 # exp_add_profit.csv 地址和利润
 # exp_group_id.csv 地址和聚类后的块号
@@ -3092,6 +3261,7 @@ if __name__ == '__main__':
     # txdedupN()
     # norAddrNFig9Intxs1()
     # test()
-    # filterAddr()
-    norAddrFromFig9N1()
-    # norAddrFromFig9N2()
+    # filterAddr1()
+    # norAddrFromFig9N1()
+    # norAddrFromFig9N3()
+    norAddrNFig9Intxs1()
