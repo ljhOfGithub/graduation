@@ -3451,13 +3451,14 @@ def etherscanAddrTax():
     print(len(mylist3))#6449
     alladdr = list(set(list1 + list2 + list3 + list4 + list5 + list6 + list7 + list8 + list9))
     print(len(alladdr))#6434
-    # print(typenum)
+    print(typenum)
     with open('addr.txt', 'r') as f:
         list10 = literal_eval(f.read())
         print(len(list10))#6434
     mylist4 = [i for i in alladdr if i not in list10]#漏掉的欺诈地址
     # print(mylist4)
     return typelist
+#{'Malware': 2, 'ICO': 13, 'Trust-Trading': 1290, 'Trust Trading': 1, 'Phish': 3170, 'Hack': 1958}
 #不是欺诈地址的地址：
 #0x1f2e2293efa2ebd9c09211569f3d7758f0463189
 #0x14f37b574242d366558db61f3335289a5035c506
