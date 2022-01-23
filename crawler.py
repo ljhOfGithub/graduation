@@ -1411,7 +1411,19 @@ def normalAddrtx2csv2():#内部交易的from，to，value列
     frames = [df14, df15, df16, df17, df18, df19, df20, df21, df22, df23]
     df = pandas.concat(frames)
     df.to_csv('normalAddritx.csv')
-
+def normalAddrtx2csv3():#内部交易的from，to，value列
+    df14 = pandas.read_csv('normaletx1.csv', low_memory=False, usecols=[2, 5, 7, 8])#hash,from,to,value
+    df15 = pandas.read_csv('normaletx2.csv', low_memory=False, usecols=[2, 5, 7, 8])
+    df16 = pandas.read_csv('normaletx3.csv', low_memory=False, usecols=[2, 5, 7, 8])
+    df17 = pandas.read_csv('normaletx4.csv', low_memory=False, usecols=[2, 5, 7, 8])
+    df18 = pandas.read_csv('normaletx5.csv', low_memory=False, usecols=[2, 5, 7, 8])
+    df19 = pandas.read_csv('normaletx6.csv', low_memory=False, usecols=[2, 5, 7, 8])
+    df20 = pandas.read_csv('normaletx7.csv', low_memory=False, usecols=[2, 5, 7, 8])
+    df21 = pandas.read_csv('normaletx8.csv', low_memory=False, usecols=[2, 5, 7, 8])
+    df22 = pandas.read_csv('normaletx9.csv', low_memory=False, usecols=[2, 5, 7, 8])
+    frames = [df14, df15, df16, df17, df18, df19, df20, df21, df22]
+    df = pandas.concat(frames)
+    df.to_csv('normalAddretx.csv')
 def norAddrNFig9Intxs1():#统计normalAddrntx.csv里面的In Txs of normal Addresses（一般交易）
     with open('normalAddr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
@@ -1452,7 +1464,7 @@ def norAddrNFig9Intxs2():#统计normalAddrntx.csv里面的In Txs of normal Addre
     with open('normalAddr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
     df = pandas.read_csv('normalAddrntx2.csv')
-    df = df.ilco[3000000:6000000]
+    df = df.iloc[3000000:6000000]
     #欺诈地址作为接收方的欺诈交易数量
     addr2num = {}
     for index, row in df.iterrows():
@@ -1489,7 +1501,7 @@ def norAddrNFig9Intxs3():#统计normalAddrntx.csv里面的In Txs of normal Addre
     with open('normalAddr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
     df = pandas.read_csv('normalAddrntx2.csv')
-    df = df.ilco[6000000:9000000]
+    df = df.iloc[6000000:9000000]
     #欺诈地址作为接收方的欺诈交易数量
     addr2num = {}
     for index, row in df.iterrows():
@@ -1526,7 +1538,7 @@ def norAddrNFig9Intxs4():#统计normalAddrntx.csv里面的In Txs of normal Addre
     with open('normalAddr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
     df = pandas.read_csv('normalAddrntx2.csv')
-    df = df.ilco[9000000:12000000]
+    df = df.iloc[9000000:12000000]
     #欺诈地址作为接收方的欺诈交易数量
     addr2num = {}
     for index, row in df.iterrows():
@@ -1536,7 +1548,7 @@ def norAddrNFig9Intxs4():#统计normalAddrntx.csv里面的In Txs of normal Addre
                     addr2num[row['to']] = addr2num.get(row['to'],0) + 1
             except Exception:
                 print(row['to'])
-        print(index)
+        # print(index)
     with open('nor2numNIntx4.txt','w',encoding='utf-8') as f:
         print(addr2num,file=f)
     return
@@ -1544,7 +1556,7 @@ def norAddrNFig9Intxs5():#统计normalAddrntx.csv里面的In Txs of normal Addre
     with open('normalAddr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
     df = pandas.read_csv('normalAddrntx2.csv')
-    df = df.ilco[12000000:]
+    df = df.iloc[12000000:,[0,4]]
     #欺诈地址作为接收方的欺诈交易数量
     addr2num = {}
     for index, row in df.iterrows():
@@ -1587,13 +1599,97 @@ def norAddrIFig9Intxs():#统计normalAddritx.csv里面的In Txs of normal Addres
     line = ax.plot(x, percentage)
     plt.xscale('log')
     plt.show()
-
+def norAddrEFig9Intxs1():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddretx2.csv',nrows=3000000)
+    #欺诈地址作为接收方的欺诈交易数量
+    addr2num = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['to'], str):
+                    addr2num[row['to']] = addr2num.get(row['to'],0) + 1
+            except Exception:
+                print(row['to'])
+        print(index)
+    with open('nor2numEIntx1.txt','w',encoding='utf-8') as f:
+        print(addr2num,file=f)
+    return
+def norAddrEFig9Intxs2():#统计normalAddrntx.csv里面的In Txs of normal Addresses（一般交易）
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv').iloc[3000000:6000000]
+    #欺诈地址作为接收方的欺诈交易数量
+    addr2num = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['to'], str):
+                    addr2num[row['to']] = addr2num.get(row['to'],0) + 1
+            except Exception:
+                print(row['to'])
+        print(index)
+    with open('nor2numEIntx2.txt','w',encoding='utf-8') as f:
+        print(addr2num,file=f)
+    return
+def norAddrEFig9Intxs3():#统计normalAddrntx.csv里面的In Txs of normal Addresses（一般交易）
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv').iloc[6000000:9000000]
+    #欺诈地址作为接收方的欺诈交易数量
+    addr2num = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['to'], str):
+                    addr2num[row['to']] = addr2num.get(row['to'],0) + 1
+            except Exception:
+                print(row['to'])
+        print(index)
+    with open('nor2numEIntx3.txt','w',encoding='utf-8') as f:
+        print(addr2num,file=f)
+    return
+def norAddrEFig9Intxs4():#统计normalAddrntx.csv里面的In Txs of normal Addresses（一般交易）
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv').iloc[9000000:12000000]
+    #欺诈地址作为接收方的欺诈交易数量
+    addr2num = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['to'], str):
+                    addr2num[row['to']] = addr2num.get(row['to'],0) + 1
+            except Exception:
+                print(row['to'])
+        print(index)
+    with open('nor2numEIntx4.txt','w',encoding='utf-8') as f:
+        print(addr2num,file=f)
+    return
+def norAddrEFig9Intxs5():#统计normalAddrntx.csv里面的In Txs of normal Addresses（一般交易）
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv').iloc[12000000:]
+    #欺诈地址作为接收方的欺诈交易数量
+    addr2num = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['to'], str):
+                    addr2num[row['to']] = addr2num.get(row['to'],0) + 1
+            except Exception:
+                print(row['to'])
+        print(index)
+    with open('nor2numEIntx5.txt','w',encoding='utf-8') as f:
+        print(addr2num,file=f)
+    return
 def norAddrNFig9Outtxs1():#统计两个文件的out txs
     with open('normalAddr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    df = pandas.read_csv('normalAddrntx.csv',nrows=3000000)#读取去重交易后的正常地址交易
+    df = pandas.read_csv('normalAddrntx2.csv',nrows=3000000)#读取去重交易后的正常地址交易
+    df = df.iloc[0:,[0,3]]
     pandas.set_option('display.max_columns', None)
-    num = 0
     addr2num = {}
     for index, row in df.iterrows():
         if row['from'] != 'NaN' and row['from'] in addrlist:
@@ -1602,10 +1698,8 @@ def norAddrNFig9Outtxs1():#统计两个文件的out txs
                     addr2num[row['from']] = addr2num.get(row['from'],0) + 1
             except Exception:
                 print(row['from'])
-            num += 1
-            print(num)
         print(index)
-    txnum2addrnum = {}
+    # txnum2addrnum = {}
     with open('nor2numNOuttx1.txt','w',encoding='utf-8') as f:
         print(addr2num,file=f)
     return
@@ -1626,8 +1720,7 @@ def norAddrNFig9Outtxs1():#统计两个文件的out txs
 def norAddrNFig9Outtxs2():#统计两个文件的out txs
     with open('normalAddr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    df = pandas.read_csv('normalAddrntx2.csv')
-    df = df.iloc[3000000:6000000]
+    df = pandas.read_csv('normalAddrntx2.csv',usecols=[0,3]).iloc[3000000:6000000]
     pandas.set_option('display.max_columns', None)
     addr2num = {}
     for index, row in df.iterrows():
@@ -1638,7 +1731,7 @@ def norAddrNFig9Outtxs2():#统计两个文件的out txs
             except Exception:
                 print(row['from'])
         print(index)
-    txnum2addrnum = {}
+    # txnum2addrnum = {}
     with open('nor2numNOuttx2.txt','w',encoding='utf-8') as f:
         print(addr2num,file=f)
     return
@@ -1659,8 +1752,7 @@ def norAddrNFig9Outtxs2():#统计两个文件的out txs
 def norAddrNFig9Outtxs3():#统计两个文件的out txs
     with open('normalAddr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    df = pandas.read_csv('normalAddrntx2.csv')
-    df = df.iloc[6000000:9000000]
+    df = pandas.read_csv('normalAddrntx2.csv',usecols=[0,3]).iloc[6000000:9000000]
     pandas.set_option('display.max_columns', None)
     addr2num = {}
     for index, row in df.iterrows():
@@ -1671,7 +1763,7 @@ def norAddrNFig9Outtxs3():#统计两个文件的out txs
             except Exception:
                 print(row['from'])
         print(index)
-    txnum2addrnum = {}
+    # txnum2addrnum = {}
     with open('nor2numNOuttx3.txt','w',encoding='utf-8') as f:
         print(addr2num,file=f)
     return
@@ -1692,8 +1784,7 @@ def norAddrNFig9Outtxs3():#统计两个文件的out txs
 def norAddrNFig9Outtxs4():#统计两个文件的out txs
     with open('normalAddr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    df = pandas.read_csv('normalAddrntx2.csv')
-    df = df.iloc[9000000:12000000]
+    df = pandas.read_csv('normalAddrntx2.csv',usecols=[0,3]).iloc[9000000:12000000]
     pandas.set_option('display.max_columns', None)
     addr2num = {}
     for index, row in df.iterrows():
@@ -1704,15 +1795,14 @@ def norAddrNFig9Outtxs4():#统计两个文件的out txs
             except Exception:
                 print(row['from'])
         print(index)
-    txnum2addrnum = {}
+    # txnum2addrnum = {}
     with open('nor2numNOuttx4.txt','w',encoding='utf-8') as f:
         print(addr2num,file=f)
     return
 def norAddrNFig9Outtxs5():#统计两个文件的out txs
     with open('normalAddr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    df = pandas.read_csv('normalAddrntx2.csv')
-    df = df.iloc[12000000:]
+    df = pandas.read_csv('normalAddrntx2.csv',usecols=[0,3]).iloc[12000000:]
     pandas.set_option('display.max_columns', None)
     addr2num = {}
     for index, row in df.iterrows():
@@ -1723,7 +1813,7 @@ def norAddrNFig9Outtxs5():#统计两个文件的out txs
             except Exception:
                 print(row['from'])
         print(index)
-    txnum2addrnum = {}
+    # txnum2addrnum = {}
     with open('nor2numNOuttx5.txt','w',encoding='utf-8') as f:
         print(addr2num,file=f)
     return
@@ -2740,15 +2830,14 @@ def scamAvgOut():
                 traceback.print_exc()
     with open('scamAvgOut.txt','w',encoding='utf-8') as f:
         print(addr2outcome,file=f)
-def normalAvgIn():
-    df1 = pandas.read_csv('normalAddrntx.csv')
-    df2 = pandas.read_csv('normalAddritx.csv')
-    frames = [df1, df2]
+def normalAvgInNtx1():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv',usecols=[0,4,5]).iloc[0:3000000]
     pandas.set_option('display.max_columns', None)
-    df = pandas.concat(frames)
     addr2income = {}
     for index, row in df.iterrows():
-        if row['to'] != 'NaN':
+        if row['to'] != 'NaN' and row['to'] in addrlist:
             try:
                 if isinstance(row['to'], str):
                     addr2income[row['to']] = addr2income.get(row['to'], 0) + int(row['value']) / 1000000000000000000
@@ -2757,16 +2846,179 @@ def normalAvgIn():
                 print(row['value'])
                 traceback.print_exc()
         print(index)
-    with open('normalAvgIn.txt','w',encoding='utf-8') as f:
+    with open('normalAvgInNtx1.txt','w',encoding='utf-8') as f:
         print(addr2income,file=f)
-def normalAvgOut():
-    df1 = pandas.read_csv('normalAddrntx.csv')
-    df2 = pandas.read_csv('normalAddritx.csv')
-    frames = [df1, df2]
-    df = pandas.concat(frames)
+def normalAvgInNtx2():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv',usecols=[0,4,5]).iloc[3000000:6000000]
+    pandas.set_option('display.max_columns', None)
+    addr2income = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['to'], str):
+                    addr2income[row['to']] = addr2income.get(row['to'], 0) + int(row['value']) / 1000000000000000000
+            except Exception:
+                print(row['to'])
+                print(row['value'])
+                traceback.print_exc()
+        print(index)
+    with open('normalAvgInNtx2.txt','w',encoding='utf-8') as f:
+        print(addr2income,file=f)
+def normalAvgInNtx3():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv',usecols=[0,4,5]).iloc[6000000:9000000]
+    pandas.set_option('display.max_columns', None)
+    addr2income = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['to'], str):
+                    addr2income[row['to']] = addr2income.get(row['to'], 0) + int(row['value']) / 1000000000000000000
+            except Exception:
+                print(row['to'])
+                print(row['value'])
+                traceback.print_exc()
+        print(index)
+    with open('normalAvgInNtx3.txt','w',encoding='utf-8') as f:
+        print(addr2income,file=f)
+def normalAvgInNtx4():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv',usecols=[0,4,5]).iloc[9000000:12000000]
+    pandas.set_option('display.max_columns', None)
+    addr2income = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['to'], str):
+                    addr2income[row['to']] = addr2income.get(row['to'], 0) + int(row['value']) / 1000000000000000000
+            except Exception:
+                print(row['to'])
+                print(row['value'])
+                traceback.print_exc()
+        print(index)
+    with open('normalAvgInNtx4.txt','w',encoding='utf-8') as f:
+        print(addr2income,file=f)
+def normalAvgInNtx5():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv',usecols=[0,4,5]).iloc[12000000:]
+    pandas.set_option('display.max_columns', None)
+    addr2income = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['to'], str):
+                    addr2income[row['to']] = addr2income.get(row['to'], 0) + int(row['value']) / 1000000000000000000
+            except Exception:
+                print(row['to'])
+                print(row['value'])
+                traceback.print_exc()
+        print(index)
+    with open('normalAvgInNtx5.txt','w',encoding='utf-8') as f:
+        print(addr2income,file=f)
+def normalAvgInEtx1():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddretx2.csv',usecols=[0,4,5]).iloc[0:3000000]
+    pandas.set_option('display.max_columns', None)
+    addr2income = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['to'], str):
+                    addr2income[row['to']] = addr2income.get(row['to'], 0) + int(row['value']) / 1000000000000000000
+            except Exception:
+                print(row['to'])
+                print(row['value'])
+                traceback.print_exc()
+        print(index)
+    with open('normalAvgInEtx1.txt','w',encoding='utf-8') as f:
+        print(addr2income,file=f)
+
+def normalAvgInEtx2():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddretx2.csv',usecols=[0,4,5]).iloc[3000000:6000000]
+    pandas.set_option('display.max_columns', None)
+    addr2income = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['to'], str):
+                    addr2income[row['to']] = addr2income.get(row['to'], 0) + int(row['value']) / 1000000000000000000
+            except Exception:
+                print(row['to'])
+                print(row['value'])
+                traceback.print_exc()
+        print(index)
+    with open('normalAvgInEtx2.txt','w',encoding='utf-8') as f:
+        print(addr2income,file=f)
+def normalAvgInEtx3():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddretx2.csv',usecols=[0,4,5]).iloc[6000000:9000000]
+    pandas.set_option('display.max_columns', None)
+    addr2income = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['to'], str):
+                    addr2income[row['to']] = addr2income.get(row['to'], 0) + int(row['value']) / 1000000000000000000
+            except Exception:
+                print(row['to'])
+                print(row['value'])
+                traceback.print_exc()
+        print(index)
+    with open('normalAvgInEtx3.txt','w',encoding='utf-8') as f:
+        print(addr2income,file=f)
+def normalAvgInEtx4():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddretx2.csv',usecols=[0,4,5]).iloc[9000000:12000000]
+    pandas.set_option('display.max_columns', None)
+    addr2income = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['to'], str):
+                    addr2income[row['to']] = addr2income.get(row['to'], 0) + int(row['value']) / 1000000000000000000
+            except Exception:
+                print(row['to'])
+                print(row['value'])
+                traceback.print_exc()
+        print(index)
+    with open('normalAvgInEtx4.txt','w',encoding='utf-8') as f:
+        print(addr2income,file=f)
+def normalAvgInEtx5():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddretx2.csv',usecols=[0,4,5]).iloc[12000000:]
+    pandas.set_option('display.max_columns', None)
+    addr2income = {}
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            try:
+                if isinstance(row['to'], str):
+                    addr2income[row['to']] = addr2income.get(row['to'], 0) + int(row['value']) / 1000000000000000000
+            except Exception:
+                print(row['to'])
+                print(row['value'])
+                traceback.print_exc()
+        print(index)
+    with open('normalAvgInEtx5.txt','w',encoding='utf-8') as f:
+        print(addr2income,file=f)
+
+def normalAvgOutNtx1():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv',usecols=[0,3,5]).iloc[0:3000000]
     addr2outcome = {}
     for index, row in df.iterrows():
-        if row['to'] != 'NaN':
+        if row['from'] != 'NaN' and row['from'] in addrlist:
             try:
                 if isinstance(row['from'], str):
                     addr2outcome[row['from']] = addr2outcome.get(row['from'], 0) + int(row['value']) / 1000000000000000000
@@ -2775,7 +3027,160 @@ def normalAvgOut():
                 print(row['value'])
                 traceback.print_exc()
         print(index)
-    with open('normalAvgOut.txt', 'w', encoding='utf-8') as f:
+    with open('normalAvgOutNtx1.txt', 'w', encoding='utf-8') as f:
+        print(addr2outcome, file=f)
+def normalAvgOutNtx2():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv',usecols=[0,3,5]).iloc[3000000:6000000]
+    addr2outcome = {}
+    for index, row in df.iterrows():
+        if row['from'] != 'NaN' and row['from'] in addrlist:
+            try:
+                if isinstance(row['from'], str):
+                    addr2outcome[row['from']] = addr2outcome.get(row['from'], 0) + int(row['value']) / 1000000000000000000
+            except Exception:
+                print(row['from'])
+                print(row['value'])
+                traceback.print_exc()
+        print(index)
+    with open('normalAvgOutNtx2.txt', 'w', encoding='utf-8') as f:
+        print(addr2outcome, file=f)
+def normalAvgOutNtx3():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv',usecols=[0,3,5]).iloc[6000000:9000000]
+    addr2outcome = {}
+    for index, row in df.iterrows():
+        if row['from'] != 'NaN' and row['from'] in addrlist:
+            try:
+                if isinstance(row['from'], str):
+                    addr2outcome[row['from']] = addr2outcome.get(row['from'], 0) + int(row['value']) / 1000000000000000000
+            except Exception:
+                print(row['from'])
+                print(row['value'])
+                traceback.print_exc()
+        print(index)
+    with open('normalAvgOutNtx3.txt', 'w', encoding='utf-8') as f:
+        print(addr2outcome, file=f)
+def normalAvgOutNtx4():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv',usecols=[0,3,5]).iloc[9000000:12000000]
+    addr2outcome = {}
+    for index, row in df.iterrows():
+        if row['from'] != 'NaN' and row['from'] in addrlist:
+            try:
+                if isinstance(row['from'], str):
+                    addr2outcome[row['from']] = addr2outcome.get(row['from'], 0) + int(row['value']) / 1000000000000000000
+            except Exception:
+                print(row['from'])
+                print(row['value'])
+                traceback.print_exc()
+        print(index)
+    with open('normalAvgOutNtx4.txt', 'w', encoding='utf-8') as f:
+        print(addr2outcome, file=f)
+def normalAvgOutNtx5():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv',usecols=[0,3,5]).iloc[12000000:]
+    addr2outcome = {}
+    for index, row in df.iterrows():
+        if row['from'] != 'NaN' and row['from'] in addrlist:
+            try:
+                if isinstance(row['from'], str):
+                    addr2outcome[row['from']] = addr2outcome.get(row['from'], 0) + int(row['value']) / 1000000000000000000
+            except Exception:
+                print(row['from'])
+                print(row['value'])
+                traceback.print_exc()
+        print(index)
+    with open('normalAvgOutNtx5.txt', 'w', encoding='utf-8') as f:
+        print(addr2outcome, file=f)
+def normalAvgOutEtx1():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddretx2.csv',usecols=[0,3,5]).iloc[0:3000000]
+    addr2outcome = {}
+    for index, row in df.iterrows():
+        if row['from'] != 'NaN' and row['from'] in addrlist:
+            try:
+                if isinstance(row['from'], str):
+                    addr2outcome[row['from']] = addr2outcome.get(row['from'], 0) + int(row['value']) / 1000000000000000000
+            except Exception:
+                print(row['from'])
+                print(row['value'])
+                traceback.print_exc()
+        print(index)
+    with open('normalAvgOutEtx1.txt', 'w', encoding='utf-8') as f:
+        print(addr2outcome, file=f)
+def normalAvgOutEtx2():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddretx2.csv',usecols=[0,3,5]).iloc[3000000:6000000]
+    addr2outcome = {}
+    for index, row in df.iterrows():
+        if row['from'] != 'NaN' and row['from'] in addrlist:
+            try:
+                if isinstance(row['from'], str):
+                    addr2outcome[row['from']] = addr2outcome.get(row['from'], 0) + int(row['value']) / 1000000000000000000
+            except Exception:
+                print(row['from'])
+                print(row['value'])
+                traceback.print_exc()
+        print(index)
+    with open('normalAvgOutEtx2.txt', 'w', encoding='utf-8') as f:
+        print(addr2outcome, file=f)
+def normalAvgOutEtx3():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddretx2.csv',usecols=[0,3,5]).iloc[6000000:9000000]
+    addr2outcome = {}
+    for index, row in df.iterrows():
+        if row['from'] != 'NaN' and row['from'] in addrlist:
+            try:
+                if isinstance(row['from'], str):
+                    addr2outcome[row['from']] = addr2outcome.get(row['from'], 0) + int(row['value']) / 1000000000000000000
+            except Exception:
+                print(row['from'])
+                print(row['value'])
+                traceback.print_exc()
+        print(index)
+    with open('normalAvgOutEtx3.txt', 'w', encoding='utf-8') as f:
+        print(addr2outcome, file=f)
+def normalAvgOutEtx4():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddretx2.csv',usecols=[0,3,5]).iloc[9000000:12000000]
+    addr2outcome = {}
+    for index, row in df.iterrows():
+        if row['from'] != 'NaN' and row['from'] in addrlist:
+            try:
+                if isinstance(row['from'], str):
+                    addr2outcome[row['from']] = addr2outcome.get(row['from'], 0) + int(row['value']) / 1000000000000000000
+            except Exception:
+                print(row['from'])
+                print(row['value'])
+                traceback.print_exc()
+        print(index)
+    with open('normalAvgOutEtx4.txt', 'w', encoding='utf-8') as f:
+        print(addr2outcome, file=f)
+def normalAvgOutEtx5():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddretx2.csv',usecols=[0,3,5]).iloc[12000000:]
+    addr2outcome = {}
+    for index, row in df.iterrows():
+        if row['from'] != 'NaN' and row['from'] in addrlist:
+            try:
+                if isinstance(row['from'], str):
+                    addr2outcome[row['from']] = addr2outcome.get(row['from'], 0) + int(row['value']) / 1000000000000000000
+            except Exception:
+                print(row['from'])
+                print(row['value'])
+                traceback.print_exc()
+        print(index)
+    with open('normalAvgOutEtx5.txt', 'w', encoding='utf-8') as f:
         print(addr2outcome, file=f)
 def mixScamAvg():
     with open('scamAvgIn.txt','r',encoding='utf-8') as f:
@@ -2980,6 +3385,10 @@ def txdedupI():
     df = pandas.read_csv('normalAddritx.csv')
     df = df.drop_duplicates(subset=['hash'],keep='first')
     df.to_csv('normalAddritx2.csv')
+def txdedupE():
+    df = pandas.read_csv('normalAddretx.csv')
+    df = df.drop_duplicates(subset=['hash'],keep='first')
+    df.to_csv('normalAddretx2.csv')
 def filterAddr1():
     with open('nor2numNOuttx1.txt','r',encoding='utf-8') as f:
         addr2tx2 = literal_eval(f.read())
@@ -3262,6 +3671,26 @@ if __name__ == '__main__':
     # norAddrNFig9Intxs1()
     # test()
     # filterAddr1()
-    # norAddrFromFig9N1()
-    # norAddrFromFig9N3()
-    norAddrNFig9Intxs1()
+    # norAddrNFig9Intxs1()
+    # norAddrNFig9Intxs2()
+    # norAddrNFig9Intxs3()
+    # norAddrNFig9Intxs4()
+    # norAddrNFig9Intxs5()
+    # norAddrNFig9Outtxs1()
+    # norAddrNFig9Outtxs2()
+    # norAddrNFig9Outtxs3()
+    # norAddrNFig9Outtxs4()
+    # norAddrNFig9Outtxs5()
+    # normalAvgInNtx1()
+    # normalAvgInNtx2()
+    # normalAvgInNtx3()
+    # normalAvgInNtx4()
+    # normalAvgInNtx5()
+    # normalAvgOutNtx1()
+    # normalAvgOutNtx2()
+    # normalAvgOutNtx3()
+    # normalAvgOutNtx4()
+    # normalAvgOutNtx5()
+    # normalAddrtx2csv3()
+    # txdedupE()
+    normalAvgInEtx1()
