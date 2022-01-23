@@ -7,7 +7,6 @@ import xlrd
 import yaml
 import pandas
 import datetime
-import matplotlib.pyplot as plt
 import numpy
 import math
 from matplotlib.pyplot import MultipleLocator
@@ -17,7 +16,6 @@ apikey = "P3FE926UGARGQF8HKPM4XWJ38CJAGX5WHZ"
 import json
 import traceback
 from scipy import stats
-import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 import statsmodels.api as sm # recommended import according to the docs
@@ -45,10 +43,10 @@ def bloxyhack():
                         mytype = atag.string
                         url2type[url] = mytype
         # print(url2type)
-    with open('bloxy.txt','w',encoding='utf-8') as f:
+    with open('bloxyhack.txt','w',encoding='utf-8') as f:
         print(url2type,file=f)
     json_str = json.dumps(url2type)
-    with open('bloxy.json', 'w') as json_file:
+    with open('bloxyhack.json', 'w') as json_file:
         json_file.write(json_str)
 def bloxyscam():
     pagenum = 56
@@ -100,7 +98,7 @@ def bloxymalware():
         json_file.write(json_str)
 
 def bloxy2():
-    with open('bloxy.txt','r',encoding='utf-8') as f:
+    with open('bloxyhack.txt','r',encoding='utf-8') as f:
         dict1 = literal_eval(f.read())
     with open('bloxyscam.txt','r',encoding='utf-8') as f:
         dict2 = literal_eval(f.read())
@@ -110,19 +108,38 @@ def bloxy2():
     mydict.update(dict1)
     mydict.update(dict2)
     mydict.update(dict3)
-    hacktype = ['Phish', 'Coinrail', 'Cryptopia', 'EtherDelta', 'Browser', 'SpankChain', 'Upbit', 'Scam']
-    notType = ['Hacking', 'HackToken', 'HackDao', 'HackerGold', 'Hacken', 'HackerSpaceBarneysToken']
+    newdict = {}
+    for key,value in mydict.items():
+        newdict[key.lower()] = value.lower()
+    mydict = newdict
+    # print(mydict)
+    hacktype = ['Phish', 'Trust-Trading', 'Hack', 'Malware', 'Upbit', 'Scam', 'hackethereumIco']
+    notType = ['Hacking', 'HackToken', 'HackDao', 'HackerGold', 'Hacken', 'HackerSpaceBarneysToken', 'HackerToken', 'Gitcoin', 'VitaluckHack']
+    # hacktype = 'PhishTrust-TradingTrust TradingHackMalwareUpbitScam'
     addrlist = []
+    # notType = 'HackingHackTokenHackDaoHackerGoldHackenHackerSpaceBarneysToken'
     for url,type in mydict.items():
         for key in hacktype:
-            for key2 in notType:
-                if key.lower() in type.lower() and key.lower() not in key2:
-                    if url.startswith('/address'):
-                        addr = url[9:]
-                    elif url.startswith('/tx'):
-                        addr = url[4:]
-                    if len(addr) == 42:
-                        addrlist.append(addr)
+            if key.lower() in type.lower():
+                if url.startswith('/address'):
+                    addr = url[9:]
+                elif url.startswith('/tx'):
+                    addr = url[4:]
+                if len(addr) == 42:
+                    addrlist.append(addr)
+    removelist = []
+    for addr in addrlist:
+        for nottag in notType:
+            if '/tx/'+str(addr) in mydict.keys():
+                if nottag.lower() in mydict['/tx/'+str(addr)].lower():
+                    removelist.append(addr)
+            elif '/address/'+str(addr) in mydict.keys():
+                if nottag.lower() in mydict['/address/'+str(addr)].lower():
+                    removelist.append(addr)
+    for removeaddr in removelist:
+        addrlist.remove(removeaddr)
+    print(removelist)
+    print(addrlist)
     addrlist = list(set(addrlist))
     # print(addrlist)
     print(len(addrlist))
@@ -1381,46 +1398,46 @@ def fromfig9():
     plt.xscale('log')
     plt.show()
 def normalAddrtx2csv1():#一般交易的from，to，value列
-    df1 = pandas.read_csv('normalntx1.csv', low_memory=False, usecols=[2, 6, 7, 8])#hash,from,to,value
-    df2 = pandas.read_csv('normalntx2.csv', low_memory=False, usecols=[2, 6, 7, 8])
-    df3 = pandas.read_csv('normalntx3.csv', low_memory=False, usecols=[2, 6, 7, 8])
-    df4 = pandas.read_csv('normalntx4.csv', low_memory=False, usecols=[2, 6, 7, 8])
-    df5 = pandas.read_csv('normalntx5.csv', low_memory=False, usecols=[2, 6, 7, 8])
-    df6 = pandas.read_csv('normalntx6.csv', low_memory=False, usecols=[2, 6, 7, 8])
-    df7 = pandas.read_csv('normalntx7.csv', low_memory=False, usecols=[2, 6, 7, 8])
-    df8 = pandas.read_csv('normalntx8.csv', low_memory=False, usecols=[2, 6, 7, 8])
-    df9 = pandas.read_csv('normalntx9.csv', low_memory=False, usecols=[2, 6, 7, 8])
-    df10 = pandas.read_csv('normalntx10.csv', low_memory=False, usecols=[2, 6, 7, 8])
-    df11 = pandas.read_csv('normalntx11.csv', low_memory=False, usecols=[2, 6, 7, 8])
-    df12 = pandas.read_csv('normalntx12.csv', low_memory=False, usecols=[2, 6, 7, 8])
-    df13 = pandas.read_csv('normalntx13.csv', low_memory=False, usecols=[2, 6, 7, 8])
+    df1 = pandas.read_csv('normalntx1.csv', low_memory=False, usecols=[1, 2, 6, 7, 8])#hash,from,to,value
+    df2 = pandas.read_csv('normalntx2.csv', low_memory=False, usecols=[1, 2, 6, 7, 8])
+    df3 = pandas.read_csv('normalntx3.csv', low_memory=False, usecols=[1, 2, 6, 7, 8])
+    df4 = pandas.read_csv('normalntx4.csv', low_memory=False, usecols=[1, 2, 6, 7, 8])
+    df5 = pandas.read_csv('normalntx5.csv', low_memory=False, usecols=[1, 2, 6, 7, 8])
+    df6 = pandas.read_csv('normalntx6.csv', low_memory=False, usecols=[1, 2, 6, 7, 8])
+    df7 = pandas.read_csv('normalntx7.csv', low_memory=False, usecols=[1, 2, 6, 7, 8])
+    df8 = pandas.read_csv('normalntx8.csv', low_memory=False, usecols=[1, 2, 6, 7, 8])
+    df9 = pandas.read_csv('normalntx9.csv', low_memory=False, usecols=[1, 2, 6, 7, 8])
+    df10 = pandas.read_csv('normalntx10.csv', low_memory=False, usecols=[1, 2, 6, 7, 8])
+    df11 = pandas.read_csv('normalntx11.csv', low_memory=False, usecols=[1, 2, 6, 7, 8])
+    df12 = pandas.read_csv('normalntx12.csv', low_memory=False, usecols=[1, 2, 6, 7, 8])
+    df13 = pandas.read_csv('normalntx13.csv', low_memory=False, usecols=[1, 2, 6, 7, 8])
     frames = [df1, df2, df3, df4, df5, df6, df7, df8, df9, df10, df11, df12, df13]
     df = pandas.concat(frames)
     df.to_csv('normalAddrntx.csv')
 def normalAddrtx2csv2():#内部交易的from，to，value列
-    df14 = pandas.read_csv('normalitx1.csv', low_memory=False, usecols=[2, 3, 4, 5])#hash,from,to,value
-    df15 = pandas.read_csv('normalitx2.csv', low_memory=False, usecols=[2, 3, 4, 5])
-    df16 = pandas.read_csv('normalitx3.csv', low_memory=False, usecols=[2, 3, 4, 5])
-    df17 = pandas.read_csv('normalitx4.csv', low_memory=False, usecols=[2, 3, 4, 5])
-    df18 = pandas.read_csv('normalitx5.csv', low_memory=False, usecols=[2, 3, 4, 5])
-    df19 = pandas.read_csv('normalitx6.csv', low_memory=False, usecols=[2, 3, 4, 5])
-    df20 = pandas.read_csv('normalitx7.csv', low_memory=False, usecols=[2, 3, 4, 5])
-    df21 = pandas.read_csv('normalitx8.csv', low_memory=False, usecols=[2, 3, 4, 5])
-    df22 = pandas.read_csv('normalitx9.csv', low_memory=False, usecols=[2, 3, 4, 5])
-    df23 = pandas.read_csv('normalitx10.csv', low_memory=False, usecols=[2, 3, 4, 5])
+    df14 = pandas.read_csv('normalitx1.csv', low_memory=False, usecols=[1, 2, 3, 4, 5])#hash,from,to,value
+    df15 = pandas.read_csv('normalitx2.csv', low_memory=False, usecols=[1, 2, 3, 4, 5])
+    df16 = pandas.read_csv('normalitx3.csv', low_memory=False, usecols=[1, 2, 3, 4, 5])
+    df17 = pandas.read_csv('normalitx4.csv', low_memory=False, usecols=[1, 2, 3, 4, 5])
+    df18 = pandas.read_csv('normalitx5.csv', low_memory=False, usecols=[1, 2, 3, 4, 5])
+    df19 = pandas.read_csv('normalitx6.csv', low_memory=False, usecols=[1, 2, 3, 4, 5])
+    df20 = pandas.read_csv('normalitx7.csv', low_memory=False, usecols=[1, 2, 3, 4, 5])
+    df21 = pandas.read_csv('normalitx8.csv', low_memory=False, usecols=[1, 2, 3, 4, 5])
+    df22 = pandas.read_csv('normalitx9.csv', low_memory=False, usecols=[1, 2, 3, 4, 5])
+    df23 = pandas.read_csv('normalitx10.csv', low_memory=False, usecols=[1, 2, 3, 4, 5])
     frames = [df14, df15, df16, df17, df18, df19, df20, df21, df22, df23]
     df = pandas.concat(frames)
     df.to_csv('normalAddritx.csv')
 def normalAddrtx2csv3():#内部交易的from，to，value列
-    df14 = pandas.read_csv('normaletx1.csv', low_memory=False, usecols=[2, 5, 7, 8, 10])#hash,from,to,value,tokenSymbol
-    df15 = pandas.read_csv('normaletx2.csv', low_memory=False, usecols=[2, 5, 7, 8, 10])
-    df16 = pandas.read_csv('normaletx3.csv', low_memory=False, usecols=[2, 5, 7, 8, 10])
-    df17 = pandas.read_csv('normaletx4.csv', low_memory=False, usecols=[2, 5, 7, 8, 10])
-    df18 = pandas.read_csv('normaletx5.csv', low_memory=False, usecols=[2, 5, 7, 8, 10])
-    df19 = pandas.read_csv('normaletx6.csv', low_memory=False, usecols=[2, 5, 7, 8, 10])
-    df20 = pandas.read_csv('normaletx7.csv', low_memory=False, usecols=[2, 5, 7, 8, 10])
-    df21 = pandas.read_csv('normaletx8.csv', low_memory=False, usecols=[2, 5, 7, 8, 10])
-    df22 = pandas.read_csv('normaletx9.csv', low_memory=False, usecols=[2, 5, 7, 8, 10])
+    df14 = pandas.read_csv('normaletx1.csv', low_memory=False, usecols=[1, 2, 5, 7, 8, 10])#hash,from,to,value,tokenSymbol
+    df15 = pandas.read_csv('normaletx2.csv', low_memory=False, usecols=[1, 2, 5, 7, 8, 10])
+    df16 = pandas.read_csv('normaletx3.csv', low_memory=False, usecols=[1, 2, 5, 7, 8, 10])
+    df17 = pandas.read_csv('normaletx4.csv', low_memory=False, usecols=[1, 2, 5, 7, 8, 10])
+    df18 = pandas.read_csv('normaletx5.csv', low_memory=False, usecols=[1, 2, 5, 7, 8, 10])
+    df19 = pandas.read_csv('normaletx6.csv', low_memory=False, usecols=[1, 2, 5, 7, 8, 10])
+    df20 = pandas.read_csv('normaletx7.csv', low_memory=False, usecols=[1, 2, 5, 7, 8, 10])
+    df21 = pandas.read_csv('normaletx8.csv', low_memory=False, usecols=[1, 2, 5, 7, 8, 10])
+    df22 = pandas.read_csv('normaletx9.csv', low_memory=False, usecols=[1, 2, 5, 7, 8, 10])
     frames = [df14, df15, df16, df17, df18, df19, df20, df21, df22]
     df = pandas.concat(frames)
     df.to_csv('normalAddretx.csv')
@@ -3248,6 +3265,47 @@ def scamLive():#living time
     x_major_locator = MultipleLocator(250)
     ax.xaxis.set_major_locator(x_major_locator)
     plt.show()
+def normalLive():#living time
+    with open('normalAddr.txt', 'r', encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df1 = pandas.read_csv('normalAddrntx2.csv')  # hash,from,to,value
+    df2 = pandas.read_csv('normalAddritx2.csv')
+    df3 = pandas.read_csv('normalAddretx2.csv')
+    frames = [df1, df2, df3]
+    df = pandas.concat(frames)
+    df = df.drop_duplicates()  # 去重
+    df = df.sort_values('timeStamp')
+    addr2day = {}  # 地址到交易时间戳的字典
+    addr2living = {}
+    for addr in addrlist:
+        addr2day[addr] = []
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            addr2day[row['to']].append(row['timeStamp'])
+    for addr, time in addr2day.items():  # 将时间列表排序，计算时间差
+        time.sort()
+    # x = ['0', '250', '500', '750', '1000', '1250', '1500', '1750']
+    for addr, time in addr2day.items():
+        if len(time) > 0:
+            start = datetime.datetime.fromtimestamp(time[0])
+            end = datetime.datetime.fromtimestamp(time[-1])
+            addr2living[addr] = (end - start).days
+    print(addr2living)
+    livingtime2num = {}
+    for addr,livingtime in addr2living.items():
+        livingtime2num[livingtime] = livingtime2num.get(livingtime,0) + 1
+    print(livingtime2num)
+    zipped = zip(livingtime2num.keys(), livingtime2num.values())
+    sort_zipped = sorted(zipped, key=lambda x: (x[0]))
+    result = zip(*sort_zipped)
+    x, y = [list(x) for x in result]
+    fig, ax = plt.subplots()
+    cum = numpy.cumsum(y)
+    percentage = cum / list(cum)[-1]
+    line = ax.plot(x, percentage)
+    x_major_locator = MultipleLocator(250)
+    ax.xaxis.set_major_locator(x_major_locator)
+    plt.show()
 def txdedupN():
     df = pandas.read_csv('normalAddrntx.csv')
     df['hash'] = df['hash'].str.lower()
@@ -3261,6 +3319,151 @@ def txdedupE():
     df = pandas.read_csv('normalAddretx.csv')
     df = df.drop_duplicates(subset=['hash'],keep='first')
     df.to_csv('normalAddretx2.csv')
+def bloxyaddrtax():
+    #怎么处理bloxy的地址标记，从备注中获取，但是备注中有可能有多种欺诈，以etherscan的为主，因为bloxy的很少
+    with open('bloxyhack.txt', 'r', encoding='utf-8') as f:
+        dict1 = literal_eval(f.read())
+    with open('bloxyscam.txt', 'r', encoding='utf-8') as f:
+        dict2 = literal_eval(f.read())
+    with open('bloxymalware.txt', 'r', encoding='utf-8') as f:
+        dict3 = literal_eval(f.read())
+    mydict = {}
+    mydict.update(dict1)
+    mydict.update(dict2)
+    mydict.update(dict3)
+    # print(len(mydict))
+    hacktype = ['Malware', 'ICO', 'Trust-Trading', 'Trust Trading', 'Phish', 'Hack']
+    typenum = {}
+    typelist = {}
+    addrlist = []
+    for mytype in hacktype:
+        typenum[mytype] = 0
+        typelist[mytype] = []
+    for url,note in mydict.items():
+        note = note.split(",")
+        exitflag = False
+        for mytype in hacktype:
+            for tip in note:
+                if mytype.lower() in tip.lower():
+                    exitflag = True
+                    if url.startswith('/address'):
+                        addr = url[9:]
+                    elif url.startswith('/tx'):
+                        addr = url[4:]
+                    if len(addr) == 42 and addr not in addrlist:#相同地址可能会重复计数
+                        typenum[mytype] += 1
+                        addr = addr.lower()
+                        typelist[mytype].append(addr)
+                        addrlist.append(addr)
+                    break
+            if exitflag:
+                break
+    addrlist = list(set(addrlist))
+    sum = 0
+    for type,num in typenum.items():
+        sum += num
+    for type,list1 in typelist.items():
+        list1 = list(set(list1))
+    # print(sum)
+    # print(len(addrlist))
+    # print(typenum)
+    return addrlist,typenum,typelist#bloxy的地址列表，类型统计，类型地址映射
+def etherscanAddrTax():
+    addrlist, typenum, typelist = bloxyaddrtax()
+    with open('bitpoint.txt', 'r') as f:
+        list1 = literal_eval(f.read())
+        list1 = [addr.lower() for addr in list1]
+        list1 = list(set(list1))
+    with open('cryptopia.txt', 'r') as f:
+        list2 = literal_eval(f.read())
+        list2 = [addr.lower() for addr in list2]
+        list2 = list(set(list2))
+    with open('etherdelta.txt', 'r') as f:
+        list3 = literal_eval(f.read())
+        list3 = [addr.lower() for addr in list3]
+        list3 = list(set(list3))
+    with open('LendfMe.txt', 'r') as f:
+        list4 = literal_eval(f.read())
+        list4 = [addr.lower() for addr in list4]
+        list4 = list(set(list4))
+    with open('phishaddr.txt', 'r') as f:
+        list5 = literal_eval(f.read())
+        list5 = [addr.lower() for addr in list5]
+        list5 = list(set(list5))#在etherscan的phish类
+        # typenum['Phish']  += len(list5)#只有一个文件是phish类的，把这个文件中的bloxy地址去掉即可，另外的文件中专属于etherscan的地址全部统计到hack类中
+    with open('upbit.txt', 'r') as f:
+        list6 = literal_eval(f.read())
+        list6 = [addr.lower() for addr in list6]
+        list6 = list(set(list6))
+    with open('scam.txt', 'r') as f:
+        list7 = literal_eval(f.read())
+        list7 = [addr.lower() for addr in list7]
+        list7 = list(set(list7))
+    with open('db.txt', 'r') as f:
+        list8 = literal_eval(f.read())
+        list8 = [addr.lower() for addr in list8]
+        list8 = list(set(list8))
+    with open('bloxyAddr.txt', 'r') as f:#在bloxy中的所有地址
+        list9 = literal_eval(f.read())
+        list9 = [addr.lower() for addr in list9]
+        list9 = list(set(list9))#在bloxy的所有地址
+    #已经分好类的地址：在bloxy中的所有地址；未分好类的地址：在scan中而不在bloxy中的地址
+    scanlist = list(set(list1 + list2 + list3 + list4 + list5 + list6 + list7 + list8))#scan中的地址数
+    print(len(scanlist))#6429
+    hacklist = list(set(list1 + list2 + list3 + list4 + list6 + list7 + list8))#etherscan去重后的hack类地址列表
+    phishlist = list5
+    bloxylist = list9
+    hackandphish = [addr for addr in phishlist if addr in hacklist]
+    print(len(hackandphish))#2284
+    onlyscan = [addr for addr in scanlist if addr not in bloxylist]
+    print(len(onlyscan))#2434
+    # mylist1 = [i for i in list5 if i not in list9 and i not in hacklist]  # 在etherscan不在bloxy而且不在hack类的Phish类的地址列表
+    # print(len(list9))
+    # print(len(addrlist))
+    phishnothack = []
+    for addr in phishlist:
+        if addr not in hacklist:#phish类要去除bloxy已经分好类的，并且不能是hack类
+            phishnothack.append(addr)
+    phishnothack = list(set(phishnothack))#去重
+    typelist['Phish'] = typelist['Phish'] + phishnothack
+    typelist['Phish'] = list(set(typelist['Phish']))#地址去重
+    typenum['Phish'] += len(phishnothack)#分类计数增加
+    # mylist2 = [i for i in hacklist if i not in list9 and i not in list5]#在etherscan不在bloxy而且不在phish类的Hack类的地址列表
+    mylist2 = []
+    for addr in onlyscan:
+        if addr not in phishnothack:#hack类要去除bloxy已经分好类的，并且不能是phish类
+            mylist2.append(addr)
+    mylist2 = list(set(mylist2))#去重
+    typelist['Hack'] = typelist['Hack'] + mylist2
+    typelist['Hack'] = list(set(typelist['Hack']))#地址去重
+    typenum['Hack'] += len(mylist2)#分类计数增加
+    mylist3 = []
+    sum = 0#分好类的地址数
+    for addr in typelist.values():#mylist3是已经分好类的地址列表
+        sum += len(addr)
+        mylist3 += addr
+    sum2 = 0#分好类的地址数
+    for num in typenum.values():#
+        sum2 += num
+    mylist3 = list(set(mylist3))#去重
+    print("sum："+str(sum))#6461
+    print("sum2："+str(sum2))#7956
+    print(len(mylist3))#6449
+    alladdr = list(set(list1 + list2 + list3 + list4 + list5 + list6 + list7 + list8 + list9))
+    print(len(alladdr))#6434
+    # print(typenum)
+    with open('addr.txt', 'r') as f:
+        list10 = literal_eval(f.read())
+        print(len(list10))#6434
+    mylist4 = [i for i in alladdr if i not in list10]#漏掉的欺诈地址
+    # print(mylist4)
+    return typelist
+#不是欺诈地址的地址：
+#0x1f2e2293efa2ebd9c09211569f3d7758f0463189
+#0x14f37b574242d366558db61f3335289a5035c506
+def txtax():
+    #怎么处理交易的分类，根据交易地址的分类？
+    pass
 def filterAddr1():
     with open('nor2numNOuttx1.txt','r',encoding='utf-8') as f:
         addr2tx2 = literal_eval(f.read())
@@ -3506,72 +3709,13 @@ if __name__ == '__main__':
     #     getEtxs4()
     # except Exception:
     #     pass
-    # efig6()
-    # nfig7()
-    # ifig7()
-    # ifig9()
-    # nfig9()
-    # tofig9()
-    # bloxymalware()
-    # bloxy2()
-    # getnormaladdr()
-    # getnormaladdrNtxs2()
-    # differSetEtx()
-    # normalAddrFromfig9()
-    # normalAddrIFig9()
-    # normalAddrNFig9()
-    # normalAddrTofig9()
-    # mixAddrFig9()
-    # scamAvgIn()
-    # scamAvgOut()
-    # scamLive()
+
     # normalAddrtx2csv1()
-    # normalAddrtx2csv2()
-    # normalAddrNFig9()
-    # normalAddrIFig9()
-    # normalAddrTofig9()
-    # normalAddrFromfig9()
-    # normalAvgIn()
-    # normalAddrtx2csv1()
-    # normalAvgOut()
-    # mixNormalAvg()
-    # txdedup()
-    # normalAddrtx2csv1()
+    # txdedupN()
     # normalAddrtx2csv2()
     # txdedupI()
-    # txdedupN()
-    # norAddrNFig9Intxs1()
-    # test()
-    # filterAddr1()
-    # norAddrNFig9Intxs1()
-    # norAddrNFig9Intxs2()
-    # norAddrNFig9Intxs3()
-    # norAddrNFig9Intxs4()
-    # norAddrNFig9Intxs5()
-    # norAddrNFig9Outtxs1()
-    # norAddrNFig9Outtxs2()
-    # norAddrNFig9Outtxs3()
-    # norAddrNFig9Outtxs4()
-    # norAddrNFig9Outtxs5()
-    # normalAvgInNtx1()
-    # normalAvgInNtx2()
-    # normalAvgInNtx3()
-    # normalAvgInNtx4()
-    # normalAvgInNtx5()
-    # normalAvgOutNtx1()
-    # normalAvgOutNtx2()
-    # normalAvgOutNtx3()
-    # normalAvgOutNtx4()
-    # normalAvgOutNtx5()
     # normalAddrtx2csv3()
     # txdedupE()
-    # normalAvgInEtx1()
-    # test()
-    # norAddrEFig9Intxs()
-    # norAddrEFig9Outtxs()
-    # norAddrIFig9Intxs()
-    # norAddrIFig9Outtxs()
-    # normalAvgInItx()
-    # normalAvgOutItx()
-    # normalAddrtx2csv3()
-    txdedupE()
+    # bloxyaddrtax()
+    etherscanAddrTax()
+    # bloxy2()
