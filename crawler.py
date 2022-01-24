@@ -3333,12 +3333,20 @@ def bloxyaddrtax():
     mydict.update(dict3)
     # print(len(mydict))
     hacktype = ['Malware', 'ICO', 'Trust-Trading', 'Trust Trading', 'Phish', 'Hack']
+    notType = ['Hacking', 'HackToken', 'HackDao', 'HackerGold', 'Hacken', 'HackerSpaceBarneysToken', 'HackerToken', 'Gitcoin', 'VitaluckHack']
+    wrongaddr = ['0x4b2b60175b6e070e456816fda2b01a72343d66ca', '0x451ab68bbec364b8a9e4403741d311c54e3907f6', '0x9e6b2b11542f2bc52f3029077ace37e8fd838d7f', '0xdcf59ee4803931a376a0fb6244036e49ebc7dd61', '0x433d84a1c0b650eac4fc1fb570798cf655ce24c0', '0xcd3e727275bc2f511822dc9a26bd7b0bbf161784', '0x2563c25db9d2fb94f65e7632544eb057fc3dfcf0', '0x2559f0dd36179c230443d2c3846435e52eb2b2df', '0x14f37b574242d366558db61f3335289a5035c506', '0x06044b5359d8df7886366c22c61c7ecd29becac7', '0xa62bdee2f277c2e2c0f46cba96879b263796ee1c', '0x05fb86775fd5c16290f1e838f5caaa7342bd9a63', '0xf6fe061efa2a8e15936696baf5e8cba8c3f3485b', '0x5c430fa24f782cf8156ca97208c42127b17b0494', '0x1f2e2293efa2ebd9c09211569f3d7758f0463189']
     typenum = {}
     typelist = {}
     addrlist = []
+    #提前删除错误的地址
     for mytype in hacktype:
         typenum[mytype] = 0
         typelist[mytype] = []
+    for addr in wrongaddr:
+        if str('/tx/' + addr) in mydict.keys():
+            mydict.pop(str('/tx/' + addr))
+        elif str('/address/' + addr) in mydict.keys():
+            mydict.pop(str('/address/' + addr))
     for url,note in mydict.items():
         note = note.split(",")
         exitflag = False
@@ -3350,7 +3358,7 @@ def bloxyaddrtax():
                         addr = url[9:]
                     elif url.startswith('/tx'):
                         addr = url[4:]
-                    if len(addr) == 42 and addr not in addrlist:#相同地址可能会重复计数
+                    if len(addr) == 42 and addr not in addrlist:
                         typenum[mytype] += 1
                         addr = addr.lower()
                         typelist[mytype].append(addr)
@@ -3421,7 +3429,7 @@ def etherscanAddrTax():
     # print(len(list9))
     # print(len(addrlist))
     phishnothack = []
-    for addr in phishlist:
+    for addr in onlyscan:
         if addr not in hacklist:#phish类要去除bloxy已经分好类的，并且不能是hack类
             phishnothack.append(addr)
     phishnothack = list(set(phishnothack))#去重
@@ -3431,7 +3439,7 @@ def etherscanAddrTax():
     # mylist2 = [i for i in hacklist if i not in list9 and i not in list5]#在etherscan不在bloxy而且不在phish类的Hack类的地址列表
     mylist2 = []
     for addr in onlyscan:
-        if addr not in phishnothack:#hack类要去除bloxy已经分好类的，并且不能是phish类
+        if addr in hacklist:#hack类要去除bloxy已经分好类的，并且不能是phish类
             mylist2.append(addr)
     mylist2 = list(set(mylist2))#去重
     typelist['Hack'] = typelist['Hack'] + mylist2
@@ -3443,28 +3451,68 @@ def etherscanAddrTax():
         sum += len(addr)
         mylist3 += addr
     sum2 = 0#分好类的地址数
-    for num in typenum.values():#
+    for num in typenum.values():#6449
         sum2 += num
     mylist3 = list(set(mylist3))#去重
-    print("sum："+str(sum))#6461
-    print("sum2："+str(sum2))#7956
+    print("sum："+str(sum))#6434
+    print("sum2："+str(sum2))#6449
     print(len(mylist3))#6449
     alladdr = list(set(list1 + list2 + list3 + list4 + list5 + list6 + list7 + list8 + list9))
     print(len(alladdr))#6434
+    mylist5 = [addr for addr in mylist3 if addr not in alladdr]
+    # print(mylist5)
     print(typenum)
     with open('addr.txt', 'r') as f:
         list10 = literal_eval(f.read())
         print(len(list10))#6434
     mylist4 = [i for i in alladdr if i not in list10]#漏掉的欺诈地址
     # print(mylist4)
+    # print(typelist)
+    with open('typelist.txt','w') as f:
+        print(typelist,file=f)
     return typelist
-#{'Malware': 2, 'ICO': 13, 'Trust-Trading': 1290, 'Trust Trading': 1, 'Phish': 3170, 'Hack': 1958}
-#不是欺诈地址的地址：
+# {'Malware': 2, 'ICO': 13, 'Trust-Trading': 1290, 'Trust Trading': 1, 'Phish': 3185, 'Hack': 1943}
+# 不是欺诈地址的地址：
 #0x1f2e2293efa2ebd9c09211569f3d7758f0463189
 #0x14f37b574242d366558db61f3335289a5035c506
+#['0x4b2b60175b6e070e456816fda2b01a72343d66ca', '0x451ab68bbec364b8a9e4403741d311c54e3907f6',
+# '0x9e6b2b11542f2bc52f3029077ace37e8fd838d7f', '0xdcf59ee4803931a376a0fb6244036e49ebc7dd61',
+# '0x433d84a1c0b650eac4fc1fb570798cf655ce24c0', '0xcd3e727275bc2f511822dc9a26bd7b0bbf161784',
+# '0x2563c25db9d2fb94f65e7632544eb057fc3dfcf0', '0x2559f0dd36179c230443d2c3846435e52eb2b2df',
+# '0x14f37b574242d366558db61f3335289a5035c506', '0x06044b5359d8df7886366c22c61c7ecd29becac7',
+# '0xa62bdee2f277c2e2c0f46cba96879b263796ee1c', '0x05fb86775fd5c16290f1e838f5caaa7342bd9a63',
+# '0xf6fe061efa2a8e15936696baf5e8cba8c3f3485b', '0x5c430fa24f782cf8156ca97208c42127b17b0494', '0x1f2e2293efa2ebd9c09211569f3d7758f0463189']
 def txtax():
-    #怎么处理交易的分类，根据交易地址的分类？
-    pass
+    with open('typelist.txt','r') as f:
+        typelist = literal_eval(f.read())
+    txtypenum = {}
+    txtypelist = {}#记录每个种类的各个交易数量
+    hacktype = ['Malware', 'ICO', 'Trust-Trading', 'Trust Trading', 'Phish', 'Hack']
+    session = requests.Session()
+    for mytype in hacktype:
+        txtypenum[mytype] = [0,0,0]
+        txtypelist[mytype] = []
+    num = 0
+
+    for typename,addrlist in typelist.items():
+        for addr in addrlist:
+            nurl = "https://api.etherscan.io/api?module=account&action=txlist&address="+addr+"&startblock=0&endblock=99999999&page=1&offset=10000&sort=asc&apikey=" + apikey
+            iurl = "https://api.etherscan.io/api?module=account&action=txlistinternal&address=" + addr + "&startblock=0&endblock=99999999&page=1&offset=10000&sort=asc&apikey=" + apikey
+            eurl = "https://api.etherscan.io/api?module=account&action=tokentx&address=" + addr + "&page=1&offset=10000&startblock=0&endblock=99999999&sort=asc&apikey=" + apikey
+            result1 = literal_eval(session.get(nurl).text)['result']
+            result2 = literal_eval(session.get(iurl).text)['result']
+            result3 = literal_eval(session.get(eurl).text)['result']
+            len1 = len(result1)
+            len2 = len(result2)
+            len3 = len(result3)
+            txtypenum[typename][0] += len1
+            txtypenum[typename][1] += len2
+            txtypenum[typename][2] += len3
+            num += 1
+            print(num)
+    with open('txtypenum.txt','w') as f:
+        print(txtypenum,file=f)
+
 def filterAddr1():
     with open('nor2numNOuttx1.txt','r',encoding='utf-8') as f:
         addr2tx2 = literal_eval(f.read())
@@ -3718,5 +3766,6 @@ if __name__ == '__main__':
     # normalAddrtx2csv3()
     # txdedupE()
     # bloxyaddrtax()
-    etherscanAddrTax()
+    # etherscanAddrTax()
     # bloxy2()
+    txtax()
