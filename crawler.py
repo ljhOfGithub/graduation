@@ -3096,8 +3096,6 @@ def mixScamAvg():
     plt.xscale('log')
     plt.legend()
     plt.show()
-
-
 def mixNormalAvg():
     with open('normalAvgIn.txt', 'r', encoding='utf-8') as f:
         addr2income = literal_eval(f.read())
@@ -3123,6 +3121,33 @@ def mixNormalAvg():
     plt.xscale('log')
     plt.legend()
     plt.show()
+def inteAvgInNtx():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    with open('normalAvgInNtx1.txt','r',encoding='utf-8') as f:
+        dict1 = literal_eval(f.read())
+    with open('normalAvgInNtx2.txt','r',encoding='utf-8') as f:
+        dict2 = literal_eval(f.read())
+    with open('normalAvgInNtx3.txt','r',encoding='utf-8') as f:
+        dict3 = literal_eval(f.read())
+    with open('normalAvgInNtx4.txt','r',encoding='utf-8') as f:
+        dict4 = literal_eval(f.read())
+    with open('normalAvgInNtx5.txt','r',encoding='utf-8') as f:
+        dict5 = literal_eval(f.read())
+    addr2income = {}
+    for addr in addrlist:
+        if addr in dict1.keys():
+            addr2income[addr] = addr2income.get(addr,0) + dict1[addr]
+        if addr in dict2.keys():
+            addr2income[addr] = addr2income.get(addr,0) + dict2[addr]
+        if addr in dict3.keys():
+            addr2income[addr] = addr2income.get(addr,0) + dict3[addr]
+        if addr in dict4.keys():
+            addr2income[addr] = addr2income.get(addr,0) + dict4[addr]
+        if addr in dict5.keys():
+            addr2income[addr] = addr2income.get(addr,0) + dict5[addr]
+    with open('normalAvgInNtx.txt','w',encoding='utf-8') as f:
+        print(addr2income,file=f)
 
 def test():
     # with open('ntx1.csv','r') as f:
@@ -3828,7 +3853,7 @@ if __name__ == '__main__':
     # except Exception:
     #     pass
     # try:
-    #     print("etxs2")from selenium import webdriver
-    
+    #     print("etxs2")
     # normalLive2()
-    normalLive1()
+    # normalLive1()
+    inteAvgInNtx()
