@@ -3265,14 +3265,10 @@ def scamLive():#living time
     x_major_locator = MultipleLocator(250)
     ax.xaxis.set_major_locator(x_major_locator)
     plt.show()
-def normalLive():#living time
+def normalLive1():#living time
     with open('normalAddr.txt', 'r', encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    df1 = pandas.read_csv('normalAddrntx2.csv')  # hash,from,to,value
-    df2 = pandas.read_csv('normalAddritx2.csv')
-    df3 = pandas.read_csv('normalAddretx2.csv')
-    frames = [df1, df2, df3]
-    df = pandas.concat(frames)
+    df = pandas.read_csv('normalAddrntx2.csv').iloc[0:5000000]  # hash,from,to,value
     df = df.drop_duplicates()  # 去重
     df = df.sort_values('timeStamp')
     addr2day = {}  # 地址到交易时间戳的字典
@@ -3284,7 +3280,6 @@ def normalLive():#living time
             addr2day[row['to']].append(row['timeStamp'])
     for addr, time in addr2day.items():  # 将时间列表排序，计算时间差
         time.sort()
-    # x = ['0', '250', '500', '750', '1000', '1250', '1500', '1750']
     for addr, time in addr2day.items():
         if len(time) > 0:
             start = datetime.datetime.fromtimestamp(time[0])
@@ -3295,6 +3290,89 @@ def normalLive():#living time
     for addr,livingtime in addr2living.items():
         livingtime2num[livingtime] = livingtime2num.get(livingtime,0) + 1
     print(livingtime2num)
+    with open('normalLiven1.txt','w') as f:
+        print(addr2living,file=f)
+    with open('normalLiven2.txt','w') as f:
+        print(livingtime2num,file=f)
+    zipped = zip(livingtime2num.keys(), livingtime2num.values())
+    sort_zipped = sorted(zipped, key=lambda x: (x[0]))
+    result = zip(*sort_zipped)
+    x, y = [list(x) for x in result]
+    fig, ax = plt.subplots()
+    cum = numpy.cumsum(y)
+    percentage = cum / list(cum)[-1]
+    line = ax.plot(x, percentage)
+    x_major_locator = MultipleLocator(250)
+    ax.xaxis.set_major_locator(x_major_locator)
+    plt.show()
+def normalLive2():#living time
+    with open('normalAddr.txt', 'r', encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddritx2.csv')  # hash,from,to,value
+    df = df.drop_duplicates()  # 去重
+    df = df.sort_values('timeStamp')
+    addr2day = {}  # 地址到交易时间戳的字典
+    addr2living = {}
+    for addr in addrlist:
+        addr2day[addr] = []
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            addr2day[row['to']].append(row['timeStamp'])
+    for addr, time in addr2day.items():  # 将时间列表排序，计算时间差
+        time.sort()
+    for addr, time in addr2day.items():
+        if len(time) > 0:
+            start = datetime.datetime.fromtimestamp(time[0])
+            end = datetime.datetime.fromtimestamp(time[-1])
+            addr2living[addr] = (end - start).days
+    # with open('normalLivei1.txt','w') as f:
+    #     print(addr2living,file=f)
+    livingtime2num = {}
+    for addr,livingtime in addr2living.items():
+        livingtime2num[livingtime] = livingtime2num.get(livingtime,0) + 1
+    print(livingtime2num)
+    # with open('normalLivei2.txt','w') as f:
+    #     print(livingtime2num,file=f)
+    zipped = zip(livingtime2num.keys(), livingtime2num.values())
+    sort_zipped = sorted(zipped, key=lambda x: (x[0]))
+    result = zip(*sort_zipped)
+    x, y = [list(x) for x in result]
+    fig, ax = plt.subplots()
+    cum = numpy.cumsum(y)
+    percentage = cum / list(cum)[-1]
+    line = ax.plot(x, percentage)
+    x_major_locator = MultipleLocator(250)
+    ax.xaxis.set_major_locator(x_major_locator)
+    plt.show()
+def normalLive3():#living time
+    with open('normalAddr.txt', 'r', encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddretx2.csv')  # hash,from,to,value
+    df = df.drop_duplicates()  # 去重
+    df = df.sort_values('timeStamp')
+    addr2day = {}  # 地址到交易时间戳的字典
+    addr2living = {}
+    for addr in addrlist:
+        addr2day[addr] = []
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            addr2day[row['to']].append(row['timeStamp'])
+    for addr, time in addr2day.items():  # 将时间列表排序，计算时间差
+        time.sort()
+    for addr, time in addr2day.items():
+        if len(time) > 0:
+            start = datetime.datetime.fromtimestamp(time[0])
+            end = datetime.datetime.fromtimestamp(time[-1])
+            addr2living[addr] = (end - start).days
+    print(addr2living)
+    livingtime2num = {}
+    for addr,livingtime in addr2living.items():
+        livingtime2num[livingtime] = livingtime2num.get(livingtime,0) + 1
+    print(livingtime2num)
+    with open('normalLivee1.txt','w') as f:
+        print(addr2living,file=f)
+    with open('normalLivee2.txt','w') as f:
+        print(livingtime2num,file=f)
     zipped = zip(livingtime2num.keys(), livingtime2num.values())
     sort_zipped = sorted(zipped, key=lambda x: (x[0]))
     result = zip(*sort_zipped)
@@ -3485,15 +3563,17 @@ def etherscanAddrTax():
 def txtax():
     with open('typelist.txt','r') as f:
         typelist = literal_eval(f.read())
+    with open('addr.txt','r') as f:
+        scamaddr = literal_eval(f.read())
     txtypenum = {}
-    txtypelist = {}#记录每个种类的各个交易数量
+    addrtxnum = {}#记录每个种类的各个地址的各种交易数量
+    for addr in scamaddr:
+        addrtxnum[addr] = [0,0,0]
     hacktype = ['Malware', 'ICO', 'Trust-Trading', 'Trust Trading', 'Phish', 'Hack']
     session = requests.Session()
     for mytype in hacktype:
         txtypenum[mytype] = [0,0,0]
-        txtypelist[mytype] = []
     num = 0
-
     for typename,addrlist in typelist.items():
         for addr in addrlist:
             nurl = "https://api.etherscan.io/api?module=account&action=txlist&address="+addr+"&startblock=0&endblock=99999999&page=1&offset=10000&sort=asc&apikey=" + apikey
@@ -3508,8 +3588,12 @@ def txtax():
             txtypenum[typename][0] += len1
             txtypenum[typename][1] += len2
             txtypenum[typename][2] += len3
+            addrtxnum[addr][0] += len1
+            addrtxnum[addr][0] += len2
+            addrtxnum[addr][0] += len3
             num += 1
             print(num)
+
     with open('txtypenum.txt','w') as f:
         print(txtypenum,file=f)
 
@@ -3744,28 +3828,7 @@ if __name__ == '__main__':
     # except Exception:
     #     pass
     # try:
-    #     print("etxs2")
-    #     getEtxs2()
-    # except Exception:
-    #     pass
-    # try:
-    #     print("etxs3")
-    #     getEtxs3()
-    # except Exception:
-    #     pass
-    # try:
-    #     print("etxs4")
-    #     getEtxs4()
-    # except Exception:
-    #     pass
-
-    # normalAddrtx2csv1()
-    # txdedupN()
-    # normalAddrtx2csv2()
-    # txdedupI()
-    # normalAddrtx2csv3()
-    # txdedupE()
-    # bloxyaddrtax()
-    # etherscanAddrTax()
-    # bloxy2()
-    txtax()
+    #     print("etxs2")from selenium import webdriver
+    
+    # normalLive2()
+    normalLive1()
