@@ -3166,16 +3166,16 @@ def scamAthirdtimeIntx():
     df = pandas.concat(frames)#拼接所有交易
     df = df.drop_duplicates()  # 去重
     df = df.sort_values('timeStamp')#将所有交易按时间戳排序
-    addr2day = {}  # 地址到交易时间戳的字典
+    addr2stamp = {}  # 地址到交易时间戳的字典
     addr2living = {}
     for addr in addrlist:
-        addr2day[addr] = []
+        addr2stamp[addr] = []
     for index, row in df.iterrows():
         if row['to'] != 'NaN' and row['to'] in addrlist:#统计每个地址的时间戳
-            addr2day[row['to']].append(row['timeStamp'])
-    for addr, time in addr2day.items():  # 将时间列表排序，计算时间差
+            addr2stamp[row['to']].append(row['timeStamp'])
+    for addr, time in addr2stamp.items():  # 将时间列表排序，计算时间差
         time.sort()
-    for addr, time in addr2day.items():
+    for addr, time in addr2stamp.items():
         if len(time) > 0:#直接用时间戳计算
             start = time[0]
             end = time[-1]
@@ -3253,7 +3253,7 @@ def scamAthirdInTxnum():
 def scamAthirdOutTxnum():
     with open('addr.txt', 'r', encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    with open('scam2athirdtime.txt','r') as f:
+    with open('scam2athirdtimeOuttx.txt','r') as f:
         addr2end = literal_eval(f.read())
     df1 = pandas.read_csv('ntx1.csv')
     df2 = pandas.read_csv('ntx2.csv')
@@ -3283,8 +3283,300 @@ def scamAthirdOutTxnum():
     with open('scam2athirdOuttxnum.txt','w') as f:
         print(addr2athirdtxnum,file=f)
 
-def norAddrAthirdInNtx():
-    pass
+def norAddrA3InNtxTime1():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv').iloc[0:5000000]  # 读取去重交易后的正常地址交易
+    df = df.drop_duplicates()
+    df = df.sort_values('timeStamp')
+    addr2stamp = {}  # 地址到交易时间戳的字典
+    addr2living = {}
+    for addr in addrlist:
+        addr2stamp[addr] = []
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:#统计每个地址的时间戳
+            addr2stamp[row['to']].append(row['timeStamp'])
+    for addr, time in addr2stamp.items():
+        if len(time) > 0:#直接用时间戳计算
+            start = time[0]
+            end = time[-1]
+            livingtime = end - start
+            addr2living[addr] = livingtime / 3 + start
+    with open('normal2athirdtimeInNtx1.txt','w') as f:
+        print(addr2living,file=f)
+def norAddrA3InNtxTime2():
+    with open('normalAddr.txt', 'r', encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv').iloc[5000000:10000000]  # 读取去重交易后的正常地址交易
+    df = df.drop_duplicates()
+    df = df.sort_values('timeStamp')
+    addr2stamp = {}  # 地址到交易时间戳的字典
+    addr2living = {}
+    for addr in addrlist:
+        addr2stamp[addr] = []
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:  # 统计每个地址的时间戳
+            addr2stamp[row['to']].append(row['timeStamp'])
+    for addr, time in addr2stamp.items():
+        if len(time) > 0:  # 直接用时间戳计算
+            start = time[0]
+            end = time[-1]
+            livingtime = end - start
+            addr2living[addr] = livingtime / 3 + start
+    with open('normal2athirdtimeInNtx2.txt', 'w') as f:
+        print(addr2living, file=f)
+def norAddrA3InNtxTime3():
+    with open('normalAddr.txt', 'r', encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv').iloc[10000000:]  # 读取去重交易后的正常地址交易
+    df = df.drop_duplicates()
+    df = df.sort_values('timeStamp')
+    addr2stamp = {}  # 地址到交易时间戳的字典
+    addr2living = {}
+    for addr in addrlist:
+        addr2stamp[addr] = []
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:  # 统计每个地址的时间戳
+            addr2stamp[row['to']].append(row['timeStamp'])
+    for addr, time in addr2stamp.items():
+        if len(time) > 0:  # 直接用时间戳计算
+            start = time[0]
+            end = time[-1]
+            livingtime = end - start
+            addr2living[addr] = livingtime / 3 + start
+    with open('normal2athirdtimeInNtx3.txt', 'w') as f:
+        print(addr2living, file=f)
+def norAddrA3OutNtxTime1():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv').iloc[0:5000000]  # 读取去重交易后的正常地址交易
+    df = df.drop_duplicates()
+    df = df.sort_values('timeStamp')
+    addr2stamp = {}  # 地址到交易时间戳的字典
+    addr2living = {}
+    for addr in addrlist:
+        addr2stamp[addr] = []
+    for index, row in df.iterrows():
+        if row['from'] != 'NaN' and row['from'] in addrlist:#统计每个地址的时间戳
+            addr2stamp[row['from']].append(row['timeStamp'])
+    for addr, time in addr2stamp.items():
+        if len(time) > 0:#直接用时间戳计算
+            start = time[0]
+            end = time[-1]
+            livingtime = end - start
+            addr2living[addr] = livingtime / 3 + start
+    with open('normal2athirdtimeOutNtx1.txt','w') as f:
+        print(addr2living,file=f)
+def norAddrA3OutNtxTime2():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv').iloc[5000000:10000000]  # 读取去重交易后的正常地址交易
+    df = df.drop_duplicates()
+    df = df.sort_values('timeStamp')
+    addr2stamp = {}  # 地址到交易时间戳的字典
+    addr2living = {}
+    for addr in addrlist:
+        addr2stamp[addr] = []
+    for index, row in df.iterrows():
+        if row['from'] != 'NaN' and row['from'] in addrlist:#统计每个地址的时间戳
+            addr2stamp[row['from']].append(row['timeStamp'])
+    for addr, time in addr2stamp.items():
+        if len(time) > 0:#直接用时间戳计算
+            start = time[0]
+            end = time[-1]
+            livingtime = end - start
+            addr2living[addr] = livingtime / 3 + start
+    with open('normal2athirdtimeOutNtx2.txt','w') as f:
+        print(addr2living,file=f)
+def norAddrA3OutNtxTime3():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv').iloc[10000000:]  # 读取去重交易后的正常地址交易
+    df = df.drop_duplicates()
+    df = df.sort_values('timeStamp')
+    addr2stamp = {}  # 地址到交易时间戳的字典
+    addr2living = {}
+    for addr in addrlist:
+        addr2stamp[addr] = []
+    for index, row in df.iterrows():
+        if row['from'] != 'NaN' and row['from'] in addrlist:#统计每个地址的时间戳
+            addr2stamp[row['from']].append(row['timeStamp'])
+    for addr, time in addr2stamp.items():
+        if len(time) > 0:#直接用时间戳计算
+            start = time[0]
+            end = time[-1]
+            livingtime = end - start
+            addr2living[addr] = livingtime / 3 + start
+    with open('normal2athirdtimeOutNtx3.txt','w') as f:
+        print(addr2living,file=f)
+def norAddrA3InItxTime1():
+    with open('normalAddr.txt', 'r', encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddritx2.csv')  # 读取去重交易后的正常地址交易
+    df = df.drop_duplicates()
+    df = df.sort_values('timeStamp')
+    addr2stamp = {}  # 地址到交易时间戳的字典
+    addr2living = {}
+    for addr in addrlist:
+        addr2stamp[addr] = []
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:  # 统计每个地址的时间戳
+            addr2stamp[row['to']].append(row['timeStamp'])
+    for addr, time in addr2stamp.items():
+        if len(time) > 0:  # 直接用时间戳计算
+            start = time[0]
+            end = time[-1]
+            livingtime = end - start
+            addr2living[addr] = livingtime / 3 + start
+    with open('normal2athirdtimeInItx.txt', 'w') as f:
+        print(addr2living, file=f)
+def norAddrA3OutItxTime1():
+    with open('normalAddr.txt', 'r', encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddritx2.csv')  # 读取去重交易后的正常地址交易
+    df = df.drop_duplicates()
+    df = df.sort_values('timeStamp')
+    addr2stamp = {}  # 地址到交易时间戳的字典
+    addr2living = {}
+    for addr in addrlist:
+        addr2stamp[addr] = []
+    for index, row in df.iterrows():
+        if row['from'] != 'NaN' and row['from'] in addrlist:  # 统计每个地址的时间戳
+            addr2stamp[row['from']].append(row['timeStamp'])
+    for addr, time in addr2stamp.items():
+        if len(time) > 0:  # 直接用时间戳计算
+            start = time[0]
+            end = time[-1]
+            livingtime = end - start
+            addr2living[addr] = livingtime / 3 + start
+    with open('normal2athirdtimeOutItx.txt', 'w') as f:
+        print(addr2living, file=f)
+def norAddrA3InItxTx1():
+    with open('normalAddr.txt', 'r', encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    with open('normal2athirdtimeInItx.txt', 'r') as f:
+        addr2end = literal_eval(f.read())
+    df = pandas.read_csv('normalAddretx2.csv')  # 读取去重交易后的正常地址交易
+    df = df.drop_duplicates()
+    df = df.sort_values('timeStamp')
+    addr2athirdtxnum = {}
+    addr2tx = {}
+    for addr in addrlist:  # 初始化用于统计的字典
+        addr2athirdtxnum[addr] = 0
+        addr2tx[addr] = []
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            end = addr2end[row['to']]  # 每一行地址的结束时间戳，有的欺诈地址可能只是from地址而不是to地址
+            if row['timeStamp'] < end:
+                addr2tx[row['to']].append(row['hash'])  # 每一个地址的满足对应条件的交易hash值列表
+                addr2athirdtxnum[row['to']] += 1
+    with open('normal2athirdInItxnum.txt', 'w') as f:
+        print(addr2athirdtxnum, file=f)
+def norAddrA3OutItxTx1():
+    with open('normalAddr.txt', 'r', encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddritx2.csv')  # 读取去重交易后的正常地址交易
+    df = df.drop_duplicates()
+    df = df.sort_values('timeStamp')
+    addr2stamp = {}  # 地址到交易时间戳的字典
+    addr2living = {}
+    for addr in addrlist:
+        addr2stamp[addr] = []
+    for index, row in df.iterrows():
+        if row['from'] != 'NaN' and row['from'] in addrlist:  # 统计每个地址的时间戳
+            addr2stamp[row['from']].append(row['timeStamp'])
+    for addr, time in addr2stamp.items():
+        if len(time) > 0:  # 直接用时间戳计算
+            start = time[0]
+            end = time[-1]
+            livingtime = end - start
+            addr2living[addr] = livingtime / 3 + start
+    with open('normal2athirdOutItxnum.txt', 'w') as f:
+        print(addr2living, file=f)
+def norAddrA3InEtxTime1():
+    with open('normalAddr.txt', 'r', encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddretx2.csv')  # 读取去重交易后的正常地址交易
+    df = df.drop_duplicates()
+    df = df.sort_values('timeStamp')
+    addr2stamp = {}  # 地址到交易时间戳的字典
+    addr2living = {}
+    for addr in addrlist:
+        addr2stamp[addr] = []
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:  # 统计每个地址的时间戳
+            addr2stamp[row['to']].append(row['timeStamp'])
+    for addr, time in addr2stamp.items():
+        if len(time) > 0:  # 直接用时间戳计算
+            start = time[0]
+            end = time[-1]
+            livingtime = end - start
+            addr2living[addr] = livingtime / 3 + start
+    with open('normal2athirdtimeInEtx.txt', 'w') as f:
+        print(addr2living, file=f)
+def norAddrA3OutEtxTime1():
+    with open('normalAddr.txt', 'r', encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df = pandas.read_csv('normalAddretx2.csv')  # 读取去重交易后的正常地址交易
+    df = df.drop_duplicates()
+    df = df.sort_values('timeStamp')
+    addr2stamp = {}  # 地址到交易时间戳的字典
+    addr2living = {}
+    for addr in addrlist:
+        addr2stamp[addr] = []
+    for index, row in df.iterrows():
+        if row['from'] != 'NaN' and row['from'] in addrlist:  # 统计每个地址的时间戳
+            addr2stamp[row['from']].append(row['timeStamp'])
+    for addr, time in addr2stamp.items():
+        if len(time) > 0:  # 直接用时间戳计算
+            start = time[0]
+            end = time[-1]
+            livingtime = end - start
+            addr2living[addr] = livingtime / 3 + start
+    with open('normal2athirdtimeOutEtx.txt', 'w') as f:
+        print(addr2living, file=f)
+def norAddrA3InEtxTx1():
+    with open('normalAddr.txt', 'r', encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    with open('normal2athirdtimeInEtx.txt', 'r') as f:
+        addr2end = literal_eval(f.read())
+    df = pandas.read_csv('normalAddretx2.csv')  # 读取去重交易后的正常地址交易
+    df = df.drop_duplicates()
+    df = df.sort_values('timeStamp')
+    addr2athirdtxnum = {}
+    addr2tx = {}
+    for addr in addrlist:  # 初始化用于统计的字典
+        addr2athirdtxnum[addr] = 0
+        addr2tx[addr] = []
+    for index, row in df.iterrows():
+        if row['to'] != 'NaN' and row['to'] in addrlist:
+            end = addr2end[row['to']]# 每一行地址的结束时间戳，有的欺诈地址可能只是from地址而不是to地址
+            if row['timeStamp'] < end:
+                addr2tx[row['to']].append(row['hash'])#每一个地址的满足对应条件的交易hash值列表
+                addr2athirdtxnum[row['to']] += 1
+    with open('normal2athirdInEtxnum.txt','w') as f:
+        print(addr2athirdtxnum,file=f)
+def norAddrA3OutEtxTx1():
+    with open('normalAddr.txt', 'r', encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    with open('normal2athirdtimeOutEtx.txt', 'r') as f:
+        addr2end = literal_eval(f.read())
+    df = pandas.read_csv('normalAddretx2.csv')  # 读取去重交易后的正常地址交易
+    df = df.drop_duplicates()
+    df = df.sort_values('timeStamp')
+    addr2athirdtxnum = {}
+    addr2tx = {}
+    for addr in addrlist:  # 初始化用于统计的字典
+        addr2athirdtxnum[addr] = 0
+        addr2tx[addr] = []
+    for index, row in df.iterrows():
+        if row['from'] != 'NaN' and row['from'] in addrlist:
+            end = addr2end[row['to']]# 每一行地址的结束时间戳，有的欺诈地址可能只是from地址而不是to地址
+            if row['timeStamp'] < end:
+                addr2tx[row['from']].append(row['hash'])#每一个地址的满足对应条件的交易hash值列表
+                addr2athirdtxnum[row['from']] += 1
+    with open('normal2athirdOutEtxnum.txt','w') as f:
+        print(addr2athirdtxnum,file=f)
 def test():
     # with open('ntx1.csv','r') as f:
     #     print(len(f.readlines()))
@@ -3993,4 +4285,4 @@ if __name__ == '__main__':
     # normalLive1()
     # inteAvgInNtx()
     # ItxAddrIncome()
-    scamAthirdtimeOuttx()
+    norAddrA3InEtxTime1()
