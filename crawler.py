@@ -4748,22 +4748,22 @@ def scamAvgIncomeOutcome():
     addr2avgincome = {}
     addr2avgoutcome = {}
     for addr in addrlist:
+        addr2avgincome[addr] = 0
+        addr2avgoutcome[addr] = 0
+    for addr in addrlist:
         if addr in addr2Intxnum.keys() and addr in addr2income.keys():
-            if addr2Intxnum[addr] == 0:
-                addr2avgincome[addr] = 0
-            else:
+            if addr2Intxnum[addr] != 0:
                 addr2avgincome[addr] = addr2income[addr] / addr2Intxnum[addr]
     for addr in addrlist:
         if addr in addr2OutTxnum.keys() and addr in addr2outcome.keys():
-            if addr2OutTxnum[addr] == 0:
-                addr2avgincome[addr] = 0
-            else:
-                addr2avgincome[addr] = addr2outcome[addr] / addr2OutTxnum[addr]
-
-    # with open('scamAvgIncome.txt','w') as f:
-    #     print(addr2avgincome,file=f)
-    # with open('scamAvgOutcome.txt','w') as f:
-    #     print(addr2avgoutcome,file=f)
+            if addr2OutTxnum[addr] != 0:
+                addr2avgoutcome[addr] = addr2outcome[addr] / addr2OutTxnum[addr]
+    print(addr2avgincome)
+    print(addr2avgoutcome)
+    with open('scamAvgIncome.txt','w') as f:
+        print(addr2avgincome,file=f)
+    with open('scamAvgOutcome.txt','w') as f:
+        print(addr2avgoutcome,file=f)
 
 def norItxAvgIOcome():
     with open('normalAddr.txt','r',encoding='utf-8') as f:
@@ -5170,7 +5170,7 @@ def mixnormalAvgIOcome():
         if addr2InTxnum[addr] != 0:
             addr2avgincome[addr] = addr2income[addr] / addr2InTxnum[addr]
         if addr2OutTxnum[addr] != 0:
-            addr2outcome[addr] = addr2outcome[addr] / addr2OutTxnum[addr]
+            addr2avgoutcome[addr] = addr2outcome[addr] / addr2OutTxnum[addr]
     print(addr2avgincome)
     print(addr2avgoutcome)
     with open('normalAvgIncome.txt','w') as f:
@@ -5180,26 +5180,71 @@ def mixnormalAvgIOcome():
 
     #如何计算每个地址的平均income和outcome，取加权平均值
 
-    pass
+
 def mixAvg():
     with open('scamAvgIncome.txt','r') as f:
         addr2avgincome1 = literal_eval(f.read())
     with open('scamAvgOutcome.txt','r') as f:
         addr2avgoutcome1 = literal_eval(f.read())
-    with open('normalNtxAvgIncome.txt','r') as f:
+    with open('normalAvgIncome.txt','r') as f:
         addr2avgincome2 = literal_eval(f.read())
-    with open('normalNtxAvgOutcome.txt','r') as f:
+    with open('normalAvgOutcome.txt','r') as f:
         addr2avgoutcome2 = literal_eval(f.read())
-    with open('normalItxAvgIncome.txt','r') as f:
-        addr2avgincome3 = literal_eval(f.read())
-    with open('normalItxAvgOutcome.txt','r') as f:
-        addr2avgoutcome3 = literal_eval(f.read())
-    # zipped1 = zip(txnum2addrnum1.keys(), txnum2addrnum1.values())
-    # sort_zipped1 = sorted(zipped1, key=lambda x: (x[0]))
-    # result1 = zip(*sort_zipped1)
-    # x1, y1 = [list(x) for x in result1]
-    # cum = numpy.cumsum(y1)
-    # percentage1 = cum / list(cum)[-1]
+    income2addrnum1 = {}
+    income2addrnum2 = {}
+    outcome2addrnum1 = {}
+    outcome2addrnum2 = {}
+    for addr,avgincome in addr2avgincome1.items():
+        income2addrnum1[avgincome] = income2addrnum1.get(avgincome,0) + 1
+    for addr,avgincome in addr2avgincome2.items():
+        income2addrnum2[avgincome] = income2addrnum2.get(avgincome,0) + 1
+    for addr,avgoutcome in addr2avgoutcome1.items():
+        outcome2addrnum1[avgoutcome] = outcome2addrnum1.get(avgoutcome,0) + 1
+    for addr,avgoutcome in addr2avgoutcome2.items():
+        outcome2addrnum2[avgoutcome] = outcome2addrnum2.get(avgoutcome,0) + 1
+
+    fig, ax = plt.subplots()
+
+    zipped1 = zip(income2addrnum1.keys(), income2addrnum1.values())
+    sort_zipped1 = sorted(zipped1, key=lambda x: (x[0]))
+    result1 = zip(*sort_zipped1)
+    x1, y1 = [list(x) for x in result1]
+    print(x1)
+    print(y1)
+    cum = numpy.cumsum(y1)
+    percentage1 = cum / list(cum)[-1]
+
+    zipped2 = zip(outcome2addrnum1.keys(), outcome2addrnum1.values())
+    sort_zipped2 = sorted(zipped2, key=lambda x: (x[0]))
+    result2 = zip(*sort_zipped2)
+    x2, y2 = [list(x) for x in result2]
+    cum2 = numpy.cumsum(y2)
+    percentage2 = cum2 / list(cum2)[-1]
+
+    zipped3 = zip(income2addrnum2.keys(), income2addrnum2.values())
+    sort_zipped3 = sorted(zipped3, key=lambda x: (x[0]))
+    result3 = zip(*sort_zipped3)
+    x3, y3 = [list(x) for x in result3]
+    cum3 = numpy.cumsum(y3)
+    percentage3 = cum3 / list(cum3)[-1]
+
+    zipped4 = zip(outcome2addrnum2.keys(), outcome2addrnum2.values())
+    sort_zipped4 = sorted(zipped4, key=lambda x: (x[0]))
+    result4 = zip(*sort_zipped4)
+    x4, y4 = [list(x) for x in result4]
+    cum4 = numpy.cumsum(y4)
+    percentage4 = cum4 / list(cum4)[-1]
+
+    line1 = ax.plot(x1, percentage1, label='Avg Income Of scam addresses', color='black')
+    line2 = ax.plot(x2, percentage2, label='Avg Outcome Of scam addresses', linestyle="--", color='black')
+    line3 = ax.plot(x3, percentage3, label='Avg Income Of normal addresses', color='red')
+    line4 = ax.plot(x4, percentage4, label='Avg Outcome Of normal addresses', linestyle="--", color='gray')
+    ax.set_xlabel('Average Income/Outcome of Addresses (ETH)')
+    ax.set_ylabel('CDF of Addresses')
+    plt.xscale('log')
+    ax([0,100000])
+    plt.legend()
+    plt.show()
 def mixfig6():
     with open('scamNtxliving.txt','r') as f:
         addr2living1 = literal_eval(f.read())
@@ -5723,4 +5768,7 @@ if __name__ == '__main__':
     # mixfig9Itx()
     # mixfig9Etx()
     # mixnormalNtxAvgIOcome()
-    mixnormalAvgIOcome()
+    # mixnormalAvgIOcome()
+    mixAvg()
+    # scamAvgIncomeOutcome()
+    # mixnormalAvgIOcome()
