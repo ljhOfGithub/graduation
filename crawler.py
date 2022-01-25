@@ -4494,8 +4494,8 @@ def mixLive():
     ax.xaxis.set_major_locator(x_major_locator)
     plt.title('living time of addresses(Days)')
     plt.legend()
-    plt.show()
     plt.savefig('livingtime.jpg')
+    plt.show()
 def txdedupN():
     df = pandas.read_csv('normalAddrntx.csv')
     df['hash'] = df['hash'].str.lower()
@@ -5209,8 +5209,6 @@ def mixAvg():
     sort_zipped1 = sorted(zipped1, key=lambda x: (x[0]))
     result1 = zip(*sort_zipped1)
     x1, y1 = [list(x) for x in result1]
-    print(x1)
-    print(y1)
     cum = numpy.cumsum(y1)
     percentage1 = cum / list(cum)[-1]
 
@@ -5242,8 +5240,9 @@ def mixAvg():
     ax.set_xlabel('Average Income/Outcome of Addresses (ETH)')
     ax.set_ylabel('CDF of Addresses')
     plt.xscale('log')
-    ax([0,100000])
+    ax.set_xlim(1)
     plt.legend()
+    plt.savefig('avgIOcome.jpg')
     plt.show()
 def mixfig6():
     with open('scamNtxliving.txt','r') as f:
@@ -5317,8 +5316,9 @@ def mixfig6():
     plt.yscale('log')
     plt.title('living time of scam address')
     plt.legend()
-    plt.show()
     plt.savefig('fig6.jpg')
+    plt.show()
+
 def mixfig7():
     with open('scamNtxProfit.txt','r') as f:
         addr2prof1 = literal_eval(f.read())
@@ -5382,8 +5382,9 @@ def mixfig7():
     plt.yscale('log')
     plt.legend()
     plt.title('scam address profit')
-    plt.show()
     plt.savefig('fig7.jpg')
+    plt.show()
+
 def mixfig9Ntx():
     with open('scamAddrNFig9Intx.txt','r',encoding='utf-8') as f:
         txnum2addrnum1 = literal_eval(f.read())
@@ -5425,11 +5426,12 @@ def mixfig9Ntx():
     cum = numpy.cumsum(y4)
     percentage4 = cum / list(cum)[-1]
     line4 = ax.plot(x4,percentage4,label='out txs of normal txs of normal address', linestyle="--", color='lavender')
-
+    ax.set_xlim(1)
     plt.xscale('log')
     plt.legend()
-    plt.show()
     plt.savefig('Ntxfig9.jpg')
+    plt.show()
+
 def mixfig9Itx():
     with open('scamAddrIFig9Intx.txt','r',encoding='utf-8') as f:
         txnum2addrnum1 = literal_eval(f.read())
@@ -5471,11 +5473,12 @@ def mixfig9Itx():
     cum = numpy.cumsum(y4)
     percentage4 = cum / list(cum)[-1]
     line4 = ax.plot(x4, percentage4, label='out txs of internal txs of normal address', linestyle="--", color='lavender')
-
+    ax.set_xlim(1)
     plt.xscale('log')
     plt.legend()
-    plt.show()
     plt.savefig('Itxfig9.jpg')
+    plt.show()
+
 def mixfig9Etx():
     with open('scamAddrEFig9Intx.txt','r',encoding='utf-8') as f:
         txnum2addrnum1 = literal_eval(f.read())
@@ -5518,13 +5521,14 @@ def mixfig9Etx():
     line2 = ax.plot(x2,percentage2,label='in txs of token txs of normal address', linestyle="--", color='black')
     line3 = ax.plot(x3,percentage3,label='out txs of token txs of scam address', linestyle="--", color='gray')
     line4 = ax.plot(x4,percentage4,label='out txs of token txs of normal address', linestyle="--", color='gray')
-
+    ax.set_xlim(1)
     # ax.set_xlabel('Average Income/Outcome of Addresses (ETH)')
     # ax.set_ylabel('CDF of Addresses')
     plt.xscale('log')
     plt.legend()
-    plt.show()
     plt.savefig('Etxfig9.jpg')
+    plt.show()
+
 def MFG():
     pass
 def CCG():
