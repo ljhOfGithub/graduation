@@ -4494,6 +4494,7 @@ def mixLive():
     ax.xaxis.set_major_locator(x_major_locator)
     plt.title('living time of addresses(Days)')
     plt.legend()
+    ax.set_xlim(1)
     plt.savefig('livingtime.jpg')
     plt.show()
 def txdedupN():
@@ -5316,6 +5317,7 @@ def mixfig6():
     plt.yscale('log')
     plt.title('living time of scam address')
     plt.legend()
+    ax.set_xlim(1)
     plt.savefig('fig6.jpg')
     plt.show()
 
@@ -5382,6 +5384,7 @@ def mixfig7():
     plt.yscale('log')
     plt.legend()
     plt.title('scam address profit')
+    ax.set_xlim(1)
     plt.savefig('fig7.jpg')
     plt.show()
 
