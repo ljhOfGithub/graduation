@@ -1748,9 +1748,10 @@ def norAddrNFig9Intxs5():#统计normalAddrntx.csv里面的In Txs of normal Addre
     #         except Exception:
     #             print(row['to'])
     #     print(index)
-    # txnum2addrnum = {}
+
     with open('nor2numNIntx5.txt', 'r', encoding='utf-8') as f:
         addr2num = literal_eval(f.read())
+    txnum2addrnum = {}
     for addr,num in addr2num.items():
         txnum2addrnum[num] = txnum2addrnum.get(num,0) + 1
     with open('norAddrNFig9Intxs5.txt','w',encoding='utf-8') as f:
@@ -1759,21 +1760,56 @@ def norAddrNFig9Intxs5():#统计normalAddrntx.csv里面的In Txs of normal Addre
     with open('nor2numNIntx5.txt','w',encoding='utf-8') as f:
         print(addr2num,file=f)
     return
-#internal tx不需要分段分析交易，正常地址的内部交易的输入交易数量
-def norAddrIFig9Intxs():#统计normalAddritx.csv里面的In Txs of normal Addresses（内部交易）
-    with open('normalAddr.txt','r',encoding='utf-8') as f:
-        addrlist = literal_eval(f.read())
-    df = pandas.read_csv('normalAddritx2.csv')
-    addr2num = {}
-    for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
-            try:
-                if isinstance(row['to'], str):
-                    addr2num[row['to']] = addr2num.get(row['to'],0) + 1
-            except Exception:
-                print(row['to'])
-        print(index)
+#统计txnum2addrnum
+def mixnorAddrNFig9Intxs():
+    with open('norAddrNFig9Intxs1.txt', 'r', encoding='utf-8') as f:
+        txnum2addrnum1 = literal_eval(f.read())
+    with open('norAddrNFig9Intxs2.txt', 'r', encoding='utf-8') as f:
+        txnum2addrnum2 = literal_eval(f.read())
+    with open('norAddrNFig9Intxs3.txt', 'r', encoding='utf-8') as f:
+        txnum2addrnum3 = literal_eval(f.read())
+    with open('norAddrNFig9Intxs4.txt', 'r', encoding='utf-8') as f:
+        txnum2addrnum4 = literal_eval(f.read())
+    with open('norAddrNFig9Intxs5.txt', 'r', encoding='utf-8') as f:
+        txnum2addrnum5 = literal_eval(f.read())
     txnum2addrnum = {}
+    txnumlist = list(txnum2addrnum1.keys()) + list(txnum2addrnum2.keys()) + list(txnum2addrnum3.keys()) + list(txnum2addrnum4.keys()) + list(txnum2addrnum5.keys())
+    for txnum in txnumlist:
+        if txnum in txnum2addrnum1.keys():
+            txnum2addrnum[txnum] = txnum2addrnum.get(txnum,0) + txnum2addrnum1[txnum]
+        if txnum in txnum2addrnum2.keys():
+            txnum2addrnum[txnum] = txnum2addrnum.get(txnum,0) + txnum2addrnum2[txnum]
+        if txnum in txnum2addrnum3.keys():
+            txnum2addrnum[txnum] = txnum2addrnum.get(txnum,0) + txnum2addrnum3[txnum]
+        if txnum in txnum2addrnum4.keys():
+            txnum2addrnum[txnum] = txnum2addrnum.get(txnum,0) + txnum2addrnum4[txnum]
+        if txnum in txnum2addrnum5.keys():
+            txnum2addrnum[txnum] = txnum2addrnum.get(txnum,0) + txnum2addrnum5[txnum]
+    with open('norAddrNFig9Intxs.txt','w',encoding='utf-8') as f:
+        print(txnum2addrnum,file=f)
+#internal tx不需要分段分析交易，正常地址的内部交易的输入交易数量
+
+def norAddrIFig9Intxs():#统计normalAddritx.csv里面的In Txs of normal Addresses（内部交易）
+    # with open('normalAddr.txt','r',encoding='utf-8') as f:
+    #     addrlist = literal_eval(f.read())
+    # df = pandas.read_csv('normalAddritx2.csv')
+    # addr2num = {}
+    # for index, row in df.iterrows():
+    #     if row['to'] != 'NaN' and row['to'] in addrlist:
+    #         try:
+    #             if isinstance(row['to'], str):
+    #                 addr2num[row['to']] = addr2num.get(row['to'],0) + 1
+    #         except Exception:
+    #             print(row['to'])
+    #     print(index)
+    txnum2addrnum = {}
+    with open('nor2numIIntx1.txt', 'r', encoding='utf-8') as f:
+        addr2num = literal_eval(f.read())
+    for addr,num in addr2num.items():
+        txnum2addrnum[num] = txnum2addrnum.get(num,0) + 1
+    with open('norAddrIFig9Intxs.txt','w',encoding='utf-8') as f:
+        print(txnum2addrnum,file=f)
+    return
     with open('nor2numIIntx1.txt','w',encoding='utf-8') as f:
         print(addr2num,file=f)
     return
@@ -1793,19 +1829,27 @@ def norAddrIFig9Intxs():#统计normalAddritx.csv里面的In Txs of normal Addres
     plt.show()
 #token tx不需要分段
 def norAddrEFig9Intxs():#正常地址的token交易的输入交易数量
-    with open('normalAddr.txt','r',encoding='utf-8') as f:
-        addrlist = literal_eval(f.read())
-    df = pandas.read_csv('normalAddretx2.csv')
-    #欺诈地址作为接收方的欺诈交易数量
-    addr2num = {}
-    for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
-            try:
-                if isinstance(row['to'], str):
-                    addr2num[row['to']] = addr2num.get(row['to'],0) + 1
-            except Exception:
-                print(row['to'])
-        print(index)
+    # with open('normalAddr.txt','r',encoding='utf-8') as f:
+    #     addrlist = literal_eval(f.read())
+    # df = pandas.read_csv('normalAddretx2.csv')
+    # #欺诈地址作为接收方的欺诈交易数量
+    # addr2num = {}
+    # for index, row in df.iterrows():
+    #     if row['to'] != 'NaN' and row['to'] in addrlist:
+    #         try:
+    #             if isinstance(row['to'], str):
+    #                 addr2num[row['to']] = addr2num.get(row['to'],0) + 1
+    #         except Exception:
+    #             print(row['to'])
+    #     print(index)
+    txnum2addrnum = {}
+    with open('nor2numEIntx1.txt', 'r', encoding='utf-8') as f:
+        addr2num = literal_eval(f.read())
+    for addr,num in addr2num.items():
+        txnum2addrnum[num] = txnum2addrnum.get(num,0) + 1
+    with open('norAddrEFig9Intxs.txt','w',encoding='utf-8') as f:
+        print(txnum2addrnum,file=f)
+    return
     with open('nor2numEIntx1.txt','w',encoding='utf-8') as f:
         print(addr2num,file=f)
     return
@@ -4892,7 +4936,7 @@ def mixfig7():
 def mixfig9NtxIntx():
     with open('scamAddrNFig9Intx.txt','r',encoding='utf-8') as f:
         txnum2addrnum1 = literal_eval(f.read())
-    with open('nor2numNIntx2.txt','r',encoding='utf-8') as f:
+    with open('norAddrNFig9Intxs.txt','r',encoding='utf-8') as f:
         txnum2addrnum2 = literal_eval(f.read())
     zipped1 = zip(txnum2addrnum1.keys(), txnum2addrnum1.values())
     sort_zipped1 = sorted(zipped1, key=lambda x: (x[0]))
@@ -4901,15 +4945,14 @@ def mixfig9NtxIntx():
     fig, ax = plt.subplots()
     cum = numpy.cumsum(y1)
     percentage = cum / list(cum)[-1]
-    line = ax.plot(x1,percentage,label='in txs of normal txs of scam address')
-
+    line = ax.plot(x1,percentage,label='in txs of normal txs of scam address', color='black')
     zipped2 = zip(txnum2addrnum2.keys(), txnum2addrnum2.values())
     sort_zipped2 = sorted(zipped2, key=lambda x: (x[0]))
     result2 = zip(*sort_zipped2)
     x2, y2 = [list(x) for x in result2]
     cum = numpy.cumsum(y2)
     percentage2 = cum / list(cum)[-1]
-    line = ax.plot(x2,percentage2,label='in txs of normal txs of normal address')
+    line = ax.plot(x2,percentage2,label='in txs of normal txs of normal address', linestyle="--", color='black')
     plt.xscale('log')
     plt.legend()
     plt.show()
@@ -4917,7 +4960,7 @@ def mixfig9NtxIntx():
 def mixfig9ItxIntx():
     with open('scamAddrIFig9Intx.txt','r',encoding='utf-8') as f:
         txnum2addrnum1 = literal_eval(f.read())
-    with open('nor2numIIntx2.txt','r',encoding='utf-8') as f:
+    with open('norAddrIFig9Intxs.txt','r',encoding='utf-8') as f:
         txnum2addrnum2 = literal_eval(f.read())
     zipped1 = zip(txnum2addrnum1.keys(), txnum2addrnum1.values())
     sort_zipped1 = sorted(zipped1, key=lambda x: (x[0]))
@@ -4926,15 +4969,16 @@ def mixfig9ItxIntx():
     fig, ax = plt.subplots()
     cum = numpy.cumsum(y1)
     percentage = cum / list(cum)[-1]
-    line = ax.plot(x1,percentage)
+    line = ax.plot(x1,percentage,label='in txs of internal txs of scam address', color='black')
     zipped2 = zip(txnum2addrnum2.keys(), txnum2addrnum2.values())
     sort_zipped2 = sorted(zipped2, key=lambda x: (x[0]))
     result2 = zip(*sort_zipped2)
     x2, y2 = [list(x) for x in result2]
     cum = numpy.cumsum(y2)
     percentage = cum / list(cum)[-1]
-    line = ax.plot(x2,percentage)
+    line = ax.plot(x2,percentage,label='in txs of internal txs of normal address', linestyle="--", color='black')
     plt.xscale('log')
+    plt.legend()
     plt.show()
     plt.savefig('Itxfig9.jpg')
 def mixfig9EtxIntx():
@@ -4946,7 +4990,7 @@ def mixfig9EtxIntx():
     x1, y1 = [list(x) for x in result1]
     cum = numpy.cumsum(y1)
     percentage1 = cum / list(cum)[-1]
-    with open('nor2numEIntx2.txt','r',encoding='utf-8') as f:
+    with open('norAddrEFig9Intxs.txt','r',encoding='utf-8') as f:
         txnum2addrnum2 = literal_eval(f.read())
     zipped2 = zip(txnum2addrnum2.keys(), txnum2addrnum2.values())
     sort_zipped2 = sorted(zipped2, key=lambda x: (x[0]))
@@ -4955,11 +4999,12 @@ def mixfig9EtxIntx():
     fig, ax = plt.subplots()
     cum = numpy.cumsum(y2)
     percentage2 = cum / list(cum)[-1]
-    line1 = ax.plot(x1,percentage1)
-    line2 = ax.plot(x2,percentage2)
-    ax.set_xlabel('Average Income/Outcome of Addresses (ETH)')
-    ax.set_ylabel('CDF of Addresses')
+    line1 = ax.plot(x1,percentage1,label='in txs of token txs of scam address', color='black')
+    line2 = ax.plot(x2,percentage2,label='in txs of token txs of normal address', linestyle="--", color='black')
+    # ax.set_xlabel('Average Income/Outcome of Addresses (ETH)')
+    # ax.set_ylabel('CDF of Addresses')
     plt.xscale('log')
+    plt.legend()
     plt.show()
     plt.savefig('Etxfig9.jpg')
 def MFG():
@@ -5191,4 +5236,9 @@ if __name__ == '__main__':
 #nor2numEIntx1.txt
     # mixfig7()
     # mixfig9NtxIntx()
-    norAddrNFig9Intxs3()
+    # mixnorAddrNFig9Intxs()
+    # norAddrNFig9Intxs5()
+    # norAddrEFig9Intxs()
+    mixfig9NtxIntx()
+    mixfig9ItxIntx()
+    mixfig9EtxIntx()
