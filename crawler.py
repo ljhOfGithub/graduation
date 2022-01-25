@@ -4248,15 +4248,220 @@ def filterAddr2():
         addr2tx.pop(addr)
     with open('filterAddr.txt','w',encoding='utf-8') as f:
         print(list(addr2tx.keys()),file=f)
+def scamAvgIncomeOutcome():
+    with open('addr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    with open('scamIncome.txt','r',encoding='utf-8') as f:
+        addr2income = literal_eval(f.read())
+    with open('scamOutcome.txt','r',encoding='utf-8') as f:
+        addr2outcome = literal_eval(f.read())
+    with open('scamInTx.txt','r') as f:
+        addr2Intxnum = literal_eval(f.read())
+    with open('scamOutTx.txt','r',encoding='utf-8') as f:
+        addr2OutTxnum = literal_eval(f.read())
+    addr2avgincome = {}
+    addr2avgoutcome = {}
+    for addr in addrlist:
+        if addr in addr2Intxnum.keys() and addr in addr2income.keys():
+            if addr2Intxnum[addr] == 0:
+                addr2avgincome[addr] = 0
+            else:
+                addr2avgincome[addr] = addr2income[addr] / addr2Intxnum[addr]
+    for addr in addrlist:
+        if addr in addr2OutTxnum.keys() and addr in addr2outcome.keys():
+            if addr2OutTxnum[addr] == 0:
+                addr2avgincome[addr] = 0
+            else:
+                addr2avgincome[addr] = addr2outcome[addr] / addr2OutTxnum[addr]
+    with open('scamAvgIncome.txt','w') as f:
+        print(addr2avgincome,file=f)
+    with open('scamAvgOutcome.txt','w') as f:
+        print(addr2avgoutcome,file=f)
+def norItxAvgIOcome():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    with open('normalIncomeItx1.txt','r',encoding='utf-8') as f:
+        addr2income = literal_eval(f.read())
+    with open('normalOutcomeItx1.txt','r',encoding='utf-8') as f:
+        addr2outcome = literal_eval(f.read())
+    with open('nor2numIIntx1.txt','r') as f:
+        addr2Intxnum = literal_eval(f.read())
+    with open('nor2numIIntx1.txt','r') as f:
+        addr2Intxnum = literal_eval(f.read())
+    with open('nor2numIOuttx.txt','r',encoding='utf-8') as f:
+        addr2OutTxnum = literal_eval(f.read())
+    addr2avgincome = {}
+    addr2avgoutcome = {}
+    for addr in addrlist:
+        if addr in addr2Intxnum.keys() and addr in addr2income.keys():
+            if addr2Intxnum[addr] == 0:
+                addr2avgincome[addr] = 0
+            else:
+                addr2avgincome[addr] = addr2income[addr] / addr2Intxnum[addr]
+    for addr in addrlist:
+        if addr in addr2OutTxnum.keys() and addr in addr2outcome.keys():
+            if addr2OutTxnum[addr] == 0:
+                addr2avgincome[addr] = 0
+            else:
+                addr2avgincome[addr] = addr2outcome[addr] / addr2OutTxnum[addr]
+    with open('normalItxAvgIncome.txt', 'w') as f:
+        print(addr2avgincome, file=f)
+    with open('normalItxAvgOutcome.txt', 'w') as f:
+        print(addr2avgoutcome, file=f)
+def norNtxAvgIOcome1():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    with open('normalIncomeNtx1.txt','r',encoding='utf-8') as f:
+        addr2income = literal_eval(f.read())
+    with open('normalOutcomeNtx1.txt','r',encoding='utf-8') as f:
+        addr2outcome = literal_eval(f.read())
+    with open('nor2numNIntx1.txt','r') as f:
+        addr2Intxnum = literal_eval(f.read())
+    with open('nor2numNOuttx1.txt','r',encoding='utf-8') as f:
+        addr2OutTxnum = literal_eval(f.read())
+    addr2avgincome = {}
+    addr2avgoutcome = {}
+    for addr in addrlist:
+        if addr in addr2Intxnum.keys() and addr in addr2income.keys():
+            if addr2Intxnum[addr] == 0:
+                addr2avgincome[addr] = 0
+            else:
+                addr2avgincome[addr] = addr2income[addr] / addr2Intxnum[addr]
+    for addr in addrlist:
+        if addr in addr2OutTxnum.keys() and addr in addr2outcome.keys():
+            if addr2OutTxnum[addr] == 0:
+                addr2avgincome[addr] = 0
+            else:
+                addr2avgincome[addr] = addr2outcome[addr] / addr2OutTxnum[addr]
+    with open('normalNtxAvgIncome1.txt', 'w') as f:
+        print(addr2avgincome, file=f)
+    with open('normalNtxAvgOutcome1.txt', 'w') as f:
+        print(addr2avgoutcome, file=f)
+def norNtxAvgIOcome2():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    with open('normalIncomeNtx2.txt','r',encoding='utf-8') as f:
+        addr2income = literal_eval(f.read())
+    with open('normalOutcomeNtx2.txt','r',encoding='utf-8') as f:
+        addr2outcome = literal_eval(f.read())
+    with open('nor2numNIntx2.txt','r') as f:
+        addr2Intxnum = literal_eval(f.read())
+    with open('nor2numNOuttx2.txt','r',encoding='utf-8') as f:
+        addr2OutTxnum = literal_eval(f.read())
+    addr2avgincome = {}
+    addr2avgoutcome = {}
+    for addr in addrlist:
+        if addr in addr2Intxnum.keys() and addr in addr2income.keys():
+            if addr2Intxnum[addr] == 0:
+                addr2avgincome[addr] = 0
+            else:
+                addr2avgincome[addr] = addr2income[addr] / addr2Intxnum[addr]
+    for addr in addrlist:
+        if addr in addr2OutTxnum.keys() and addr in addr2outcome.keys():
+            if addr2OutTxnum[addr] == 0:
+                addr2avgincome[addr] = 0
+            else:
+                addr2avgincome[addr] = addr2outcome[addr] / addr2OutTxnum[addr]
+    with open('normalNtxAvgIncome2.txt', 'w') as f:
+        print(addr2avgincome, file=f)
+    with open('normalNtxAvgOutcome2.txt', 'w') as f:
+        print(addr2avgoutcome, file=f)
+def norNtxAvgIOcome3():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    with open('normalIncomeNtx3.txt','r',encoding='utf-8') as f:
+        addr2income = literal_eval(f.read())
+    with open('normalOutcomeNtx3.txt','r',encoding='utf-8') as f:
+        addr2outcome = literal_eval(f.read())
+    with open('nor2numNIntx3.txt','r') as f:
+        addr2Intxnum = literal_eval(f.read())
+    with open('nor2numNOuttx3.txt','r',encoding='utf-8') as f:
+        addr2OutTxnum = literal_eval(f.read())
+    addr2avgincome = {}
+    addr2avgoutcome = {}
+    for addr in addrlist:
+        if addr in addr2Intxnum.keys() and addr in addr2income.keys():
+            if addr2Intxnum[addr] == 0:
+                addr2avgincome[addr] = 0
+            else:
+                addr2avgincome[addr] = addr2income[addr] / addr2Intxnum[addr]
+    for addr in addrlist:
+        if addr in addr2OutTxnum.keys() and addr in addr2outcome.keys():
+            if addr2OutTxnum[addr] == 0:
+                addr2avgincome[addr] = 0
+            else:
+                addr2avgincome[addr] = addr2outcome[addr] / addr2OutTxnum[addr]
+    with open('normalNtxAvgIncome3.txt', 'w') as f:
+        print(addr2avgincome, file=f)
+    with open('normalNtxAvgOutcome3.txt', 'w') as f:
+        print(addr2avgoutcome, file=f)
+def norNtxAvgIOcome4():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    with open('normalIncomeNtx4.txt','r',encoding='utf-8') as f:
+        addr2income = literal_eval(f.read())
+    with open('normalOutcomeNtx4.txt','r',encoding='utf-8') as f:
+        addr2outcome = literal_eval(f.read())
+    with open('nor2numNIntx4.txt','r') as f:
+        addr2Intxnum = literal_eval(f.read())
+    with open('nor2numNOuttx2.txt','r',encoding='utf-8') as f:
+        addr2OutTxnum = literal_eval(f.read())
+    addr2avgincome = {}
+    addr2avgoutcome = {}
+    for addr in addrlist:
+        if addr in addr2Intxnum.keys() and addr in addr2income.keys():
+            if addr2Intxnum[addr] == 0:
+                addr2avgincome[addr] = 0
+            else:
+                addr2avgincome[addr] = addr2income[addr] / addr2Intxnum[addr]
+    for addr in addrlist:
+        if addr in addr2OutTxnum.keys() and addr in addr2outcome.keys():
+            if addr2OutTxnum[addr] == 0:
+                addr2avgincome[addr] = 0
+            else:
+                addr2avgincome[addr] = addr2outcome[addr] / addr2OutTxnum[addr]
+    with open('normalNtxAvgIncome4.txt', 'w') as f:
+        print(addr2avgincome, file=f)
+    with open('normalNtxAvgOutcome4.txt', 'w') as f:
+        print(addr2avgoutcome, file=f)
+def norNtxAvgIOcome5():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    with open('normalIncomeNtx5.txt','r',encoding='utf-8') as f:
+        addr2income = literal_eval(f.read())
+    with open('normalOutcomeNtx5.txt','r',encoding='utf-8') as f:
+        addr2outcome = literal_eval(f.read())
+    with open('nor2numNIntx5.txt','r') as f:
+        addr2Intxnum = literal_eval(f.read())
+    with open('nor2numNOuttx5.txt','r',encoding='utf-8') as f:
+        addr2OutTxnum = literal_eval(f.read())
+    addr2avgincome = {}
+    addr2avgoutcome = {}
+    for addr in addrlist:
+        if addr in addr2Intxnum.keys() and addr in addr2income.keys():
+            if addr2Intxnum[addr] == 0:
+                addr2avgincome[addr] = 0
+            else:
+                addr2avgincome[addr] = addr2income[addr] / addr2Intxnum[addr]
+    for addr in addrlist:
+        if addr in addr2OutTxnum.keys() and addr in addr2outcome.keys():
+            if addr2OutTxnum[addr] == 0:
+                addr2avgincome[addr] = 0
+            else:
+                addr2avgincome[addr] = addr2outcome[addr] / addr2OutTxnum[addr]
+    with open('normalNtxAvgIncome5.txt', 'w') as f:
+        print(addr2avgincome, file=f)
+    with open('normalNtxAvgOutcome5.txt', 'w') as f:
+        print(addr2avgoutcome, file=f)
+
 def MFG():
     pass
 def CCG():
     pass
 def CIG():
     pass
-def scamAvgIn():
 
-    pass
+
 # exp_add_profit.csv 地址和利润
 # exp_group_id.csv 地址和聚类后的块号
 # exp_group_victim.csv 地址和聚类后的？
@@ -4470,7 +4675,7 @@ if __name__ == '__main__':
     # nfig6()
     # ifig6()
     # efig6()
-    nfig7()
-    ifig7()
-
+    # nfig7()
+    # ifig7()
+    norNtxAvgIOcome2()
 #nor2numEIntx1.txt
