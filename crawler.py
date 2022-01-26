@@ -733,6 +733,9 @@ def nfig3():
     print(month2count)
     x = month2count.keys()
     y = month2count.values()
+    with open('fig3N.txt','w') as f:
+        print(month2count,file=f)
+    return
     plt.plot(x,y)
     plt.xticks(rotation=30)
     x_major_locator = MultipleLocator(3)
@@ -759,6 +762,9 @@ def ifig3():
     print(month2count)
     x = month2count.keys()
     y = month2count.values()
+    with open('fig3I.txt','w') as f:
+        print(month2count,file=f)
+    return
     plt.plot(x,y)
     plt.xticks(rotation=30)
     x_major_locator = MultipleLocator(3)
@@ -766,7 +772,6 @@ def ifig3():
     ax.xaxis.set_major_locator(x_major_locator)
     plt.yscale('log')
     plt.show()
-
 
 def efig3():
     #统计每个月的欺诈交易数量，取出每行的时间戳进行转换，判断时间戳的月份，月份的欺诈交易数量+1
@@ -792,6 +797,9 @@ def efig3():
     print(month2count)
     x = month2count.keys()
     y = month2count.values()
+    with open('fig3E.txt','w') as f:
+        print(month2count,file=f)
+    return
     plt.plot(x,y)
     plt.xticks(rotation=30)
     x_major_locator = MultipleLocator(3)
@@ -799,7 +807,30 @@ def efig3():
     ax.xaxis.set_major_locator(x_major_locator)
     plt.yscale('log')
     plt.show()
-
+def mixfig3():
+    with open('fig3N.txt','r') as f:
+        month2count1 = literal_eval(f.read())
+    with open('fig3I.txt','r') as f:
+        month2count2 = literal_eval(f.read())
+    with open('fig3E.txt','r') as f:
+        month2count3 = literal_eval(f.read())
+    x1 = month2count1.keys()
+    y1 = month2count1.values()
+    x2 = month2count2.keys()
+    y2 = month2count2.values()
+    x3 = month2count3.keys()
+    y3 = month2count3.values()
+    plt.plot(x1, y1, label='normal tx')
+    plt.plot(x2, y2, label='internal tx')
+    plt.plot(x3, y3, label='token tx')
+    plt.xticks(rotation=30)
+    x_major_locator = MultipleLocator(3)
+    ax = plt.gca()
+    ax.xaxis.set_major_locator(x_major_locator)
+    plt.yscale('log')
+    plt.legend()
+    plt.savefig('fig3.jpg')
+    plt.show()
 #fig4：所有地址每个月欺诈交易的数量，根据txhash统计，存储to地址和txhash的列表的字典，然后去重，统计所有种类的交易
 def fig4():
     with open('addr.txt','r',encoding='utf-8') as f:
@@ -842,12 +873,13 @@ def fig4():
         for addr,num in addr2num.items():
             x.append(mon)
             y.append(num)
-    plt.scatter(x, y,s=9)
+    plt.scatter(x, y,s=4)
     plt.xticks(rotation=30)
     x_major_locator = MultipleLocator(3)
     ax = plt.gca()
     ax.xaxis.set_major_locator(x_major_locator)
     plt.yscale('log')
+    plt.savefig('fig4.jpg')
     plt.show()
 
 def nfig6():#欺诈地址一般交易的living小时 scamNtxliving
@@ -1035,7 +1067,7 @@ def fig6():
     plt.yscale('log')
     plt.legend()
     plt.show()
-def nfig7():
+def fig7n():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
     df1 = pandas.read_csv('ntx1.csv')
@@ -1048,14 +1080,14 @@ def nfig7():
     df = df.drop_duplicates()  # 去重
     df = df.sort_values('timeStamp')
     addr2prof = {}
-    url = "https://api.coingecko.com/api/v3/exchange_rates"
-    session = requests.Session()
-    res = literal_eval(session.get(url).text)['rates']
-    usd = res['usd']['value']  # 一个比特币的价格
-    rates = {}
-    for name, dic in res.items():
-        rates[name] = usd / dic['value']
-    eth = rates['eth']  # 一个以太币的价格
+    # url = "https://api.coingecko.com/api/v3/exchange_rates"
+    # session = requests.Session()
+    # res = literal_eval(session.get(url).text)['rates']
+    # usd = res['usd']['value']  # 一个比特币的价格
+    # rates = {}
+    # for name, dic in res.items():
+    #     rates[name] = usd / dic['value']
+    # eth = rates['eth']  # 一个以太币的价格
     for index, row in df.iterrows():
         if row['to'] != 'NaN' and row['to'] in addrlist:
             addr2prof[row['to']] = 0
@@ -1063,14 +1095,14 @@ def nfig7():
         if row['to'] != 'NaN' and row['to'] in addrlist:
             try:
                 if isinstance(row['value'],str):
-                    addr2prof[row['to']] += int(row['value']) * eth / 1000000000000000000
+                    addr2prof[row['to']] += int(row['value']) / 1000000000000000000
             except Exception:
                 print(row['value'])
     # print(addr2prof)
-    with open('scamNtxProfit.txt','w') as f:
-        print(addr2prof,file=f)
+    # with open('scamNtxProfit.txt','w') as f:
+    #     print(addr2prof,file=f)
     prof2num = {}
-    profaxis = ['0-1k','1k-2k','2k-3k','3k-4k','4k-5k','5k-10k','10k-15k','>15k']
+    profaxis = ['0-1k','1k-2k','2k-3k','3k-4k','4k-5k','5k-6k','6k-7k','7k-8k','8k-9k','9k-10k','10k-11k','11k-12k','12k-13k','13k-14k','14k-15k','>15k']
     for prof in profaxis:
         prof2num[prof] = 0
     for addr,prof in addr2prof.items():
@@ -1084,10 +1116,26 @@ def nfig7():
             prof2num['3k-4k'] += 1
         if prof / 1000 > 4 and prof / 1000 <= 5:
             prof2num['4k-5k'] += 1
-        if prof / 1000 > 5 and prof / 1000 < 10:
-            prof2num['5k-10k'] += 1
-        if prof / 1000 > 10 and prof / 1000 < 15:
-            prof2num['10k-15k'] += 1
+        if prof / 1000 > 5 and prof / 1000 <= 6:
+            prof2num['5k-6k'] += 1
+        if prof / 1000 > 6 and prof / 1000 <= 7:
+            prof2num['6k-7k'] += 1
+        if prof / 1000 > 7 and prof / 1000 <= 8:
+            prof2num['7k-8k'] += 1
+        if prof / 1000 > 8 and prof / 1000 <= 9:
+            prof2num['8k-9k'] += 1
+        if prof / 1000 > 9 and prof / 1000 <= 10:
+            prof2num['9k-10k'] += 1
+        if prof / 1000 > 10 and prof / 1000 <= 11:
+            prof2num['10k-11k'] += 1
+        if prof / 1000 > 11 and prof / 1000 <= 12:
+            prof2num['11k-12k'] += 1
+        if prof / 1000 > 12 and prof / 1000 <= 13:
+            prof2num['12k-13k'] += 1
+        if prof / 1000 > 13 and prof / 1000 < 14:
+            prof2num['13k-14k'] += 1
+        if prof / 1000 > 14 and prof / 1000 < 15:
+            prof2num['14k-15k'] += 1
         if prof / 1000 > 15:
             prof2num['>15k'] += 1
     x = []
@@ -1098,10 +1146,15 @@ def nfig7():
     plt.bar(x,y)
     plt.xticks(rotation=30)
     plt.yscale('log')
+    plt.savefig('fig7n.jpg')
+    fig, ax = plt.subplots()
+    ax.set_xlabel('The Profit of Address($)')
     plt.show()
-    print(prof2num)
+    with open('fig7n.txt','w') as f:
+        print(prof2num,file=f)
 
-def ifig7():
+
+def fig7i():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
     df1 = pandas.read_csv('itx1.csv')
@@ -1114,14 +1167,14 @@ def ifig7():
     df = df.drop_duplicates()  # 去重
     df = df.sort_values('timeStamp')
     addr2prof = {}
-    url = "https://api.coingecko.com/api/v3/exchange_rates"
-    session = requests.Session()
-    res = literal_eval(session.get(url).text)['rates']
-    usd = res['usd']['value']  # 一个比特币的价格
-    rates = {}
-    for name, dic in res.items():
-        rates[name] = usd / dic['value']
-    eth = rates['eth']  # 一个以太币的价格
+    # url = "https://api.coingecko.com/api/v3/exchange_rates"
+    # session = requests.Session()
+    # res = literal_eval(session.get(url).text)['rates']
+    # usd = res['usd']['value']  # 一个比特币的价格
+    # rates = {}
+    # for name, dic in res.items():
+    #     rates[name] = usd / dic['value']
+    # eth = rates['eth']  # 一个以太币的价格
     for index, row in df.iterrows():
         if row['to'] != 'NaN' and row['to'] in addrlist:
             addr2prof[row['to']] = 0
@@ -1129,18 +1182,18 @@ def ifig7():
         if row['to'] != 'NaN' and row['to'] in addrlist:
             try:
                 if isinstance(row['value'],str):
-                    addr2prof[row['to']] += int(row['value']) * eth / 1000000000000000000
+                    addr2prof[row['to']] += int(row['value']) / 1000000000000000000
             except Exception:
                 print(row['value'])
     # print(addr2prof)
-    with open('scamItxProfit.txt','w') as f:
-        print(addr2prof,file=f)
-    return
+    # with open('scamItxProfit.txt','w') as f:
+    #     print(addr2prof,file=f)
+    # return
+    profaxis = ['0-1k','1k-2k','2k-3k','3k-4k','4k-5k','5k-6k','6k-7k','7k-8k','8k-9k','9k-10k','10k-11k','11k-12k','12k-13k','13k-14k','14k-15k','>15k']
     prof2num = {}
-    profaxis = ['0-1k','1k-2k','2k-3k','3k-4k','4k-5k','5k-10k','10k-15k','>15k']
     for prof in profaxis:
         prof2num[prof] = 0
-    for addr,prof in addr2prof.items():
+    for addr, prof in addr2prof.items():
         if prof / 1000 <= 1:
             prof2num['0-1k'] += 1
         if prof / 1000 > 1 and prof / 1000 <= 2:
@@ -1151,10 +1204,26 @@ def ifig7():
             prof2num['3k-4k'] += 1
         if prof / 1000 > 4 and prof / 1000 <= 5:
             prof2num['4k-5k'] += 1
-        if prof / 1000 > 5 and prof / 1000 < 10:
-            prof2num['5k-10k'] += 1
-        if prof / 1000 > 10 and prof / 1000 < 15:
-            prof2num['10k-15k'] += 1
+        if prof / 1000 > 5 and prof / 1000 <= 6:
+            prof2num['5k-6k'] += 1
+        if prof / 1000 > 6 and prof / 1000 <= 7:
+            prof2num['6k-7k'] += 1
+        if prof / 1000 > 7 and prof / 1000 <= 8:
+            prof2num['7k-8k'] += 1
+        if prof / 1000 > 8 and prof / 1000 <= 9:
+            prof2num['8k-9k'] += 1
+        if prof / 1000 > 9 and prof / 1000 <= 10:
+            prof2num['9k-10k'] += 1
+        if prof / 1000 > 10 and prof / 1000 <= 11:
+            prof2num['10k-11k'] += 1
+        if prof / 1000 > 11 and prof / 1000 <= 12:
+            prof2num['11k-12k'] += 1
+        if prof / 1000 > 12 and prof / 1000 <= 13:
+            prof2num['12k-13k'] += 1
+        if prof / 1000 > 13 and prof / 1000 < 14:
+            prof2num['13k-14k'] += 1
+        if prof / 1000 > 14 and prof / 1000 < 15:
+            prof2num['14k-15k'] += 1
         if prof / 1000 > 15:
             prof2num['>15k'] += 1
     x = []
@@ -1165,8 +1234,10 @@ def ifig7():
     plt.bar(x,y)
     plt.xticks(rotation=30)
     plt.yscale('log')
+    plt.savefig('fig7i.jpg')
     plt.show()
-    print(prof2num)
+    with open('fig7i.txt','w') as f:
+        print(prof2num,file=f)
 
 def fig8():
     with open('addr.txt','r',encoding='utf-8') as f:
@@ -4494,6 +4565,7 @@ def mixLive():
     ax.xaxis.set_major_locator(x_major_locator)
     plt.title('living time of addresses(Days)')
     plt.legend()
+    ax.set_ylabel('CDF of Addresses')
     ax.set_xlim(1)
     plt.savefig('livingtime.jpg')
     plt.show()
@@ -5384,7 +5456,6 @@ def mixfig7():
     plt.yscale('log')
     plt.legend()
     plt.title('scam address profit')
-    ax.set_xlim(1)
     plt.savefig('fig7.jpg')
     plt.show()
 
@@ -5420,7 +5491,7 @@ def mixfig9Ntx():
     x3, y3 = [list(x) for x in result3]
     cum = numpy.cumsum(y3)
     percentage3 = cum / list(cum)[-1]
-    line3 = ax.plot(x3, percentage3, label='out txs of normal txs of scam address', color='lavender')
+    line3 = ax.plot(x3, percentage3, label='out txs of normal txs of scam address', color='gray')
 
     zipped4 = zip(txnum2addrnum4.keys(), txnum2addrnum4.values())
     sort_zipped4 = sorted(zipped4, key=lambda x: (x[0]))
@@ -5428,10 +5499,12 @@ def mixfig9Ntx():
     x4, y4 = [list(x) for x in result4]
     cum = numpy.cumsum(y4)
     percentage4 = cum / list(cum)[-1]
-    line4 = ax.plot(x4,percentage4,label='out txs of normal txs of normal address', linestyle="--", color='lavender')
+    line4 = ax.plot(x4,percentage4,label='out txs of normal txs of normal address', linestyle="--", color='gray')
     ax.set_xlim(1)
     plt.xscale('log')
     plt.legend()
+    ax.set_ylabel('CDF of Addresses')
+    plt.title('# fo transactions')
     plt.savefig('Ntxfig9.jpg')
     plt.show()
 
@@ -5467,7 +5540,7 @@ def mixfig9Itx():
     x3, y3 = [list(x) for x in result3]
     cum = numpy.cumsum(y3)
     percentage3 = cum / list(cum)[-1]
-    line3 = ax.plot(x3, percentage3, label='out txs of internal txs of scam address', color='lavender')
+    line3 = ax.plot(x3, percentage3, label='out txs of internal txs of scam address', color='gray')
 
     zipped4 = zip(txnum2addrnum4.keys(), txnum2addrnum4.values())
     sort_zipped4 = sorted(zipped4, key=lambda x: (x[0]))
@@ -5475,10 +5548,12 @@ def mixfig9Itx():
     x4, y4 = [list(x) for x in result4]
     cum = numpy.cumsum(y4)
     percentage4 = cum / list(cum)[-1]
-    line4 = ax.plot(x4, percentage4, label='out txs of internal txs of normal address', linestyle="--", color='lavender')
+    line4 = ax.plot(x4, percentage4, label='out txs of internal txs of normal address', linestyle="--", color='gray')
     ax.set_xlim(1)
     plt.xscale('log')
     plt.legend()
+    ax.set_ylabel('CDF of Addresses')
+    plt.title('# of transactions')
     plt.savefig('Itxfig9.jpg')
     plt.show()
 
@@ -5750,32 +5825,10 @@ if __name__ == '__main__':
     # ItxAddrIncome()
     # norAddrA3InEtxTime1()
     # scamTx()
-    # nfig6()
-    # ifig6()
-    # efig6()
-    # nfig7()
-    # ifig7()
     # norNtxAvgIOcome1()
     # mixnormalAvgIOcome()
     # norAddrA3InNtxTime1()
 #nor2numEIntx1.txt
-    # mixfig7()
-    # mixfig9NtxIntx()
-    # mixnorAddrNFig9Intxs()
-    # norAddrNFig9Intxs5()
-    # # norAddrEFig9Intxs()
-    # mixfig9NtxIntx()
-    # mixfig9ItxIntx()
-    # mixfig9EtxIntx()
-    # mixfig6()
-    # mixnormalLive()
-    # scamLive()
-    # mixLive()
-    # norAddrNFig9Outtxs5()
-    # mixfig9Itx()
-    # mixfig9Etx()
-    # mixnormalNtxAvgIOcome()
-    # mixnormalAvgIOcome()
-    mixAvg()
-    # scamAvgIncomeOutcome()
-    # mixnormalAvgIOcome()
+    # fig4()
+    fig7n()
+    # ifig7()
