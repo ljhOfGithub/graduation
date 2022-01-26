@@ -5532,7 +5532,7 @@ def mixfig6():
             y2[6] += 1
         if 720 <= living:
             y2[7] += 1
-    for addr,living in addr2living2.items():
+    for addr,living in addr2living3.items():
         if living < 6:
             y3[0] += 1
         if 6 <= living and living <12:
@@ -5555,7 +5555,7 @@ def mixfig6():
     plt.xticks(rotation=30)
     ax = plt.gca()
     plt.yscale('log')
-    plt.title('living time of scam address')
+    ax.set_xlabel('living time of scam address')
     plt.legend()
     ax.set_xlim(1)
     plt.savefig('fig6.jpg')
@@ -6003,6 +6003,7 @@ if __name__ == '__main__':
     # test()
     # mixfig9Etx()
     # fig7nCdf()
-    test()
+    # test()
+    mixfig6()
 #收集整理大量数据时，尽量保存中间文件，即使由于机器性能原因或者ide设置原因等中断运行，也能避免效率的降低。
 #涉及网络爬虫的工作中可能会出现由于当时的网络原因出现问题，包括但不限于整个代码停止运行，某个url的网站爬取失败，为此需要增加异常处理，以便于事后补充未完成的url爬取工作
