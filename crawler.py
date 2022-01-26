@@ -4396,9 +4396,10 @@ def test():
     # print(type(chunker))
     # pd = pandas.read_csv('normalAddretx2.csv')
     # print(len(pd))
-    with open('addr.txt','r') as f:
+    with open('NormalAddr.txt','r') as f:
         list = literal_eval(f.read())
-    print(list.index('0x8909cc8d294544ca2c956550edbcb59ce4f2a9ad'))
+    print(len(list))
+    # print(list.index('0x8909cc8d294544ca2c956550edbcb59ce4f2a9ad'))
     # for item in chunker:
     #     print(item)
     # with open('normalAddritx.csv', 'r') as f:
@@ -6001,4 +6002,7 @@ if __name__ == '__main__':
     # ifig7()
     # test()
     # mixfig9Etx()
-    fig7nCdf()
+    # fig7nCdf()
+    test()
+#收集整理大量数据时，尽量保存中间文件，即使由于机器性能原因或者ide设置原因等中断运行，也能避免效率的降低。
+#涉及网络爬虫的工作中可能会出现由于当时的网络原因出现问题，包括但不限于整个代码停止运行，某个url的网站爬取失败，为此需要增加异常处理，以便于事后补充未完成的url爬取工作
