@@ -420,7 +420,9 @@ def getNtxs4():
                 print(url)
                 print(result)
                 print(addr)
-
+# def remointeraction():
+#     with open('ntx1.csv','r') as f:
+#         ntx1 = literal_eval()
 def getItxs1():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
@@ -714,6 +716,7 @@ def fig2():
     x_major_locator = MultipleLocator(3)
     ax = plt.gca()
     ax.xaxis.set_major_locator(x_major_locator)
+    plt.savefig('fig2.jpg')
     plt.show()
 
 def nfig3():
@@ -839,44 +842,52 @@ def fig4():
     df2 = pandas.read_csv('ntx2.csv')
     df3 = pandas.read_csv('ntx3.csv')
     df4 = pandas.read_csv('ntx4.csv')
-    df5 = pandas.read_csv('itx1.csv')
-    df6 = pandas.read_csv('itx2.csv')
-    df7 = pandas.read_csv('itx3.csv')
-    df8 = pandas.read_csv('itx4.csv')
-    df9 = pandas.read_csv('etx1.csv')
-    df10 = pandas.read_csv('etx2.csv')
-    df11 = pandas.read_csv('etx3.csv')
-    df12 = pandas.read_csv('etx4.csv')
-    df13 = pandas.read_csv('bntx1.csv')
-    df14 = pandas.read_csv('bitx1.csv')
-    df15 = pandas.read_csv('betx1.csv')
-    frames = [df1,df2,df3,df4,df5,df6,df7,df8,df9,df10,df11,df12,df13,df14,df15]
+    # df5 = pandas.read_csv('itx1.csv')
+    # df6 = pandas.read_csv('itx2.csv')
+    # df7 = pandas.read_csv('itx3.csv')
+    # df8 = pandas.read_csv('itx4.csv')
+    # df9 = pandas.read_csv('etx1.csv')
+    # df10 = pandas.read_csv('etx2.csv')
+    # df11 = pandas.read_csv('etx3.csv')
+    # df12 = pandas.read_csv('etx4.csv')
+    # df13 = pandas.read_csv('bntx1.csv')
+    # df14 = pandas.read_csv('bitx1.csv')
+    # df15 = pandas.read_csv('betx1.csv')
+    # frames = [df1,df2,df3,df4,df5,df6,df7,df8,df9,df10,df11,df12,df13,df14,df15]
+    frames = [df1,df2,df3,df4]
     df = pandas.concat(frames)
     df = df.drop_duplicates()#去重
-    df['timeStamp'] = df['timeStamp'].map(lambda x:datetime.datetime.fromtimestamp(x).strftime("%Y-%m"))
+    df['timeStamp'] = df['timeStamp'].map(lambda x:datetime.datetime.fromtimestamp(x).strftime("%Y-%m-%d"))
     df = df.sort_values('timeStamp')
     pandas.set_option('display.max_columns', 40)  # 打印最大列数
     #月份2地址2交易数量，不同地址作为同x不同y的点
     #地址2月份还是月份2地址都可以，地址2月份2交易数量方便
     #先排序时间再统计交易数量
-    mon2addr2num = {}
+    day2addr2num = {}
     for index, row in df.iterrows():
         if row['to'] != 'NaN' and row['to'] in addrlist:
-            mon2addr2num[row['timeStamp']] = {}
+            day2addr2num[row['timeStamp']] = {}
     for index, row in df.iterrows():
         if row['to'] != 'NaN' and row['to'] in addrlist:
-            mon2addr2num[row['timeStamp']][row['to']] = mon2addr2num[row['timeStamp']].get(row['to'],0) + 1
+            day2addr2num[row['timeStamp']][row['to']] = day2addr2num[row['timeStamp']].get(row['to'],0) + 1
+    with open('fig4.txt','w',encoding='utf-8') as f:
+        print(day2addr2num,file=f)
+    # with open('fig4.txt','r',encoding='utf-8') as f:
+    #     day2addr2num = literal_eval(f.read())
     #将月份和交易数量存入x轴和y轴
     x = []
     y = []
-    for mon,addr2num in mon2addr2num.items():
+    for mon,addr2num in day2addr2num.items():
         for addr,num in addr2num.items():
             x.append(mon)
             y.append(num)
-    plt.scatter(x, y,s=4)
+    plt.scatter(x, y,s=1)
     plt.xticks(rotation=30)
-    x_major_locator = MultipleLocator(3)
+    x_major_locator = MultipleLocator(90)
     ax = plt.gca()
+    ax.set_ylabel('# of transactions')
+    ax.set_xlabel('Date')
+    ax.set_ylim(1)
     ax.xaxis.set_major_locator(x_major_locator)
     plt.yscale('log')
     plt.savefig('fig4.jpg')
@@ -1088,71 +1099,155 @@ def fig7n():
     # for name, dic in res.items():
     #     rates[name] = usd / dic['value']
     # eth = rates['eth']  # 一个以太币的价格
+    eth = 2460.268204521556
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'].lower() in addrlist and row['from'].lower() not in addrlist:
             addr2prof[row['to']] = 0
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'].lower() in addrlist and row['from'].lower() not in addrlist:
             try:
                 if isinstance(row['value'],str):
-                    addr2prof[row['to']] += int(row['value']) / 1000000000000000000
+                    addr2prof[row['to']] += int(row['value']) / 1000000000000000000 * eth
             except Exception:
                 print(row['value'])
     # print(addr2prof)
     # with open('scamNtxProfit.txt','w') as f:
     #     print(addr2prof,file=f)
+    # print(addr2prof['0x8909cc8d294544ca2c956550edbcb59ce4f2a9ad'])
+    # return
     prof2num = {}
-    profaxis = ['0-1k','1k-2k','2k-3k','3k-4k','4k-5k','5k-6k','6k-7k','7k-8k','8k-9k','9k-10k','10k-11k','11k-12k','12k-13k','13k-14k','14k-15k','>15k']
+    profaxis = ['0-100k','100k-200k','200k-300k','300k-400k','400k-500k','500k-600k','600k-700k','700k-800k','800k-900k','900k-1000k','1000k-1100k','1100k-1200k','1200k-1300k','1300k-1400k','1400k-1500k','>1500k']
     for prof in profaxis:
         prof2num[prof] = 0
     for addr,prof in addr2prof.items():
-        if prof / 1000 <= 1:
-            prof2num['0-1k'] += 1
-        if prof / 1000 > 1 and prof / 1000 <= 2:
-            prof2num['1k-2k'] += 1
-        if prof / 1000 > 2 and prof / 1000 <= 3:
-            prof2num['2k-3k'] += 1
-        if prof / 1000 > 3 and prof / 1000 <= 4:
-            prof2num['3k-4k'] += 1
-        if prof / 1000 > 4 and prof / 1000 <= 5:
-            prof2num['4k-5k'] += 1
-        if prof / 1000 > 5 and prof / 1000 <= 6:
-            prof2num['5k-6k'] += 1
-        if prof / 1000 > 6 and prof / 1000 <= 7:
-            prof2num['6k-7k'] += 1
-        if prof / 1000 > 7 and prof / 1000 <= 8:
-            prof2num['7k-8k'] += 1
-        if prof / 1000 > 8 and prof / 1000 <= 9:
-            prof2num['8k-9k'] += 1
-        if prof / 1000 > 9 and prof / 1000 <= 10:
-            prof2num['9k-10k'] += 1
-        if prof / 1000 > 10 and prof / 1000 <= 11:
-            prof2num['10k-11k'] += 1
-        if prof / 1000 > 11 and prof / 1000 <= 12:
-            prof2num['11k-12k'] += 1
-        if prof / 1000 > 12 and prof / 1000 <= 13:
-            prof2num['12k-13k'] += 1
-        if prof / 1000 > 13 and prof / 1000 < 14:
-            prof2num['13k-14k'] += 1
-        if prof / 1000 > 14 and prof / 1000 < 15:
-            prof2num['14k-15k'] += 1
-        if prof / 1000 > 15:
-            prof2num['>15k'] += 1
+        if prof / 1000 <= 100:
+            prof2num['0-100k'] += 1
+        if prof / 1000 > 100 and prof / 1000 <= 200:
+            prof2num['100k-200k'] += 1
+        if prof / 1000 > 200 and prof / 1000 <= 300:
+            prof2num['200k-300k'] += 1
+        if prof / 1000 > 300 and prof / 1000 <= 400:
+            prof2num['300k-400k'] += 1
+        if prof / 1000 > 400 and prof / 1000 <= 500:
+            prof2num['400k-500k'] += 1
+        if prof / 1000 > 500 and prof / 1000 <= 600:
+            prof2num['500k-600k'] += 1
+        if prof / 1000 > 600 and prof / 1000 <= 700:
+            prof2num['600k-700k'] += 1
+        if prof / 1000 > 700 and prof / 1000 <= 800:
+            prof2num['700k-800k'] += 1
+        if prof / 1000 > 800 and prof / 1000 <= 900:
+            prof2num['800k-900k'] += 1
+        if prof / 1000 > 900 and prof / 1000 <= 1000:
+            prof2num['900k-1000k'] += 1
+        if prof / 1000 > 1000 and prof / 1000 <= 1100:
+            prof2num['1000k-1100k'] += 1
+        if prof / 1000 > 1100 and prof / 1000 <= 1200:
+            prof2num['1100k-1200k'] += 1
+        if prof / 1000 > 1200 and prof / 1000 <= 1300:
+            prof2num['1200k-1300k'] += 1
+        if prof / 1000 > 1300 and prof / 1000 < 1400:
+            prof2num['1300k-1400k'] += 1
+        if prof / 1000 > 1400 and prof / 1000 < 1500:
+            prof2num['1400k-1500k'] += 1
+        if prof / 1000 > 1500:
+            prof2num['>1500k'] += 1
+    prof2num2 = {}
+    for addr,prof in addr2prof.items():
+        addr2prof[addr] = addr2prof[addr]
+    for addr,prof in addr2prof.items():
+        prof2num2[prof] = prof2num2.get(prof,0) + 1
     x = []
     y = []
+    # with open('fig7n.txt','r') as f:
+    #     prof2num = literal_eval(f.read())
+    fig, ax = plt.subplots()
     for prof in profaxis:
         x.append(prof)
         y.append(prof2num[prof])
-    plt.bar(x,y)
+    plt.bar(x,y,width=1)
     plt.xticks(rotation=30)
     plt.yscale('log')
+    x_major_locator = MultipleLocator(5)
+    ax = plt.gca()
+    ax.xaxis.set_major_locator(x_major_locator)
     plt.savefig('fig7n.jpg')
-    fig, ax = plt.subplots()
     ax.set_xlabel('The Profit of Address($)')
+    ax.set_ylabel('# of normal txs')
     plt.show()
+    return
     with open('fig7n.txt','w') as f:
         print(prof2num,file=f)
+    with open('fig7n2.txt','w') as f:
+        print(prof2num2,file=f)
+    with open('fig7n3.txt','w') as f:
+        print(addr2prof,file=f)
+def fig7nCdf():
+    # with open('fig7n.txt','r') as f:
+    #     prof2num = literal_eval(f.read())
+    # # return
+    # profaxis = ['0-100k','100k-200k','200k-300k','300k-400k','400k-500k','500k-600k','600k-700k','700k-800k','800k-900k','900k-1000k','1000k-1100k','1100k-1200k','1200k-1300k','1300k-1400k','1400k-1500k','>1500k']
+    # x = []
+    # y = []
+    #
+    # fig, ax = plt.subplots()
+    # for prof in profaxis:
+    #     x.append(prof)
+    #     y.append(prof2num[prof])
+    # plt.bar(x,y,width=1)
+    # plt.xticks(rotation=30)
+    # plt.yscale('log')
+    # x_major_locator = MultipleLocator(5)
+    # ax = plt.gca()
+    # ax.xaxis.set_major_locator(x_major_locator)
+    # plt.savefig('fig7n.jpg')
+    # ax.set_xlabel('The Profit of Address($)')
+    # ax.set_ylabel('# of normal txs')
+    # plt.show()
 
+
+    prof2num = {}
+    with open('fig7n2.txt','r') as f:
+        prof2num = literal_eval(f.read())
+    with open('fig7n3.txt','r') as f:
+        addr2prof = literal_eval(f.read())
+    proflist = sorted(prof2num.keys())
+    print(proflist)
+    print(max(proflist))
+    for addr,prof in addr2prof.items():
+        if prof == max(proflist):
+            print(addr)
+    return
+    maxp = max(proflist)
+    # testprofit = []
+    # for profit in proflist:
+    #     if profit > 1000000:
+    #         testprofit.append(profit)
+    for addr,prof in addr2prof.items():
+        if prof == maxp:
+            print(addr)
+
+    zipped = zip(prof2num.keys(), prof2num.values())
+    sort_zipped = sorted(zipped, key=lambda x: (x[0]))
+    result = zip(*sort_zipped)
+    x, y = [list(x) for x in result]
+    fig, ax = plt.subplots()
+    # for prof in profaxis:
+    #     x.append(prof)
+    #     y.append(prof2num[prof])
+    cum = numpy.cumsum(y)
+    percentage = cum / list(cum)[-1]
+    line = ax.plot(x,percentage)
+    # plt.xscale('log')
+    # x_major_locator = MultipleLocator(1000)
+    # ax = plt.gca()
+    # ax.xaxis.set_major_locator(x_major_locator)
+    ax.set_ylabel('CDF of Addresses')
+    ax.set_xlabel('the profit of address($)')
+    ax.set_xlim(1)
+    plt.savefig('fig7nCdf2.jpg')
+    # ax.set_xlim(1)
+    plt.show()
 
 def fig7i():
     with open('addr.txt','r',encoding='utf-8') as f:
@@ -1175,70 +1270,139 @@ def fig7i():
     # for name, dic in res.items():
     #     rates[name] = usd / dic['value']
     # eth = rates['eth']  # 一个以太币的价格
+    eth = 2460.268204521556
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        # if row['to'] != 'NaN':
+        # if not math.isnan(row['to']):
+        if isinstance(row['to'],str):
             addr2prof[row['to']] = 0
+    # print(addr2prof)
+    hashlist = []
+    valuesum = 0
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
-            try:
-                if isinstance(row['value'],str):
-                    addr2prof[row['to']] += int(row['value']) / 1000000000000000000
-            except Exception:
-                print(row['value'])
+        # if row['to'] != 'NaN' and row['to'].lower() in addrlist and row['from'].lower() not in addrlist:
+        try:
+            if isinstance(row['to'],str) and row['to'].lower() in addrlist and row['from'].lower() not in addrlist:
+                addr2prof[row['to']] += int(row['value']) / 1000000000000000000 * eth
+            if isinstance(row['to'],str) and row['to'].lower() == '0xa9bf70a420d364e923c74448d9d817d3f2a77822' and int(row['value']) != 0 and row['from'] not in addrlist:
+                # print(row)
+                # print(row['value'])
+                # print(row['hash'])
+                hashlist.append(row['hash'])
+                valuesum += int(row['value'])
+        except Exception:
+            print(row['value'])
     # print(addr2prof)
     # with open('scamItxProfit.txt','w') as f:
     #     print(addr2prof,file=f)
-    # return
-    profaxis = ['0-1k','1k-2k','2k-3k','3k-4k','4k-5k','5k-6k','6k-7k','7k-8k','8k-9k','9k-10k','10k-11k','11k-12k','12k-13k','13k-14k','14k-15k','>15k']
+    # print(hashlist)
+    # print(valuesum)
+
+    #'0xa6074142f75502f24a050e0ed6d45a303d713051d56433f007e661d18d045900'是0xa9bf70a420d364e923c74448d9d817d3f2a77822欺诈最多的交易hash
     prof2num = {}
+    profaxis = ['0-100k', '100k-200k', '200k-300k', '300k-400k', '400k-500k', '500k-600k', '600k-700k', '700k-800k',
+                '800k-900k', '900k-1000k', '1000k-1100k', '1100k-1200k', '1200k-1300k', '1300k-1400k', '1400k-1500k',
+                '>1500k']
     for prof in profaxis:
         prof2num[prof] = 0
     for addr, prof in addr2prof.items():
-        if prof / 1000 <= 1:
-            prof2num['0-1k'] += 1
-        if prof / 1000 > 1 and prof / 1000 <= 2:
-            prof2num['1k-2k'] += 1
-        if prof / 1000 > 2 and prof / 1000 <= 3:
-            prof2num['2k-3k'] += 1
-        if prof / 1000 > 3 and prof / 1000 <= 4:
-            prof2num['3k-4k'] += 1
-        if prof / 1000 > 4 and prof / 1000 <= 5:
-            prof2num['4k-5k'] += 1
-        if prof / 1000 > 5 and prof / 1000 <= 6:
-            prof2num['5k-6k'] += 1
-        if prof / 1000 > 6 and prof / 1000 <= 7:
-            prof2num['6k-7k'] += 1
-        if prof / 1000 > 7 and prof / 1000 <= 8:
-            prof2num['7k-8k'] += 1
-        if prof / 1000 > 8 and prof / 1000 <= 9:
-            prof2num['8k-9k'] += 1
-        if prof / 1000 > 9 and prof / 1000 <= 10:
-            prof2num['9k-10k'] += 1
-        if prof / 1000 > 10 and prof / 1000 <= 11:
-            prof2num['10k-11k'] += 1
-        if prof / 1000 > 11 and prof / 1000 <= 12:
-            prof2num['11k-12k'] += 1
-        if prof / 1000 > 12 and prof / 1000 <= 13:
-            prof2num['12k-13k'] += 1
-        if prof / 1000 > 13 and prof / 1000 < 14:
-            prof2num['13k-14k'] += 1
-        if prof / 1000 > 14 and prof / 1000 < 15:
-            prof2num['14k-15k'] += 1
-        if prof / 1000 > 15:
-            prof2num['>15k'] += 1
+        if prof / 1000 <= 100:
+            prof2num['0-100k'] += 1
+        if prof / 1000 > 100 and prof / 1000 <= 200:
+            prof2num['100k-200k'] += 1
+        if prof / 1000 > 200 and prof / 1000 <= 300:
+            prof2num['200k-300k'] += 1
+        if prof / 1000 > 300 and prof / 1000 <= 400:
+            prof2num['300k-400k'] += 1
+        if prof / 1000 > 400 and prof / 1000 <= 500:
+            prof2num['400k-500k'] += 1
+        if prof / 1000 > 500 and prof / 1000 <= 600:
+            prof2num['500k-600k'] += 1
+        if prof / 1000 > 600 and prof / 1000 <= 700:
+            prof2num['600k-700k'] += 1
+        if prof / 1000 > 700 and prof / 1000 <= 800:
+            prof2num['700k-800k'] += 1
+        if prof / 1000 > 800 and prof / 1000 <= 900:
+            prof2num['800k-900k'] += 1
+        if prof / 1000 > 900 and prof / 1000 <= 1000:
+            prof2num['900k-1000k'] += 1
+        if prof / 1000 > 1000 and prof / 1000 <= 1100:
+            prof2num['1000k-1100k'] += 1
+        if prof / 1000 > 1100 and prof / 1000 <= 1200:
+            prof2num['1100k-1200k'] += 1
+        if prof / 1000 > 1200 and prof / 1000 <= 1300:
+            prof2num['1200k-1300k'] += 1
+        if prof / 1000 > 1300 and prof / 1000 < 1400:
+            prof2num['1300k-1400k'] += 1
+        if prof / 1000 > 1400 and prof / 1000 < 1500:
+            prof2num['1400k-1500k'] += 1
+        if prof / 1000 > 1500:
+            prof2num['>1500k'] += 1
+    prof2num2 = {}
+    for addr, prof in addr2prof.items():
+        addr2prof[addr] = int(addr2prof[addr])
+    for addr, prof in addr2prof.items():
+        prof2num2[prof] = prof2num2.get(prof, 0) + 1
     x = []
     y = []
     for prof in profaxis:
         x.append(prof)
         y.append(prof2num[prof])
-    plt.bar(x,y)
+    plt.bar(x,y,width=1)
     plt.xticks(rotation=30)
     plt.yscale('log')
+    x_major_locator = MultipleLocator(5)
+    ax = plt.gca()
+    ax.xaxis.set_major_locator(x_major_locator)
+    ax.set_ylabel('the PDF graph of internal txs')
+    ax.set_xlabel('the profit of address($)')
     plt.savefig('fig7i.jpg')
     plt.show()
     with open('fig7i.txt','w') as f:
         print(prof2num,file=f)
-
+    with open('fig7i2.txt','w') as f:
+        print(prof2num2,file=f)
+    with open('fig7i3.txt','w') as f:
+        print(addr2prof,file=f)
+def fig7iCdf():
+    with open('fig7i2.txt', 'r') as f:
+        prof2num = literal_eval(f.read())
+    with open('fig7i3.txt', 'r') as f:
+        addr2prof = literal_eval(f.read())
+    # profaxis = ['0-100k','100k-200k','200k-300k','300k-400k','400k-500k']
+    # ,'500k-600k','600k-700k','700k-800k','800k-900k','900k-1000k','1000k-1100k','1100k-1200k','1200k-1300k','1300k-1400k','1400k-1500k','>1500k']
+    proflist = sorted(prof2num.keys())
+    print(proflist)
+    # print(max(proflist))
+    maxp = max(proflist)
+    # testprofit = []
+    # for profit in proflist:
+    #     if profit > 1000000:
+    #         testprofit.append(profit)
+    for addr, prof in addr2prof.items():
+        if prof == maxp:
+            print(addr)
+    zipped = zip(prof2num.keys(), prof2num.values())
+    sort_zipped = sorted(zipped, key=lambda x: (x[0]))
+    result = zip(*sort_zipped)
+    x, y = [list(x) for x in result]
+    fig, ax = plt.subplots()
+    # for prof in profaxis:
+    #     x.append(prof)
+    #     y.append(prof2num[prof])
+    cum = numpy.cumsum(y)
+    percentage = cum / list(cum)[-1]
+    line = ax.plot(x, percentage)
+    # plt.xscale('log')
+    # x_major_locator = MultipleLocator(1000)
+    # ax = plt.gca()
+    # ax.xaxis.set_major_locator(x_major_locator)
+    ax.set_ylabel('CDF of Addresses')
+    ax.set_xlabel('the profit of address($)')
+    ax.set_xlim(1)
+    plt.savefig('fig7iCdf2.jpg')
+    # ax.set_xlim(1)
+    plt.show()
 def fig8():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
@@ -4230,8 +4394,11 @@ def test():
     #     print(len(f.readlines()))
     # chunker = pandas.read_csv("normalAddrntx2.csv", nrows=7500000)
     # print(type(chunker))
-    pd = pandas.read_csv('normalAddretx2.csv')
-    print(len(pd))
+    # pd = pandas.read_csv('normalAddretx2.csv')
+    # print(len(pd))
+    with open('addr.txt','r') as f:
+        list = literal_eval(f.read())
+    print(list.index('0x8909cc8d294544ca2c956550edbcb59ce4f2a9ad'))
     # for item in chunker:
     #     print(item)
     # with open('normalAddritx.csv', 'r') as f:
@@ -5614,7 +5781,7 @@ def CCG():
 def CIG():
     pass
 
-
+#每个文件的含义
 # exp_add_profit.csv 地址和利润
 # exp_group_id.csv 地址和聚类后的块号
 # exp_group_victim.csv 地址和聚类后的？
@@ -5830,5 +5997,8 @@ if __name__ == '__main__':
     # norAddrA3InNtxTime1()
 #nor2numEIntx1.txt
     # fig4()
-    fig7n()
+    # fig7i()
     # ifig7()
+    # test()
+    # mixfig9Etx()
+    fig7nCdf()
