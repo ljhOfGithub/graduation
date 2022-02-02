@@ -896,15 +896,16 @@ def fig4():
 def nfig6():#欺诈地址一般交易的living小时 scamNtxliving
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    df1 = pandas.read_csv('ntx1.csv')
-    df2 = pandas.read_csv('ntx2.csv')
-    df3 = pandas.read_csv('ntx3.csv')
-    df4 = pandas.read_csv('ntx4.csv')
-    df5 = pandas.read_csv('ntx5.csv')
-    df6 = pandas.read_csv('bntx1.csv')
-    frames = [df1, df2, df3, df4, df5, df6]
-    df = pandas.concat(frames)
-    df = df.drop_duplicates()  # 去重
+    # df1 = pandas.read_csv('ntx1.csv')
+    # df2 = pandas.read_csv('ntx2.csv')
+    # df3 = pandas.read_csv('ntx3.csv')
+    # df4 = pandas.read_csv('ntx4.csv')
+    # df5 = pandas.read_csv('ntx5.csv')
+    # df6 = pandas.read_csv('bntx1.csv')
+    # frames = [df1, df2, df3, df4, df5, df6]
+    # df = pandas.concat(frames)
+    # df = df.drop_duplicates()  # 去重
+    df = pandas.read_csv('ntx.csv')
     df = df.sort_values('timeStamp')
     addr2time = {}#地址到交易时间戳的字典
     addr2living = {}
@@ -953,13 +954,14 @@ def nfig6():#欺诈地址一般交易的living小时 scamNtxliving
 def ifig6():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    df1 = pandas.read_csv('itx1.csv')
-    df2 = pandas.read_csv('itx2.csv')
-    df3 = pandas.read_csv('itx3.csv')
-    df4 = pandas.read_csv('itx4.csv')
-    df5 = pandas.read_csv('bitx1.csv')
-    frames = [df1, df2, df3, df4, df5]
-    df = pandas.concat(frames)
+    # df1 = pandas.read_csv('itx1.csv')
+    # df2 = pandas.read_csv('itx2.csv')
+    # df3 = pandas.read_csv('itx3.csv')
+    # df4 = pandas.read_csv('itx4.csv')
+    # df5 = pandas.read_csv('bitx1.csv')
+    # frames = [df1, df2, df3, df4, df5]
+    # df = pandas.concat(frames)
+    df = pandas.read_csv('itx.csv')
     df = df.drop_duplicates()  # 去重
     df = df.sort_values('timeStamp')
     addr2time = {}#地址到交易时间戳的字典
@@ -1008,14 +1010,15 @@ def ifig6():
 def efig6():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    df1 = pandas.read_csv('etx1.csv')
-    df2 = pandas.read_csv('etx2.csv')
-    df3 = pandas.read_csv('etx3.csv')
-    df4 = pandas.read_csv('etx4.csv')
-    df5 = pandas.read_csv('betx1.csv')
-    frames = [df1, df2, df3, df4, df5]
-    df = pandas.concat(frames)
-    df = df.drop_duplicates()  # 去重
+    # df1 = pandas.read_csv('etx1.csv')
+    # df2 = pandas.read_csv('etx2.csv')
+    # df3 = pandas.read_csv('etx3.csv')
+    # df4 = pandas.read_csv('etx4.csv')
+    # df5 = pandas.read_csv('betx1.csv')
+    # frames = [df1, df2, df3, df4, df5]
+    # df = pandas.concat(frames)
+    # df = df.drop_duplicates()  # 去重
+    df = pandas.read_csv('etx.csv')
     df = df.sort_values('timeStamp')
     addr2time = {}#地址到交易时间戳的字典
     addr2living = {}
@@ -5593,6 +5596,14 @@ def mixfig6():
     plt.bar(x, y1, width, label="normal tx")
     plt.bar(index+width, y2, width, label="internal tx")
     plt.bar(index+width*2, y3, width, label="token tx")
+    for a, b in zip(x, y1):
+        plt.text(a, b + 0.05, '%.0f' % b, ha='center', va='bottom', fontsize=7)
+    x = index + width
+    for a, b in zip(x, y2):
+        plt.text(a, b + 0.05, '%.0f' % b, ha='center', va='bottom', fontsize=7)
+    x = index + width * 2
+    for a, b in zip(x, y3):
+        plt.text(a, b + 0.05, '%.0f' % b, ha='center', va='bottom', fontsize=7)
     plt.xticks(rotation=30)
     ax = plt.gca()
     plt.yscale('log')
@@ -6036,7 +6047,7 @@ if __name__ == '__main__':
     # norNtxAvgIOcome1()
     # mixnormalAvgIOcome()
     # norAddrA3InNtxTime1()
-#nor2numEIntx1.txt
+    #nor2numEIntx1.txt
     # fig4()
     # fig7i()
     # ifig7()
@@ -6044,7 +6055,8 @@ if __name__ == '__main__':
     # mixfig9Etx()
     # fig7nCdf()
     # test()
-    # mixfig6()
-    scamTxDedupI()
+    # ifig6()
+    mixfig6()
+    # scamTxDedupI()
 #收集整理大量数据时，尽量保存中间文件，即使由于机器性能原因或者ide设置原因等中断运行，也能避免效率的降低。
 #涉及网络爬虫的工作中可能会出现由于当时的网络原因出现问题，包括但不限于整个代码停止运行，某个url的网站爬取失败，为此需要增加异常处理，以便于事后补充未完成的url爬取工作
