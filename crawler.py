@@ -900,8 +900,9 @@ def nfig6():#欺诈地址一般交易的living小时 scamNtxliving
     df2 = pandas.read_csv('ntx2.csv')
     df3 = pandas.read_csv('ntx3.csv')
     df4 = pandas.read_csv('ntx4.csv')
-    df5 = pandas.read_csv('bntx1.csv')
-    frames = [df1, df2, df3, df4, df5]
+    df5 = pandas.read_csv('ntx5.csv')
+    df6 = pandas.read_csv('bntx1.csv')
+    frames = [df1, df2, df3, df4, df5, df6]
     df = pandas.concat(frames)
     df = df.drop_duplicates()  # 去重
     df = df.sort_values('timeStamp')
@@ -4737,6 +4738,45 @@ def mixLive():
     ax.set_xlim(1)
     plt.savefig('livingtime.jpg')
     plt.show()
+def scamTxDedupN():
+    df1 = pandas.read_csv('ntx1.csv')
+    df2 = pandas.read_csv('ntx2.csv')
+    df3 = pandas.read_csv('ntx3.csv')
+    df4 = pandas.read_csv('ntx4.csv')
+    df5 = pandas.read_csv('ntx5.csv')
+    df6 = pandas.read_csv('bntx1.csv')
+    frames = [df1, df2, df3, df4, df5, df6]
+    df = pandas.concat(frames)
+    df = df.drop_duplicates()
+    df['hash'] = df['hash'].str.lower()
+    df = df.drop_duplicates(subset=['hash'], keep='first')
+    df.to_csv('ntx.csv')
+def scamTxDedupI():
+    df1 = pandas.read_csv('itx1.csv')
+    df2 = pandas.read_csv('itx2.csv')
+    df3 = pandas.read_csv('itx3.csv')
+    df4 = pandas.read_csv('itx4.csv')
+    # df5 = pandas.read_csv('itx5.csv')
+    df6 = pandas.read_csv('bitx1.csv')
+    frames = [df1, df2, df3, df4, df6]
+    df = pandas.concat(frames)
+    df = df.drop_duplicates()
+    df['hash'] = df['hash'].str.lower()
+    df = df.drop_duplicates(subset=['hash'], keep='first')
+    df.to_csv('itx.csv')
+def scamTxDedupE():
+    df1 = pandas.read_csv('etx1.csv')
+    df2 = pandas.read_csv('etx2.csv')
+    df3 = pandas.read_csv('etx3.csv')
+    df4 = pandas.read_csv('etx4.csv')
+    # df5 = pandas.read_csv('etx5.csv')
+    df6 = pandas.read_csv('betx1.csv')
+    frames = [df1, df2, df3, df4, df6]
+    df = pandas.concat(frames)
+    df = df.drop_duplicates()
+    df['hash'] = df['hash'].str.lower()
+    df = df.drop_duplicates(subset=['hash'], keep='first')
+    df.to_csv('etx.csv')
 def txdedupN():
     df = pandas.read_csv('normalAddrntx.csv')
     df['hash'] = df['hash'].str.lower()
@@ -5492,7 +5532,7 @@ def mixfig6():
         addr2living2 = literal_eval(f.read())
     with open('scamEtxliving.txt','r') as f:
         addr2living3 = literal_eval(f.read())
-    x = ['<6h','6h≤time<12h','12h≤time<18h','18h≤time<24h','24h≤time<48h','48h≤time<1 week','1 week≤time<1 month','>1 month']
+    x = ['time<6h','6h≤time<12h','12h≤time<18h','18h≤time<24h','24h≤time<48h','48h≤time<1 week','1 week≤time<1 month','time>1 month']
     y1 = [0,0,0,0,0,0,0,0]
     y2 = [0,0,0,0,0,0,0,0]
     y3 = [0,0,0,0,0,0,0,0]
@@ -5549,6 +5589,7 @@ def mixfig6():
             y3[6] += 1
         if 720 <= living:
             y3[7] += 1
+    plt.figure(figsize=(8, 4))
     plt.bar(x, y1, width, label="normal tx")
     plt.bar(index+width, y2, width, label="internal tx")
     plt.bar(index+width*2, y3, width, label="token tx")
@@ -5557,7 +5598,6 @@ def mixfig6():
     plt.yscale('log')
     ax.set_xlabel('living time of scam address')
     plt.legend()
-    ax.set_xlim(1)
     plt.savefig('fig6.jpg')
     plt.show()
 
@@ -6004,13 +6044,7 @@ if __name__ == '__main__':
     # mixfig9Etx()
     # fig7nCdf()
     # test()
-    mixfig6()
+    # mixfig6()
+    scamTxDedupI()
 #收集整理大量数据时，尽量保存中间文件，即使由于机器性能原因或者ide设置原因等中断运行，也能避免效率的降低。
 #涉及网络爬虫的工作中可能会出现由于当时的网络原因出现问题，包括但不限于整个代码停止运行，某个url的网站爬取失败，为此需要增加异常处理，以便于事后补充未完成的url爬取工作
-
-
-
-
-
-
-
