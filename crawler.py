@@ -671,19 +671,24 @@ def fig2():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
     #找每个地址第一次收到钱的时间戳，包括一般交易和内部交易
-    df1 = pandas.read_csv('ntx1.csv')
-    df2 = pandas.read_csv('ntx2.csv')
-    df3 = pandas.read_csv('ntx3.csv')
-    df4 = pandas.read_csv('ntx4.csv')
-    df5 = pandas.read_csv('itx1.csv')
-    df6 = pandas.read_csv('itx2.csv')
-    df7 = pandas.read_csv('itx3.csv')
-    df8 = pandas.read_csv('itx4.csv')
-    df9 = pandas.read_csv('bntx1.csv')
-    df10 = pandas.read_csv('bitx1.csv')
-    frames = [df1,df2,df3,df4,df5,df6,df7,df8,df9,df10]
+    # df1 = pandas.read_csv('ntx1.csv')
+    # df2 = pandas.read_csv('ntx2.csv')
+    # df3 = pandas.read_csv('ntx3.csv')
+    # df4 = pandas.read_csv('ntx4.csv')
+    # df5 = pandas.read_csv('itx1.csv')
+    # df6 = pandas.read_csv('itx2.csv')
+    # df7 = pandas.read_csv('itx3.csv')
+    # df8 = pandas.read_csv('itx4.csv')
+    # df9 = pandas.read_csv('bntx1.csv')
+    # df10 = pandas.read_csv('bitx1.csv')
+    # frames = [df1,df2,df3,df4,df5,df6,df7,df8,df9,df10]
+    #
+    # df = pandas.concat(frames)
+    # df = df.drop_duplicates()#去重
+    df1 = pandas.read_csv('ntx.csv')
+    df2 = pandas.read_csv('itx.csv')
+    frames = [df1,df2]
     df = pandas.concat(frames)
-    df = df.drop_duplicates()#去重
     df['timeStamp'] = df['timeStamp'].map(lambda x:datetime.datetime.fromtimestamp(x).strftime("%Y-%m"))
     df = df.sort_values('timeStamp')
     addr2time = {}
@@ -694,16 +699,22 @@ def fig2():
             addr2time[row['to']].append(row['timeStamp'])
     for addr,time in addr2time.items():
         time.sort()
-    print(addr2time)
+    # print(addr2time)
     addr2mon = {}
     for addr,time in addr2time.items():
         if len(time) > 0:
             addr2mon[addr] = time[0]
-    print(addr2mon)
+    # print(addr2mon)
+    with open('fig2addr2mon.txt','w',encoding='utf-8') as f:
+        print(addr2mon,file=f)
     mon2count = {}
     for addr,mon in addr2mon.items():
         mon2count[mon] = mon2count.get(mon,0) + 1
-    print(mon2count)
+    # print(mon2count)
+    mon2count = sorted(mon2count.items(),key = lambda x:(x[0],x[1]))
+    with open('fig2mon2count.txt','w',encoding='utf-8') as f:
+        print(mon2count,file=f)
+    return
     x = mon2count.keys()
     y = mon2count.values()
     zipped = zip(x, y)
@@ -721,13 +732,14 @@ def fig2():
 
 def nfig3():
     #统计每个月的欺诈交易数量，取出每行的时间戳进行转换，判断时间戳的月份，月份的欺诈交易数量+1
-    df1 = pandas.read_csv('ntx1.csv')
-    df2 = pandas.read_csv('ntx2.csv')
-    df3 = pandas.read_csv('ntx3.csv')
-    df4 = pandas.read_csv('ntx4.csv')
-    df5 = pandas.read_csv('bntx1.csv')
-    frames = [df1,df2,df3,df4,df5]
-    df = pandas.concat(frames)
+    # df1 = pandas.read_csv('ntx1.csv')
+    # df2 = pandas.read_csv('ntx2.csv')
+    # df3 = pandas.read_csv('ntx3.csv')
+    # df4 = pandas.read_csv('ntx4.csv')
+    # df5 = pandas.read_csv('bntx1.csv')
+    # frames = [df1,df2,df3,df4,df5]
+    # df = pandas.concat(frames)
+    df = pandas.read_csv('ntx.csv')
     df['timeStamp'] = df['timeStamp'].map(lambda x:datetime.datetime.fromtimestamp(x).strftime("%Y-%m"))
     dfsort = df.sort_values('timeStamp')
     month2count = {}
@@ -749,14 +761,15 @@ def nfig3():
 
 def ifig3():
     #统计每个月的欺诈交易数量，取出每行的时间戳进行转换，判断时间戳的月份，月份的欺诈交易数量+1
-    df1 = pandas.read_csv('itx1.csv')
-    df2 = pandas.read_csv('itx2.csv')
-    df3 = pandas.read_csv('itx3.csv')
-    df4 = pandas.read_csv('itx4.csv')
-    df5 = pandas.read_csv('bitx1.csv')
-    frames = [df1,df2,df3,df4]
-    df = pandas.concat(frames)
-    df = df.drop_duplicates()
+    # df1 = pandas.read_csv('itx1.csv')
+    # df2 = pandas.read_csv('itx2.csv')
+    # df3 = pandas.read_csv('itx3.csv')
+    # df4 = pandas.read_csv('itx4.csv')
+    # df5 = pandas.read_csv('bitx1.csv')
+    # frames = [df1,df2,df3,df4]
+    # df = pandas.concat(frames)
+    # df = df.drop_duplicates()
+    df = pandas.read_csv('itx.csv')
     df['timeStamp'] = df['timeStamp'].map(lambda x:datetime.datetime.fromtimestamp(x).strftime("%Y-%m"))
     dfsort = df.sort_values('timeStamp')
     month2count = {}
@@ -778,20 +791,21 @@ def ifig3():
 
 def efig3():
     #统计每个月的欺诈交易数量，取出每行的时间戳进行转换，判断时间戳的月份，月份的欺诈交易数量+1
-    df1 = pandas.read_csv('etx1.csv')
-    df2 = pandas.read_csv('etx2.csv')
-    df3 = pandas.read_csv('etx3.csv')
-    df4 = pandas.read_csv('etx4.csv')
-    df5 = pandas.read_csv('betx1.csv')
-    print(df1.shape[0])
-    print(df2.shape[0])
-    print(df3.shape[0])
-    print(df4.shape[0])
-    frames = [df1,df2,df3,df4]
-    df = pandas.concat(frames)
-    print(df.shape[0])
-    df = df.drop_duplicates()
-    print(df.shape[0])
+    # df1 = pandas.read_csv('etx1.csv')
+    # df2 = pandas.read_csv('etx2.csv')
+    # df3 = pandas.read_csv('etx3.csv')
+    # df4 = pandas.read_csv('etx4.csv')
+    # df5 = pandas.read_csv('betx1.csv')
+    # print(df1.shape[0])
+    # print(df2.shape[0])
+    # print(df3.shape[0])
+    # print(df4.shape[0])
+    # frames = [df1,df2,df3,df4]
+    # df = pandas.concat(frames)
+    df = pandas.read_csv('etx.csv')
+    # print(df.shape[0])
+    # df = df.drop_duplicates()
+    # print(df.shape[0])
     df['timeStamp'] = df['timeStamp'].map(lambda x:datetime.datetime.fromtimestamp(x).strftime("%Y-%m"))
     dfsort = df.sort_values('timeStamp')
     month2count = {}
@@ -834,6 +848,36 @@ def mixfig3():
     plt.legend()
     plt.savefig('fig3.jpg')
     plt.show()
+def fig221():
+    with open('fig2addr2mon.txt','r',encoding='utf-8') as f:
+        addr2mon = literal_eval(f.read())
+    addrlist21 = []
+    for addr,month in addr2mon.items():
+        if month[0:4] == '2021':
+            addrlist21.append(addr)
+    with open('fig221.txt','w',encoding='utf-8') as f:
+        print(addrlist21,file=f)
+def scamIncome21():
+    with open('fig221.txt','r',encoding='utf-8') as f:
+        addrlist21 = literal_eval(f.read())
+    with open('scamIncome.txt','r',encoding='utf-8') as f:
+        scamIncome = literal_eval(f.read())
+    scamIncome21 = {}
+    profit21 = {}
+    maxprofit = 0
+    for addr in addrlist21:
+        if addr in scamIncome.keys():
+            scamIncome21[addr] = scamIncome[addr]
+            if scamIncome21[addr] > maxprofit:
+                maxprofit = scamIncome21[addr]
+            if scamIncome21[addr] > 100:
+                profit21[addr] = scamIncome21[addr]
+    print(profit21)
+    print(maxprofit)
+
+    # with open('scamIncome21.txt','w',encoding='utf-8') as f:
+    #     print(scamIncome21,file=f)
+    # print(scamIncome21)
 #fig4：所有地址每个月欺诈交易的数量，根据txhash统计，存储to地址和txhash的列表的字典，然后去重，统计所有种类的交易
 def fig4():
     with open('addr.txt','r',encoding='utf-8') as f:
@@ -1085,14 +1129,15 @@ def fig6():
 def fig7n():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    df1 = pandas.read_csv('ntx1.csv')
-    df2 = pandas.read_csv('ntx2.csv')
-    df3 = pandas.read_csv('ntx3.csv')
-    df4 = pandas.read_csv('ntx4.csv')
-    df5 = pandas.read_csv('bntx1.csv')
-    frames = [df1, df2, df3, df4, df5]
-    df = pandas.concat(frames)
-    df = df.drop_duplicates()  # 去重
+    # df1 = pandas.read_csv('ntx1.csv')
+    # df2 = pandas.read_csv('ntx2.csv')
+    # df3 = pandas.read_csv('ntx3.csv')
+    # df4 = pandas.read_csv('ntx4.csv')
+    # df5 = pandas.read_csv('bntx1.csv')
+    # frames = [df1, df2, df3, df4, df5]
+    # df = pandas.concat(frames)
+    df = pandas.read_csv('ntx.csv')
+    # df = df.drop_duplicates()  # 去重
     df = df.sort_values('timeStamp')
     addr2prof = {}
     # url = "https://api.coingecko.com/api/v3/exchange_rates"
@@ -1156,6 +1201,8 @@ def fig7n():
             prof2num['1400k-1500k'] += 1
         if prof / 1000 > 1500:
             prof2num['>1500k'] += 1
+            print(addr)
+
     prof2num2 = {}
     for addr,prof in addr2prof.items():
         addr2prof[addr] = addr2prof[addr]
@@ -1179,7 +1226,7 @@ def fig7n():
     ax.set_xlabel('The Profit of Address($)')
     ax.set_ylabel('# of normal txs')
     plt.show()
-    return
+
     with open('fig7n.txt','w') as f:
         print(prof2num,file=f)
     with open('fig7n2.txt','w') as f:
@@ -1208,8 +1255,6 @@ def fig7nCdf():
     # ax.set_xlabel('The Profit of Address($)')
     # ax.set_ylabel('# of normal txs')
     # plt.show()
-
-
     prof2num = {}
     with open('fig7n2.txt','r') as f:
         prof2num = literal_eval(f.read())
@@ -1256,14 +1301,7 @@ def fig7nCdf():
 def fig7i():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    df1 = pandas.read_csv('itx1.csv')
-    df2 = pandas.read_csv('itx2.csv')
-    df3 = pandas.read_csv('itx3.csv')
-    df4 = pandas.read_csv('itx4.csv')
-    df5 = pandas.read_csv('bitx1.csv')
-    frames = [df1, df2, df3, df4, df5]
-    df = pandas.concat(frames)
-    df = df.drop_duplicates()  # 去重
+    df = pandas.read_csv('itx.csv')
     df = df.sort_values('timeStamp')
     addr2prof = {}
     # url = "https://api.coingecko.com/api/v3/exchange_rates"
@@ -1458,13 +1496,7 @@ def fig8():
 def nfig9Intx():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    df1 = pandas.read_csv('ntx1.csv')
-    df2 = pandas.read_csv('ntx2.csv')
-    df3 = pandas.read_csv('ntx3.csv')
-    df4 = pandas.read_csv('ntx4.csv')
-    df5 = pandas.read_csv('bntx1.csv')
-    frames = [df1, df2, df3, df4, df5]
-    df = pandas.concat(frames)
+    df = pandas.read_csv('ntx.csv')
     #欺诈地址作为接收方的欺诈交易数量
     addr2num = {}
     for index, row in df.iterrows():
@@ -1529,13 +1561,7 @@ def nfig9Intx():
 def ifig9Intx():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    df1 = pandas.read_csv('itx1.csv')
-    df2 = pandas.read_csv('itx2.csv')
-    df3 = pandas.read_csv('itx3.csv')
-    df4 = pandas.read_csv('itx4.csv')
-    df5 = pandas.read_csv('bitx1.csv')
-    frames = [df1, df2, df3, df4, df5]
-    df = pandas.concat(frames)
+    df = pandas.read_csv('itx.csv')
     addr2num = {}
     for index, row in df.iterrows():
         if row['to'] != 'NaN' and row['to'] in addrlist:
@@ -1562,13 +1588,14 @@ def ifig9Intx():
 def efig9Intx():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    df1 = pandas.read_csv('etx1.csv')
-    df2 = pandas.read_csv('etx2.csv')
-    df3 = pandas.read_csv('etx3.csv')
-    df4 = pandas.read_csv('etx4.csv')
-    df5 = pandas.read_csv('betx1.csv')
-    frames = [df1, df2, df3, df4, df5]
-    df = pandas.concat(frames)
+    # df1 = pandas.read_csv('etx1.csv')
+    # df2 = pandas.read_csv('etx2.csv')
+    # df3 = pandas.read_csv('etx3.csv')
+    # df4 = pandas.read_csv('etx4.csv')
+    # df5 = pandas.read_csv('betx1.csv')
+    # frames = [df1, df2, df3, df4, df5]
+    # df = pandas.concat(frames)
+    df = pandas.read_csv('etx.csv')
     addr2num = {}
     for index, row in df.iterrows():
         if row['to'] != 'NaN' and row['to'] in addrlist:
@@ -1595,13 +1622,15 @@ def efig9Intx():
 def nfig9Outtx():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    df1 = pandas.read_csv('ntx1.csv')
-    df2 = pandas.read_csv('ntx2.csv')
-    df3 = pandas.read_csv('ntx3.csv')
-    df4 = pandas.read_csv('ntx4.csv')
-    df5 = pandas.read_csv('bntx1.csv')
-    frames = [df1, df2, df3, df4, df5]
-    df = pandas.concat(frames)
+    # df1 = pandas.read_csv('ntx1.csv')
+    # df2 = pandas.read_csv('ntx2.csv')
+    # df3 = pandas.read_csv('ntx3.csv')
+    # df4 = pandas.read_csv('ntx4.csv')
+    # df5 = pandas.read_csv('bntx1.csv')
+    # frames = [df1, df2, df3, df4, df5]
+    df = pandas.read_csv('ntx.csv')
+    #
+    # df = pandas.concat(frames)
     addr2num = {}
     for index, row in df.iterrows():
         if row['from'] != 'NaN' and row['from'] in addrlist:
@@ -1628,13 +1657,15 @@ def nfig9Outtx():
 def ifig9Outtx():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    df1 = pandas.read_csv('itx1.csv')
-    df2 = pandas.read_csv('itx2.csv')
-    df3 = pandas.read_csv('itx3.csv')
-    df4 = pandas.read_csv('itx4.csv')
-    df5 = pandas.read_csv('bitx1.csv')
-    frames = [df1, df2, df3, df4, df5]
-    df = pandas.concat(frames)
+    # df1 = pandas.read_csv('itx1.csv')
+    # df2 = pandas.read_csv('itx2.csv')
+    # df3 = pandas.read_csv('itx3.csv')
+    # df4 = pandas.read_csv('itx4.csv')
+    # df5 = pandas.read_csv('bitx1.csv')
+    # frames = [df1, df2, df3, df4, df5]
+    # df = pandas.concat(frames)
+    df = pandas.read_csv('itx.csv')
+
     addr2num = {}
     for index, row in df.iterrows():
         if row['from'] != 'NaN' and row['from'] in addrlist:
@@ -1661,13 +1692,14 @@ def ifig9Outtx():
 def efig9Outtx():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    df1 = pandas.read_csv('etx1.csv')
-    df2 = pandas.read_csv('etx2.csv')
-    df3 = pandas.read_csv('etx3.csv')
-    df4 = pandas.read_csv('etx4.csv')
-    df5 = pandas.read_csv('betx1.csv')
-    frames = [df1, df2, df3, df4, df5]
-    df = pandas.concat(frames)
+    # df1 = pandas.read_csv('etx1.csv')
+    # df2 = pandas.read_csv('etx2.csv')
+    # df3 = pandas.read_csv('etx3.csv')
+    # df4 = pandas.read_csv('etx4.csv')
+    # df5 = pandas.read_csv('betx1.csv')
+    # frames = [df1, df2, df3, df4, df5]
+    # df = pandas.concat(frames)
+    df = pandas.read_csv('etx.csv')
     addr2num = {}
     for index, row in df.iterrows():
         if row['from'] != 'NaN' and row['from'] in addrlist:
@@ -3304,17 +3336,9 @@ def getnormaladdrEtxs10():
 def scamIncome():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    df1 = pandas.read_csv('ntx1.csv')
-    df2 = pandas.read_csv('ntx2.csv')
-    df3 = pandas.read_csv('ntx3.csv')
-    df4 = pandas.read_csv('ntx4.csv')
-    df5 = pandas.read_csv('itx1.csv')
-    df6 = pandas.read_csv('itx2.csv')
-    df7 = pandas.read_csv('itx3.csv')
-    df8 = pandas.read_csv('itx4.csv')
-    df9 = pandas.read_csv('bntx1.csv')
-    df10 = pandas.read_csv('bitx1.csv')
-    frames = [df1, df2, df3, df4, df5, df6, df7, df8, df9, df10]
+    df1 = pandas.read_csv('ntx.csv')
+    df2 = pandas.read_csv('itx.csv')
+    frames = [df1,df2]
     df = pandas.concat(frames)
     addr2income = {}
     for index, row in df.iterrows():
@@ -3332,17 +3356,9 @@ def scamIncome():
 def scamOutcome():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    df1 = pandas.read_csv('ntx1.csv')
-    df2 = pandas.read_csv('ntx2.csv')
-    df3 = pandas.read_csv('ntx3.csv')
-    df4 = pandas.read_csv('ntx4.csv')
-    df5 = pandas.read_csv('itx1.csv')
-    df6 = pandas.read_csv('itx2.csv')
-    df7 = pandas.read_csv('itx3.csv')
-    df8 = pandas.read_csv('itx4.csv')
-    df9 = pandas.read_csv('bntx1.csv')
-    df10 = pandas.read_csv('bitx1.csv')
-    frames = [df1, df2, df3, df4, df5, df6, df7, df8, df9, df10]
+    df1 = pandas.read_csv('ntx.csv')
+    df2 = pandas.read_csv('itx.csv')
+    frames = [df1,df2]
     df = pandas.concat(frames)
     addr2outcome = {}
     for index, row in df.iterrows():
@@ -3359,17 +3375,9 @@ def scamOutcome():
 def scamTx():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    df1 = pandas.read_csv('ntx1.csv')
-    df2 = pandas.read_csv('ntx2.csv')
-    df3 = pandas.read_csv('ntx3.csv')
-    df4 = pandas.read_csv('ntx4.csv')
-    df5 = pandas.read_csv('itx1.csv')
-    df6 = pandas.read_csv('itx2.csv')
-    df7 = pandas.read_csv('itx3.csv')
-    df8 = pandas.read_csv('itx4.csv')
-    df9 = pandas.read_csv('bntx1.csv')
-    df10 = pandas.read_csv('bitx1.csv')
-    frames = [df1, df2, df3, df4, df5, df6, df7, df8, df9, df10]
+    df1 = pandas.read_csv('ntx.csv')
+    df2 = pandas.read_csv('itx.csv')
+    frames = [df1,df2]
     df = pandas.concat(frames)
     addr2Intxnum = {}
     addr2Outtxnum = {}
@@ -5608,7 +5616,7 @@ def mixfig6():
     ax = plt.gca()
     plt.yscale('log')
     ax.set_xlabel('living time of scam address')
-    plt.legend()
+    plt.legend(loc='best')
     plt.savefig('fig6.jpg')
     plt.show()
 
@@ -6056,7 +6064,14 @@ if __name__ == '__main__':
     # fig7nCdf()
     # test()
     # ifig6()
-    mixfig6()
+    # mixfig6()
+    # fig7i()
+    # fig221()
+    # scamIncome21()
+    # mixfig3()
+    # scamIncome()
+    # scamOutcome()
+    scamTx()
     # scamTxDedupI()
 #收集整理大量数据时，尽量保存中间文件，即使由于机器性能原因或者ide设置原因等中断运行，也能避免效率的降低。
 #涉及网络爬虫的工作中可能会出现由于当时的网络原因出现问题，包括但不限于整个代码停止运行，某个url的网站爬取失败，为此需要增加异常处理，以便于事后补充未完成的url爬取工作
