@@ -857,12 +857,15 @@ def fig221():
             addrlist21.append(addr)
     with open('fig221.txt','w',encoding='utf-8') as f:
         print(addrlist21,file=f)
-def scamIncome21():
+def scamIOcome21():
     with open('fig221.txt','r',encoding='utf-8') as f:
         addrlist21 = literal_eval(f.read())
     with open('scamIncome.txt','r',encoding='utf-8') as f:
         scamIncome = literal_eval(f.read())
+    with open('scamOutcome.txt','r',encoding='utf-8') as f:
+        scamOutcome = literal_eval(f.read())
     scamIncome21 = {}
+    scamOutcome21 = {}
     profit21 = {}
     maxprofit = 0
     for addr in addrlist21:
@@ -872,12 +875,13 @@ def scamIncome21():
                 maxprofit = scamIncome21[addr]
             if scamIncome21[addr] > 100:
                 profit21[addr] = scamIncome21[addr]
-    print(profit21)
-    print(maxprofit)
+        if addr in scamIncome.keys():
+            scamOutcome21[addr] = scamOutcome[addr]
 
-    # with open('scamIncome21.txt','w',encoding='utf-8') as f:
-    #     print(scamIncome21,file=f)
-    # print(scamIncome21)
+    with open('scamIncome21.txt','w') as f:
+        print(scamIncome21,file=f)
+    with open('scamOutcome21.txt','w') as f:
+        print(scamOutcome21,file=f)
 #fig4：所有地址每个月欺诈交易的数量，根据txhash统计，存储to地址和txhash的列表的字典，然后去重，统计所有种类的交易
 def fig4():
     with open('addr.txt','r',encoding='utf-8') as f:
@@ -1129,13 +1133,6 @@ def fig6():
 def fig7n():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    # df1 = pandas.read_csv('ntx1.csv')
-    # df2 = pandas.read_csv('ntx2.csv')
-    # df3 = pandas.read_csv('ntx3.csv')
-    # df4 = pandas.read_csv('ntx4.csv')
-    # df5 = pandas.read_csv('bntx1.csv')
-    # frames = [df1, df2, df3, df4, df5]
-    # df = pandas.concat(frames)
     df = pandas.read_csv('ntx.csv')
     # df = df.drop_duplicates()  # 去重
     df = df.sort_values('timeStamp')
@@ -1460,13 +1457,8 @@ def fig8():
     print(usd)
     print(rates)
     print(eth)
-    df1 = pandas.read_csv('etx1.csv')
-    df2 = pandas.read_csv('etx2.csv')
-    df3 = pandas.read_csv('etx3.csv')
-    df4 = pandas.read_csv('etx4.csv')
-    df5 = pandas.read_csv('betx1.csv')
-    frames = [df1, df2, df3, df4, df5]
-    df = pandas.concat(frames)
+
+    df = pandas.read_csv('etx.csv')
     addr2profit = {}
     for index, row in df.iterrows():
         try:
@@ -1510,7 +1502,7 @@ def nfig9Intx():
     # txnum2addrnum = {'1-10': 3447, '10-100': 1650, '100-1000': 228, '1000-5000': 24}
     # #先画直方图，横轴是交易数量区间，纵轴是欺诈地址数
     txnum2addrnum = {}
-    # txnum = ['1-10','10-100','100-1000','1000-5000']#原本要分的区间，不需要分区间，需要交易数量到地址数量的映射，如果该交易数量没有则构造
+    # #原本要分的区间，不需要分区间，需要交易数量到地址数量的映射，如果该交易数量没有则构造
     # print(list(txnum2addrnum.values()))
     for addr,num in addr2num.items():
         txnum2addrnum[num] = txnum2addrnum.get(num,0) + 1
@@ -1552,12 +1544,28 @@ def nfig9Intx():
     line = ax.plot(x,percentage)
     plt.xscale('log')
     plt.show()
-
     # plt.plot(x,y)
     # plt.xticks(rotation=30)
     # plt.xscale('log')
     # plt.show()
-
+def fig921():
+    with open('addr.txt','r',encoding='utf-8') as f:
+        addrlist21 = literal_eval(f.read())
+    with open('scamInTx.txt','r') as f:
+        addr2Intxnum = literal_eval(f.read())
+    with open('scamOutTx.txt','r') as f:
+        addr2Outtxnum = literal_eval(f.read())
+    addr2Intxnum21 = {}
+    addr2Outtxnum21 = {}
+    for addr in addrlist21:#不是所有21年的欺诈地址都有in tx
+        if addr in addr2Intxnum.keys():
+            addr2Intxnum21[addr] = addr2Intxnum[addr]
+        if addr in addr2Outtxnum.keys():
+            addr2Outtxnum21[addr] = addr2Outtxnum[addr]
+    with open('scamInTx21.txt','w') as f:
+        print(addr2Intxnum21,file=f)
+    with open('scamOutTx21.txt','w') as f:
+        print(addr2Outtxnum21,file=f)
 def ifig9Intx():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
@@ -1588,13 +1596,6 @@ def ifig9Intx():
 def efig9Intx():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    # df1 = pandas.read_csv('etx1.csv')
-    # df2 = pandas.read_csv('etx2.csv')
-    # df3 = pandas.read_csv('etx3.csv')
-    # df4 = pandas.read_csv('etx4.csv')
-    # df5 = pandas.read_csv('betx1.csv')
-    # frames = [df1, df2, df3, df4, df5]
-    # df = pandas.concat(frames)
     df = pandas.read_csv('etx.csv')
     addr2num = {}
     for index, row in df.iterrows():
@@ -1622,15 +1623,7 @@ def efig9Intx():
 def nfig9Outtx():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    # df1 = pandas.read_csv('ntx1.csv')
-    # df2 = pandas.read_csv('ntx2.csv')
-    # df3 = pandas.read_csv('ntx3.csv')
-    # df4 = pandas.read_csv('ntx4.csv')
-    # df5 = pandas.read_csv('bntx1.csv')
-    # frames = [df1, df2, df3, df4, df5]
     df = pandas.read_csv('ntx.csv')
-    #
-    # df = pandas.concat(frames)
     addr2num = {}
     for index, row in df.iterrows():
         if row['from'] != 'NaN' and row['from'] in addrlist:
@@ -6068,10 +6061,11 @@ if __name__ == '__main__':
     # fig7i()
     # fig221()
     # scamIncome21()
+    scamIOcome21()
     # mixfig3()
     # scamIncome()
     # scamOutcome()
-    scamTx()
+    # scamTx()
     # scamTxDedupI()
 #收集整理大量数据时，尽量保存中间文件，即使由于机器性能原因或者ide设置原因等中断运行，也能避免效率的降低。
 #涉及网络爬虫的工作中可能会出现由于当时的网络原因出现问题，包括但不限于整个代码停止运行，某个url的网站爬取失败，为此需要增加异常处理，以便于事后补充未完成的url爬取工作
