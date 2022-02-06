@@ -1498,6 +1498,9 @@ def nfig9Intx():
                     addr2num[row['to']] = addr2num.get(row['to'],0) + 1
             except Exception:
                 print(row['to'])
+    with open('scamInNtx.txt','w',encoding='utf-8') as f:
+        print(addr2num,file=f)
+    return
     # print(addr2num)
     # txnum2addrnum = {'1-10': 3447, '10-100': 1650, '100-1000': 228, '1000-5000': 24}
     # #先画直方图，横轴是交易数量区间，纵轴是欺诈地址数
@@ -1513,41 +1516,13 @@ def nfig9Intx():
     x, y = [list(x) for x in result]
     with open('scamAddrNFig9Intx.txt','w',encoding='utf-8') as f:
         print(txnum2addrnum,file=f)
-    # y = numpy.array(y)
-    # name = x
-
-    # ecdf = ECDF(x)
-    # x = numpy.linspace(min(x),max(x),len(x))
-    # y = ecdf(x)
-
-    # ysum = sum(y)
-    # y = numpy.cumsum(y)
-    # 构造数据
-    # x = list(txnum2addrnum.keys())
-    # res_freq = [value / ysum for value in y]#频率
-    # print(res_freq)
-
-    # plt.bar(list(range(len(res_freq))),res_freq,tick_label=x,width=0.6)
-    # plt.xscale('log')
-    # plt.xticks(rotation=30)
-    # plt.show()
-    # plt.plot(x,y,label=name)
-
-    # df_participant_pair = pd.read_sql(sqls_participant_pair, db)
-    # df_participant_pair['cumsum'] = numpy.cumsum(df_participant_pair['count'])
-    # df_participant_pair['percentage'] = df_participant_pair['cumsum'] / list(df_participant_pair['cumsum'])[-1]
-    # line2 = ax.plot(df_participant_pair['involve_pairs'], df_participant_pair['percentage'], color='black',
-    #                 label='Participants')
     fig, ax = plt.subplots()
     cum = numpy.cumsum(y)
     percentage = cum / list(cum)[-1]
     line = ax.plot(x,percentage)
     plt.xscale('log')
     plt.show()
-    # plt.plot(x,y)
-    # plt.xticks(rotation=30)
-    # plt.xscale('log')
-    # plt.show()
+
 def fig921():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist21 = literal_eval(f.read())
@@ -1578,6 +1553,9 @@ def ifig9Intx():
                     addr2num[row['to']] = addr2num.get(row['to'],0) + 1
             except Exception:
                 print(row['to'])
+    with open('scamInItx.txt','w',encoding='utf-8') as f:
+        print(addr2num,file=f)
+    return
     txnum2addrnum = {}
     for addr,num in addr2num.items():
         txnum2addrnum[num] = txnum2addrnum.get(num,0) + 1
@@ -1632,6 +1610,9 @@ def nfig9Outtx():
                     addr2num[row['from']] = addr2num.get(row['from'],0) + 1
             except Exception:
                 print(row['from'])
+    with open('scamOutNtx.txt','w',encoding='utf-8') as f:
+        print(addr2num,file=f)
+    return
     txnum2addrnum = {}
     for addr,num in addr2num.items():
         txnum2addrnum[num] = txnum2addrnum.get(num,0) + 1
@@ -1667,6 +1648,9 @@ def ifig9Outtx():
                     addr2num[row['from']] = addr2num.get(row['from'],0) + 1
             except Exception:
                 print(row['from'])
+    with open('scamOutItx.txt','w',encoding='utf-8') as f:
+        print(addr2num,file=f)
+    return
     txnum2addrnum = {}
     for addr,num in addr2num.items():
         txnum2addrnum[num] = txnum2addrnum.get(num,0) + 1
@@ -3391,11 +3375,64 @@ def scamTx():
             except Exception:
                 print(row['from'])
                 traceback.print_exc()
-    with open('scamInTx.txt','w') as f:
+    with open('scamInTx.txt','w') as f:#欺诈地址两种交易的in txs
         print(addr2Intxnum,file=f)
     with open('scamOutTx.txt','w') as f:
         print(addr2Outtxnum,file=f)
 
+def scamIOTxAna():
+    # with open('scamInTx.txt','r') as f:
+    #     scamInTx = literal_eval(f.read())
+    # with open('scamOutTx.txt','r') as f:
+    #     scamOutTx = literal_eval(f.read())
+    # scamInTx = sorted(scamInTx.items(),key = lambda x:(x[1]))
+    # scamOutTx = sorted(scamOutTx.items(),key = lambda x:(x[1]))
+    # print(scamInTx)
+    # print(scamOutTx)
+    # with open('scamInNtx.txt','r') as f:
+    #     scamInNtx = literal_eval(f.read())
+    # with open('scamOutNtx.txt','r') as f:
+    #     scamOutNtx = literal_eval(f.read())
+    # scamInNtx = sorted(scamInNtx.items(),key = lambda x:(x[1]))
+    # scamOutNtx = sorted(scamOutNtx.items(),key = lambda x:(x[1]))
+    with open('scamInItx.txt','r') as f:
+        scamInItx = literal_eval(f.read())
+    with open('scamOutItx.txt','r') as f:
+        scamOutItx = literal_eval(f.read())
+    scamInItx = sorted(scamInItx.items(),key = lambda x:(x[1]))
+    scamOutItx = sorted(scamOutItx.items(),key = lambda x:(x[1]))
+    print(scamInItx)
+    print(scamOutItx)
+def scamTx2():
+    with open('addr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df1 = pandas.read_csv('ntx.csv')
+    df2 = pandas.read_csv('itx.csv')
+    frames = [df1,df2]
+    df = pandas.concat(frames)
+    addr2Intxnum = {}
+    addr2Outtxnum = {}
+    for index, row in df.iterrows():
+        if isinstance(row['to'],str) and row['to'] in addrlist and isinstance(row['from'],str) and row['from'] in addrlist:
+            try:
+                if isinstance(row['to'], str):
+                    addr2Intxnum[row['to']] = addr2Intxnum.get(row['to'],0) + 1
+            except Exception:
+                print(row['to'])
+                print(row['value'])
+                traceback.print_exc()
+    for index, row in df.iterrows():
+        if isinstance(row['to'],str) and row['to'] in addrlist and isinstance(row['from'],str) and row['from'] in addrlist:
+            try:
+                if isinstance(row['from'], str):
+                    addr2Outtxnum[row['from']] = addr2Outtxnum.get(row['from'],0) + 1
+            except Exception:
+                print(row['from'])
+                traceback.print_exc()
+    with open('scamInTx2.txt','w') as f:
+        print(addr2Intxnum,file=f)
+    with open('scamOutTx2.txt','w') as f:
+        print(addr2Outtxnum,file=f)
 def normalInNtx1():
     with open('normalAddr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
@@ -4752,7 +4789,7 @@ def scamTxDedupN():
     frames = [df1, df2, df3, df4, df5, df6]
     df = pandas.concat(frames)
     df = df.drop_duplicates()
-    df['hash'] = df['hash'].str.lower()
+    df['hash'] = df['hash'].str.lower()#对哈希值进行全小写处理，然后去重，有可能有小写后相同的地址
     df = df.drop_duplicates(subset=['hash'], keep='first')
     df.to_csv('ntx.csv')
 def scamTxDedupI():
@@ -5826,13 +5863,89 @@ def mixfig9Etx():
     plt.legend()
     plt.savefig('Etxfig9.jpg')
     plt.show()
+def graph1():
+    df = pandas.read_csv('exp_group_victim.csv')
+    temp_list = df['componentnumber']
+    temp_dict = {}
+    for each in temp_list:
+        if each not in temp_dict.keys():
+            temp_dict[each] = 1
+        else:
+            temp_dict[each] = temp_dict[each] + 1
+    no_list = []
+    number_list = []
+    for k, v in temp_dict.items():
+        no_list.append(k)
+        number_list.append(v)
+    df = pandas.DataFrame({'id': no_list, '#': number_list})
+    df.to_csv(r'number of each group victim')
+def scamNtxMFG():
+    with open('addr.txt', 'r') as f:
+        addrlist = literal_eval(f.read())
+    df1 = pandas.read_csv('ntx.csv')
+    for index, row in df1.iterrows():
+        if isinstance(row['from'],str) and isinstance(row['to'],str):
+            row['from'] = row['from'].lower()
+            row['to'] = row['to'].lower()
+    dict1 = {}
+    addrlist2 = []
+    for addr in addrlist:
+        dict1[addr] = {}
+    for index, row in df1.iterrows():
+        # if row['from'] in addrlist and row['to'] in addrlist:
+        if row['from'] in addrlist:
+            dict1[row['from']][row['to']] = dict1[row['from']].get(row['to'],0) + float(row['value'])
+    with open('scamNtxMFG.csv','w',encoding='utf-8',newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(['from','to','value'])
+        for fromaddr,to2value in dict1.items():
+            for toaddr,value in dict1[fromaddr].items():
+                writer.writerow([fromaddr,toaddr,value])
+                addrlist2.append(toaddr)
+            addrlist2.append(fromaddr)
+    addrlist2 = list(set(addrlist2))
+    print(addrlist2)
+    solp = []
+    for addr in addrlist:
+        if addr not in addrlist2:
+            solp.append(addr)
+    with open('scamNtxSolP.txt','w',encoding='utf-8') as f:
+        print(solp,file=f)
+    #独立点，和没有被识别为欺诈地址的其他地址进行交易
 
-def MFG():
-    pass
-def CCG():
-    pass
-def CIG():
-    pass
+def scamItxMFG():
+    with open('addr.txt', 'r') as f:
+        addrlist = literal_eval(f.read())
+    df1 = pandas.read_csv('itx.csv')
+    for index, row in df1.iterrows():
+        if isinstance(row['from'],str) and isinstance(row['to'],str):
+            row['from'] = row['from'].lower()
+            row['to'] = row['to'].lower()
+    dict1 = {}
+    addrlist2 = []
+    for addr in addrlist:
+        dict1[addr] = {}
+    for index, row in df1.iterrows():
+        # if row['from'] in addrlist and row['to'] in addrlist:
+        if row['from'] in addrlist:
+            dict1[row['from']][row['to']] = dict1[row['from']].get(row['to'],0) + float(row['value'])#value的单位是wei
+    with open('scamItxMFG.csv','w',encoding='utf-8',newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(['from','to','value'])
+        for fromaddr,to2value in dict1.items():
+            for toaddr,value in dict1[fromaddr].items():
+                writer.writerow([fromaddr,toaddr,value])
+                addrlist2.append(toaddr)
+            addrlist2.append(fromaddr)
+    # print(addrlist2)
+    addrlist2 = list(set(addrlist2))
+    print(len(addrlist2))
+    solp = []
+    for addr in addrlist:
+        if addr not in addrlist2:
+            solp.append(addr)
+    with open('scamItxSolP.txt','w',encoding='utf-8') as f:
+        print(solp,file=f)
 
 #每个文件的含义
 # exp_add_profit.csv 地址和利润
@@ -5845,10 +5958,12 @@ def CIG():
 # final_type2_in_trans_USD.csv 地址和利润
 # final_type2_trans_USD.csv地址和利润
 # need_to_reget.csv 地址
+# node.csv 无法打开
 # number of each group victim.csv 每个块的受害者
 # scam group NO.csv 地址和块号
 # scam group time and profit.csv 欺诈地址和时间和利润
 # tx_into.csv ?
+
 
 if __name__ == '__main__':
     # try:
@@ -6061,11 +6176,13 @@ if __name__ == '__main__':
     # fig7i()
     # fig221()
     # scamIncome21()
-    scamIOcome21()
-    # mixfig3()
-    # scamIncome()
-    # scamOutcome()
-    # scamTx()
-    # scamTxDedupI()
+    # scamIOcome21()
+    # scamNtxMFG()
+    # scamTx2()
+    # nfig9Outtx()
+    # nfig9Intx()
+    scamIOTxAna()
+    # ifig9Intx()
+
 #收集整理大量数据时，尽量保存中间文件，即使由于机器性能原因或者ide设置原因等中断运行，也能避免效率的降低。
 #涉及网络爬虫的工作中可能会出现由于当时的网络原因出现问题，包括但不限于整个代码停止运行，某个url的网站爬取失败，为此需要增加异常处理，以便于事后补充未完成的url爬取工作
