@@ -695,7 +695,7 @@ def fig2():
     for addr in addrlist:
         addr2time[addr] = []
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             addr2time[row['to']].append(row['timeStamp'])
     for addr,time in addr2time.items():
         time.sort()
@@ -913,10 +913,10 @@ def fig4():
     #先排序时间再统计交易数量
     day2addr2num = {}
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             day2addr2num[row['timeStamp']] = {}
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             day2addr2num[row['timeStamp']][row['to']] = day2addr2num[row['timeStamp']].get(row['to'],0) + 1
     with open('fig4.txt','w',encoding='utf-8') as f:
         print(day2addr2num,file=f)
@@ -960,7 +960,7 @@ def nfig6():#欺诈地址一般交易的living小时 scamNtxliving
     for addr in addrlist:
         addr2time[addr] = []
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             addr2time[row['to']].append(row['timeStamp'])
     for addr,time in addr2time.items():#将时间列表排序，计算时间差
         time.sort()
@@ -1017,7 +1017,7 @@ def ifig6():
     for addr in addrlist:
         addr2time[addr] = []
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             addr2time[row['to']].append(row['timeStamp'])
     for addr,time in addr2time.items():#将时间列表排序，计算时间差
         time.sort()
@@ -1073,7 +1073,7 @@ def efig6():
     for addr in addrlist:
         addr2time[addr] = []
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             addr2time[row['to']].append(row['timeStamp'])
     for addr,time in addr2time.items():#将时间列表排序，计算时间差
         time.sort()
@@ -1311,7 +1311,7 @@ def fig7i():
     # eth = rates['eth']  # 一个以太币的价格
     eth = 2460.268204521556
     for index, row in df.iterrows():
-        # if row['to'] != 'NaN':
+        # if isinstance(row['to'],str):
         # if not math.isnan(row['to']):
         if isinstance(row['to'],str):
             addr2prof[row['to']] = 0
@@ -1319,7 +1319,7 @@ def fig7i():
     hashlist = []
     valuesum = 0
     for index, row in df.iterrows():
-        # if row['to'] != 'NaN' and row['to'].lower() in addrlist and row['from'].lower() not in addrlist:
+        # if isinstance(row['to'],str) and row['to'].lower() in addrlist and row['from'].lower() not in addrlist:
         try:
             if isinstance(row['to'],str) and row['to'].lower() in addrlist and row['from'].lower() not in addrlist:
                 addr2prof[row['to']] += int(row['value']) / 1000000000000000000 * eth
@@ -1462,7 +1462,7 @@ def fig8():
     addr2profit = {}
     for index, row in df.iterrows():
         try:
-            if row['to'] != 'NaN' and row['to'] in addrlist:
+            if isinstance(row['to'],str) and row['to'] in addrlist:
                 if isinstance(row['tokenSymbol'],str) and row['tokenSymbol'].lower() in rates.keys():
                     addr2profit[row['to']] = int(row['value']) * rates[row['tokenSymbol'].lower()] / 1000000000000000000
                 elif not isinstance(row['tokenSymbol'],str) and not math.isnan((row['tokenSymbol'])):
@@ -1492,7 +1492,7 @@ def nfig9Intx():
     #欺诈地址作为接收方的欺诈交易数量
     addr2num = {}
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             try:
                 if isinstance(row['to'], str):
                     addr2num[row['to']] = addr2num.get(row['to'],0) + 1
@@ -1547,7 +1547,7 @@ def ifig9Intx():
     df = pandas.read_csv('itx.csv')
     addr2num = {}
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             try:
                 if isinstance(row['to'], str):
                     addr2num[row['to']] = addr2num.get(row['to'],0) + 1
@@ -1577,7 +1577,7 @@ def efig9Intx():
     df = pandas.read_csv('etx.csv')
     addr2num = {}
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             try:
                 if isinstance(row['to'], str):
                     addr2num[row['to']] = addr2num.get(row['to'],0) + 1
@@ -1604,7 +1604,7 @@ def nfig9Outtx():
     df = pandas.read_csv('ntx.csv')
     addr2num = {}
     for index, row in df.iterrows():
-        if row['from'] != 'NaN' and row['from'] in addrlist:
+        if isinstance(row['from'],str) and row['from'] in addrlist:
             try:
                 if isinstance(row['from'], str):
                     addr2num[row['from']] = addr2num.get(row['from'],0) + 1
@@ -1642,7 +1642,7 @@ def ifig9Outtx():
 
     addr2num = {}
     for index, row in df.iterrows():
-        if row['from'] != 'NaN' and row['from'] in addrlist:
+        if isinstance(row['from'],str) and row['from'] in addrlist:
             try:
                 if isinstance(row['from'], str):
                     addr2num[row['from']] = addr2num.get(row['from'],0) + 1
@@ -1679,7 +1679,7 @@ def efig9Outtx():
     df = pandas.read_csv('etx.csv')
     addr2num = {}
     for index, row in df.iterrows():
-        if row['from'] != 'NaN' and row['from'] in addrlist:
+        if isinstance(row['from'],str) and row['from'] in addrlist:
             try:
                 if isinstance(row['from'], str):
                     addr2num[row['from']] = addr2num.get(row['from'],0) + 1
@@ -1718,7 +1718,7 @@ def efig9Outtx():
 #     df = pandas.concat(frames)
 #     addr2num = {}
 #     for index, row in df.iterrows():
-#         if row['to'] != 'NaN' and row['to'] in addrlist:
+#         if isinstance(row['to'],str) and row['to'] in addrlist:
 #             try:
 #                 if isinstance(row['to'], str):
 #                     addr2num[row['to']] = addr2num.get(row['to'],0) + 1
@@ -1757,7 +1757,7 @@ def efig9Outtx():
 #     df = pandas.concat(frames)
 #     addr2num = {}
 #     for index, row in df.iterrows():
-#         if row['to'] != 'NaN' and row['from'] in addrlist:
+#         if isinstance(row['to'],str) and row['from'] in addrlist:
 #             try:
 #                 if isinstance(row['from'], str):
 #                     addr2num[row['from']] = addr2num.get(row['from'],0) + 1
@@ -1829,7 +1829,7 @@ def norAddrNFig9Intxs1():#统计normalAddrntx.csv里面的In Txs of normal Addre
     #欺诈地址作为接收方的欺诈交易数量
     addr2num = {}
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             try:
                 if isinstance(row['to'], str):
                     addr2num[row['to']] = addr2num.get(row['to'],0) + 1
@@ -1872,7 +1872,7 @@ def norAddrNFig9Intxs2():#统计normalAddrntx.csv里面的In Txs of normal Addre
     # #欺诈地址作为接收方的欺诈交易数量
     # addr2num = {}
     # for index, row in df.iterrows():
-    #     if row['to'] != 'NaN' and row['to'] in addrlist:
+    #     if isinstance(row['to'],str) and row['to'] in addrlist:
     #         try:
     #             if isinstance(row['to'], str):
     #                 addr2num[row['to']] = addr2num.get(row['to'],0) + 1
@@ -1917,7 +1917,7 @@ def norAddrNFig9Intxs3():#统计normalAddrntx.csv里面的In Txs of normal Addre
     # #欺诈地址作为接收方的欺诈交易数量
     # addr2num = {}
     # for index, row in df.iterrows():
-    #     if row['to'] != 'NaN' and row['to'] in addrlist:
+    #     if isinstance(row['to'],str) and row['to'] in addrlist:
     #         try:
     #             if isinstance(row['to'], str):
     #                 addr2num[row['to']] = addr2num.get(row['to'],0) + 1
@@ -1962,7 +1962,7 @@ def norAddrNFig9Intxs4():#统计normalAddrntx.csv里面的In Txs of normal Addre
     # #欺诈地址作为接收方的欺诈交易数量
     # addr2num = {}
     # for index, row in df.iterrows():
-    #     if row['to'] != 'NaN' and row['to'] in addrlist:
+    #     if isinstance(row['to'],str) and row['to'] in addrlist:
     #         try:
     #             if isinstance(row['to'], str):
     #                 addr2num[row['to']] = addr2num.get(row['to'],0) + 1
@@ -1989,7 +1989,7 @@ def norAddrNFig9Intxs5():#统计normalAddrntx.csv里面的In Txs of normal Addre
     # #欺诈地址作为接收方的欺诈交易数量
     # addr2num = {}
     # for index, row in df.iterrows():
-    #     if row['to'] != 'NaN' and row['to'] in addrlist:
+    #     if isinstance(row['to'],str) and row['to'] in addrlist:
     #         try:
     #             if isinstance(row['to'], str):
     #                 addr2num[row['to']] = addr2num.get(row['to'],0) + 1
@@ -2069,7 +2069,7 @@ def norAddrIFig9Intxs():#统计normalAddritx.csv里面的In Txs of normal Addres
     # df = pandas.read_csv('normalAddritx2.csv')
     # addr2num = {}
     # for index, row in df.iterrows():
-    #     if row['to'] != 'NaN' and row['to'] in addrlist:
+    #     if isinstance(row['to'],str) and row['to'] in addrlist:
     #         try:
     #             if isinstance(row['to'], str):
     #                 addr2num[row['to']] = addr2num.get(row['to'],0) + 1
@@ -2109,7 +2109,7 @@ def norAddrEFig9Intxs():#正常地址的token交易的输入交易数量
     # #欺诈地址作为接收方的欺诈交易数量
     # addr2num = {}
     # for index, row in df.iterrows():
-    #     if row['to'] != 'NaN' and row['to'] in addrlist:
+    #     if isinstance(row['to'],str) and row['to'] in addrlist:
     #         try:
     #             if isinstance(row['to'], str):
     #                 addr2num[row['to']] = addr2num.get(row['to'],0) + 1
@@ -2136,7 +2136,7 @@ def norAddrNFig9Outtxs1():#统计两个文件的out txs
     # pandas.set_option('display.max_columns', None)
     # addr2num = {}
     # for index, row in df.iterrows():
-    #     if row['from'] != 'NaN' and row['from'] in addrlist:
+    #     if isinstance(row['from'],str) and row['from'] in addrlist:
     #         try:
     #             if isinstance(row['from'], str):
     #                 addr2num[row['from']] = addr2num.get(row['from'],0) + 1
@@ -2175,7 +2175,7 @@ def norAddrNFig9Outtxs2():#统计两个文件的out txs
     # pandas.set_option('display.max_columns', None)
     # addr2num = {}
     # for index, row in df.iterrows():
-    #     if row['from'] != 'NaN' and row['from'] in addrlist:
+    #     if isinstance(row['from'],str) and row['from'] in addrlist:
     #         try:
     #             if isinstance(row['from'], str):
     #                 addr2num[row['from']] = addr2num.get(row['from'],0) + 1
@@ -2215,7 +2215,7 @@ def norAddrNFig9Outtxs3():#统计两个文件的out txs
     # pandas.set_option('display.max_columns', None)
     # addr2num = {}
     # for index, row in df.iterrows():
-    #     if row['from'] != 'NaN' and row['from'] in addrlist:
+    #     if isinstance(row['from'],str) and row['from'] in addrlist:
     #         try:
     #             if isinstance(row['from'], str):
     #                 addr2num[row['from']] = addr2num.get(row['from'],0) + 1
@@ -2255,7 +2255,7 @@ def norAddrNFig9Outtxs4():#统计两个文件的out txs
     # pandas.set_option('display.max_columns', None)
     # addr2num = {}
     # for index, row in df.iterrows():
-    #     if row['from'] != 'NaN' and row['from'] in addrlist:
+    #     if isinstance(row['from'],str) and row['from'] in addrlist:
     #         try:
     #             if isinstance(row['from'], str):
     #                 addr2num[row['from']] = addr2num.get(row['from'],0) + 1
@@ -2281,7 +2281,7 @@ def norAddrNFig9Outtxs5():#统计两个文件的out txs
     # pandas.set_option('display.max_columns', None)
     # addr2num = {}
     # for index, row in df.iterrows():
-    #     if row['from'] != 'NaN' and row['from'] in addrlist:
+    #     if isinstance(row['from'],str) and row['from'] in addrlist:
     #         try:
     #             if isinstance(row['from'], str):
     #                 addr2num[row['from']] = addr2num.get(row['from'],0) + 1
@@ -2307,7 +2307,7 @@ def norAddrIFig9Outtxs():#统计两个文件的out txs
     # pandas.set_option('display.max_columns', None)
     # addr2num = {}
     # for index, row in df.iterrows():
-    #     if row['from'] != 'NaN' and row['from'] in addrlist:
+    #     if isinstance(row['from'],str) and row['from'] in addrlist:
     #         try:
     #             if isinstance(row['from'], str):
     #                 addr2num[row['from']] = addr2num.get(row['from'],0) + 1
@@ -2332,7 +2332,7 @@ def norAddrEFig9Outtxs():#统计两个文件的out txs
     # pandas.set_option('display.max_columns', None)
     # addr2num = {}
     # for index, row in df.iterrows():
-    #     if row['from'] != 'NaN' and row['from'] in addrlist:
+    #     if isinstance(row['from'],str) and row['from'] in addrlist:
     #         try:
     #             if isinstance(row['from'], str):
     #                 addr2num[row['from']] = addr2num.get(row['from'],0) + 1
@@ -3319,7 +3319,7 @@ def scamIncome():
     df = pandas.concat(frames)
     addr2income = {}
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             try:
                 if isinstance(row['to'], str):
                     addr2income[row['to']] = addr2income.get(row['to'],0) + int(row['value']) / 1000000000000000000
@@ -3339,7 +3339,7 @@ def scamOutcome():
     df = pandas.concat(frames)
     addr2outcome = {}
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             try:
                 if isinstance(row['to'], str):
                     addr2outcome[row['to']] = addr2outcome.get(row['to'],0) + int(row['value']) / 1000000000000000000
@@ -3359,7 +3359,7 @@ def scamTx():
     addr2Intxnum = {}
     addr2Outtxnum = {}
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             try:
                 if isinstance(row['to'], str):
                     addr2Intxnum[row['to']] = addr2Intxnum.get(row['to'],0) + 1
@@ -3368,7 +3368,7 @@ def scamTx():
                 print(row['value'])
                 traceback.print_exc()
     for index, row in df.iterrows():
-        if row['from'] != 'NaN' and row['from'] in addrlist:
+        if isinstance(row['from'],str) and row['from'] in addrlist:
             try:
                 if isinstance(row['from'], str):
                     addr2Outtxnum[row['from']] = addr2Outtxnum.get(row['from'],0) + 1
@@ -3440,7 +3440,7 @@ def normalInNtx1():
     pandas.set_option('display.max_columns', None)
     addr2income = {}
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             try:
                 if isinstance(row['to'], str):
                     addr2income[row['to']] = addr2income.get(row['to'], 0) + int(row['value']) / 1000000000000000000
@@ -3458,7 +3458,7 @@ def normalInNtx2():
     pandas.set_option('display.max_columns', None)
     addr2income = {}
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             try:
                 if isinstance(row['to'], str):
                     addr2income[row['to']] = addr2income.get(row['to'], 0) + int(row['value']) / 1000000000000000000
@@ -3476,7 +3476,7 @@ def normalInNtx3():
     pandas.set_option('display.max_columns', None)
     addr2income = {}
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             try:
                 if isinstance(row['to'], str):
                     addr2income[row['to']] = addr2income.get(row['to'], 0) + int(row['value']) / 1000000000000000000
@@ -3494,7 +3494,7 @@ def normalInNtx4():
     pandas.set_option('display.max_columns', None)
     addr2income = {}
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             try:
                 if isinstance(row['to'], str):
                     addr2income[row['to']] = addr2income.get(row['to'], 0) + int(row['value']) / 1000000000000000000
@@ -3512,7 +3512,7 @@ def normalInNtx5():
     pandas.set_option('display.max_columns', None)
     addr2income = {}
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             try:
                 if isinstance(row['to'], str):
                     addr2income[row['to']] = addr2income.get(row['to'], 0) + int(row['value']) / 1000000000000000000
@@ -3531,7 +3531,7 @@ def normalInItx():
     pandas.set_option('display.max_columns', None)
     addr2income = {}
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             try:
                 if isinstance(row['to'], str):
                     addr2income[row['to']] = addr2income.get(row['to'], 0) + int(row['value']) / 1000000000000000000
@@ -3550,7 +3550,7 @@ def normalOutNtx1():
     df = pandas.read_csv('normalAddrntx2.csv',usecols=[0,3,5]).iloc[0:3000000]
     addr2outcome = {}
     for index, row in df.iterrows():
-        if row['from'] != 'NaN' and row['from'] in addrlist:
+        if isinstance(row['from'],str) and row['from'] in addrlist:
             try:
                 if isinstance(row['from'], str):
                     addr2outcome[row['from']] = addr2outcome.get(row['from'], 0) + int(row['value']) / 1000000000000000000
@@ -3567,7 +3567,7 @@ def normalAvgOutNtx2():
     df = pandas.read_csv('normalAddrntx2.csv',usecols=[0,3,5]).iloc[3000000:6000000]
     addr2outcome = {}
     for index, row in df.iterrows():
-        if row['from'] != 'NaN' and row['from'] in addrlist:
+        if isinstance(row['from'],str) and row['from'] in addrlist:
             try:
                 if isinstance(row['from'], str):
                     addr2outcome[row['from']] = addr2outcome.get(row['from'], 0) + int(row['value']) / 1000000000000000000
@@ -3584,7 +3584,7 @@ def normalOutNtx3():
     df = pandas.read_csv('normalAddrntx2.csv',usecols=[0,3,5]).iloc[6000000:9000000]
     addr2outcome = {}
     for index, row in df.iterrows():
-        if row['from'] != 'NaN' and row['from'] in addrlist:
+        if isinstance(row['from'],str) and row['from'] in addrlist:
             try:
                 if isinstance(row['from'], str):
                     addr2outcome[row['from']] = addr2outcome.get(row['from'], 0) + int(row['value']) / 1000000000000000000
@@ -3601,7 +3601,7 @@ def normalOutNtx4():
     df = pandas.read_csv('normalAddrntx2.csv',usecols=[0,3,5]).iloc[9000000:12000000]
     addr2outcome = {}
     for index, row in df.iterrows():
-        if row['from'] != 'NaN' and row['from'] in addrlist:
+        if isinstance(row['from'],str) and row['from'] in addrlist:
             try:
                 if isinstance(row['from'], str):
                     addr2outcome[row['from']] = addr2outcome.get(row['from'], 0) + int(row['value']) / 1000000000000000000
@@ -3618,7 +3618,7 @@ def normalOutNtx5():
     df = pandas.read_csv('normalAddrntx2.csv',usecols=[0,3,5]).iloc[12000000:]
     addr2outcome = {}
     for index, row in df.iterrows():
-        if row['from'] != 'NaN' and row['from'] in addrlist:
+        if isinstance(row['from'],str) and row['from'] in addrlist:
             try:
                 if isinstance(row['from'], str):
                     addr2outcome[row['from']] = addr2outcome.get(row['from'], 0) + int(row['value']) / 1000000000000000000
@@ -3636,7 +3636,7 @@ def normalOutItx():
     df = pandas.read_csv('normalAddritx2.csv',usecols=[0,3,5])
     addr2outcome = {}
     for index, row in df.iterrows():
-        if row['from'] != 'NaN' and row['from'] in addrlist:
+        if isinstance(row['from'],str) and row['from'] in addrlist:
             try:
                 if isinstance(row['from'], str):
                     addr2outcome[row['from']] = addr2outcome.get(row['from'], 0) + int(row['value']) / 1000000000000000000
@@ -3654,7 +3654,7 @@ def normalAvgOutEtx():
     df = pandas.read_csv('normalAddretx2.csv',usecols=[0,3,5])
     addr2outcome = {}
     for index, row in df.iterrows():
-        if row['from'] != 'NaN' and row['from'] in addrlist:
+        if isinstance(row['from'],str) and row['from'] in addrlist:
             try:
                 if isinstance(row['from'], str):
                     addr2outcome[row['from']] = addr2outcome.get(row['from'], 0) + int(row['value']) / 1000000000000000000
@@ -3777,7 +3777,7 @@ def scamAthirdIntime():
     for addr in addrlist:
         addr2stamp[addr] = []
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:#统计每个地址的时间戳
+        if isinstance(row['to'],str) and row['to'] in addrlist:#统计每个地址的时间戳
             addr2stamp[row['to']].append(row['timeStamp'])
     for addr, time in addr2stamp.items():  # 将时间列表排序，计算时间差
         time.sort()
@@ -3807,7 +3807,7 @@ def scamAthirdOuttime():
     for addr in addrlist:
         addr2day[addr] = []
     for index, row in df.iterrows():
-        if row['from'] != 'NaN' and row['from'] in addrlist:#统计每个地址的时间戳
+        if isinstance(row['to'],str) and row['to'] in addrlist:#统计每个地址的时间戳
             addr2day[row['from']].append(row['timeStamp'])
     for addr, time in addr2day.items():  # 将时间列表排序，计算时间差
         time.sort()
@@ -3846,7 +3846,7 @@ def scamAthirdInTxnum():
         addr2athirdtxnum3[addr] = 0
         addr2tx[addr] = []
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             end1 = addr2end1[row['to']]  # 每一行地址的结束时间戳，有的欺诈地址可能只是from地址而不是to地址
             end2 = addr2end2[row['to']]
             if row['timeStamp'] < end1:
@@ -3878,7 +3878,6 @@ def scamAthirdOutTxnum():
     addr2athirdtxnum1 = {}
     addr2athirdtxnum2 = {}
     addr2athirdtxnum3 = {}
-
     addr2tx = {}
     for addr in addrlist:#初始化用于统计的字典
         addr2athirdtxnum1[addr] = 0
@@ -3886,15 +3885,16 @@ def scamAthirdOutTxnum():
         addr2athirdtxnum3[addr] = 0
         addr2tx[addr] = []
     for index, row in df.iterrows():
-        if row['from'] != 'NaN' and row['from'] in addrlist:
+        if isinstance(row['from'],str) and row['from'] in addrlist:
             end1 = addr2end1[row['from']]# 每一行地址的结束时间戳，有的欺诈地址可能只是from地址而不是to地址
+            end2 = addr2end2[row['from']]
             if row['timeStamp'] < end1:
                 addr2tx[row['from']].append(row['hash'])#每一个地址的满足对应条件的交易hash值列表
                 addr2athirdtxnum1[row['from']] += 1
             if row['timeStamp'] >= end1 and row['timeStamp'] < end2:
                 addr2athirdtxnum2[row['from']] += 1
             if row['timeStamp'] >= end2:
-                addr2athirdtxnum1[row['from']] += 1
+                addr2athirdtxnum3[row['from']] += 1
     with open('scam2athirdOuttxnum1.txt','w') as f:
         print(addr2athirdtxnum1,file=f)
     with open('scam2athirdOuttxnum2.txt','w') as f:
@@ -3908,20 +3908,24 @@ def norAddrA3InNtxTime1():
     df = df.drop_duplicates()
     df = df.sort_values('timeStamp')
     addr2stamp = {}  # 地址到交易时间戳的字典
-    addr2living = {}
+    addr2living1 = {}
+    addr2living2 = {}
     for addr in addrlist:
         addr2stamp[addr] = []
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:#统计每个地址的时间戳
+        if isinstance(row['to'],str) and row['to'] in addrlist:#统计每个地址的时间戳
             addr2stamp[row['to']].append(row['timeStamp'])
     for addr, time in addr2stamp.items():
         if len(time) > 0:#直接用时间戳计算
             start = time[0]
             end = time[-1]
             livingtime = end - start
-            addr2living[addr] = livingtime / 3 + start
-    with open('normal2athirdtimeInNtx1.txt','w') as f:
-        print(addr2living,file=f)
+            addr2living1[addr] = livingtime / 3 + start
+            addr2living2[addr] = livingtime / 3 * 2 + start
+    with open('normal2athirdtimeInNtx11.txt','w') as f:
+        print(addr2living1,file=f)
+    with open('normal2athirdtimeInNtx12.txt','w') as f:
+        print(addr2living2,file=f)
 def norAddrA3InNtxTime2():
     with open('normalAddr.txt', 'r', encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
@@ -3929,20 +3933,24 @@ def norAddrA3InNtxTime2():
     df = df.drop_duplicates()
     df = df.sort_values('timeStamp')
     addr2stamp = {}  # 地址到交易时间戳的字典
-    addr2living = {}
+    addr2living1 = {}
+    addr2living2 = {}
     for addr in addrlist:
         addr2stamp[addr] = []
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:  # 统计每个地址的时间戳
+        if isinstance(row['to'],str) and row['to'] in addrlist:  # 统计每个地址的时间戳
             addr2stamp[row['to']].append(row['timeStamp'])
     for addr, time in addr2stamp.items():
         if len(time) > 0:  # 直接用时间戳计算
             start = time[0]
             end = time[-1]
             livingtime = end - start
-            addr2living[addr] = livingtime / 3 + start
-    with open('normal2athirdtimeInNtx2.txt', 'w') as f:
-        print(addr2living, file=f)
+            addr2living1[addr] = livingtime / 3 + start
+            addr2living2[addr] = livingtime / 3 * 2 + start
+    with open('normal2athirdtimeInNtx21.txt', 'w') as f:
+        print(addr2living1, file=f)
+    with open('normal2athirdtimeInNtx22.txt', 'w') as f:
+        print(addr2living2, file=f)
 def norAddrA3InNtxTime3():
     with open('normalAddr.txt', 'r', encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
@@ -3950,20 +3958,25 @@ def norAddrA3InNtxTime3():
     df = df.drop_duplicates()
     df = df.sort_values('timeStamp')
     addr2stamp = {}  # 地址到交易时间戳的字典
-    addr2living = {}
+    addr2living1 = {}
+    addr2living2 = {}
     for addr in addrlist:
         addr2stamp[addr] = []
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:  # 统计每个地址的时间戳
+        if isinstance(row['to'],str) and row['to'] in addrlist:  # 统计每个地址的时间戳
             addr2stamp[row['to']].append(row['timeStamp'])
     for addr, time in addr2stamp.items():
         if len(time) > 0:  # 直接用时间戳计算
             start = time[0]
             end = time[-1]
             livingtime = end - start
-            addr2living[addr] = livingtime / 3 + start
-    with open('normal2athirdtimeInNtx3.txt', 'w') as f:
-        print(addr2living, file=f)
+            addr2living1[addr] = livingtime / 3 + start
+            addr2living2[addr] = livingtime / 3 * 2 + start
+    with open('normal2athirdtimeInNtx31.txt', 'w') as f:
+        print(addr2living1, file=f)
+    with open('normal2athirdtimeInNtx32.txt', 'w') as f:
+        print(addr2living2, file=f)
+
 def norAddrA3InNtxTime4():
     with open('normalAddr.txt', 'r', encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
@@ -3971,20 +3984,24 @@ def norAddrA3InNtxTime4():
     df = df.drop_duplicates()
     df = df.sort_values('timeStamp')
     addr2stamp = {}  # 地址到交易时间戳的字典
-    addr2living = {}
+    addr2living1 = {}
+    addr2living2 = {}
     for addr in addrlist:
         addr2stamp[addr] = []
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:  # 统计每个地址的时间戳
+        if isinstance(row['to'],str) and row['to'] in addrlist:  # 统计每个地址的时间戳
             addr2stamp[row['to']].append(row['timeStamp'])
     for addr, time in addr2stamp.items():
         if len(time) > 0:  # 直接用时间戳计算
             start = time[0]
             end = time[-1]
             livingtime = end - start
-            addr2living[addr] = livingtime / 3 + start
-    with open('normal2athirdtimeInNtx4.txt', 'w') as f:
-        print(addr2living, file=f)
+            addr2living1[addr] = livingtime / 3 + start
+            addr2living2[addr] = livingtime / 3 * 2 + start
+    with open('normal2athirdtimeInNtx41.txt', 'w') as f:
+        print(addr2living1, file=f)
+    with open('normal2athirdtimeInNtx42.txt', 'w') as f:
+        print(addr2living2, file=f)
 def norAddrA3InNtxTime5():
     with open('normalAddr.txt', 'r', encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
@@ -3992,20 +4009,24 @@ def norAddrA3InNtxTime5():
     df = df.drop_duplicates()
     df = df.sort_values('timeStamp')
     addr2stamp = {}  # 地址到交易时间戳的字典
-    addr2living = {}
+    addr2living1 = {}
+    addr2living2 = {}
     for addr in addrlist:
         addr2stamp[addr] = []
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:  # 统计每个地址的时间戳
+        if isinstance(row['to'],str) and row['to'] in addrlist:  # 统计每个地址的时间戳
             addr2stamp[row['to']].append(row['timeStamp'])
     for addr, time in addr2stamp.items():
         if len(time) > 0:  # 直接用时间戳计算
             start = time[0]
             end = time[-1]
             livingtime = end - start
-            addr2living[addr] = livingtime / 3 + start
-    with open('normal2athirdtimeInNtx5.txt', 'w') as f:
-        print(addr2living, file=f)
+            addr2living1[addr] = livingtime / 3 + start
+            addr2living2[addr] = livingtime / 3 * 2 + start
+    with open('normal2athirdtimeInNtx51.txt', 'w') as f:
+        print(addr2living1, file=f)
+    with open('normal2athirdtimeInNtx52.txt', 'w') as f:
+        print(addr2living2, file=f)
 def norAddrA3OutNtxTime1():
     with open('normalAddr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
@@ -4017,7 +4038,7 @@ def norAddrA3OutNtxTime1():
     for addr in addrlist:
         addr2stamp[addr] = []
     for index, row in df.iterrows():
-        if row['from'] != 'NaN' and row['from'] in addrlist:#统计每个地址的时间戳
+        if isinstance(row['from'],str) and row['from'] in addrlist:#统计每个地址的时间戳
             addr2stamp[row['from']].append(row['timeStamp'])
     for addr, time in addr2stamp.items():
         if len(time) > 0:#直接用时间戳计算
@@ -4038,7 +4059,7 @@ def norAddrA3OutNtxTime2():
     for addr in addrlist:
         addr2stamp[addr] = []
     for index, row in df.iterrows():
-        if row['from'] != 'NaN' and row['from'] in addrlist:#统计每个地址的时间戳
+        if isinstance(row['from'],str) and row['from'] in addrlist:#统计每个地址的时间戳
             addr2stamp[row['from']].append(row['timeStamp'])
     for addr, time in addr2stamp.items():
         if len(time) > 0:#直接用时间戳计算
@@ -4059,7 +4080,7 @@ def norAddrA3OutNtxTime3():
     for addr in addrlist:
         addr2stamp[addr] = []
     for index, row in df.iterrows():
-        if row['from'] != 'NaN' and row['from'] in addrlist:#统计每个地址的时间戳
+        if isinstance(row['from'],str) and row['from'] in addrlist:#统计每个地址的时间戳
             addr2stamp[row['from']].append(row['timeStamp'])
     for addr, time in addr2stamp.items():
         if len(time) > 0:#直接用时间戳计算
@@ -4080,7 +4101,7 @@ def norAddrA3OutNtxTime4():
     for addr in addrlist:
         addr2stamp[addr] = []
     for index, row in df.iterrows():
-        if row['from'] != 'NaN' and row['from'] in addrlist:#统计每个地址的时间戳
+        if isinstance(row['from'],str) and row['from'] in addrlist:#统计每个地址的时间戳
             addr2stamp[row['from']].append(row['timeStamp'])
     for addr, time in addr2stamp.items():
         if len(time) > 0:#直接用时间戳计算
@@ -4101,7 +4122,7 @@ def norAddrA3OutNtxTime5():
     for addr in addrlist:
         addr2stamp[addr] = []
     for index, row in df.iterrows():
-        if row['from'] != 'NaN' and row['from'] in addrlist:#统计每个地址的时间戳
+        if isinstance(row['from'],str) and row['from'] in addrlist:#统计每个地址的时间戳
             addr2stamp[row['from']].append(row['timeStamp'])
     for addr, time in addr2stamp.items():
         if len(time) > 0:#直接用时间戳计算
@@ -4125,7 +4146,7 @@ def norAddrA3InNtxTx1():
         addr2athirdtxnum[addr] = 0
         addr2tx[addr] = []
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             end = addr2end[row['to']]# 每一行地址的结束时间戳，有的欺诈地址可能只是from地址而不是to地址
             if row['timeStamp'] < end:
                 addr2tx[row['to']].append(row['hash'])#每一个地址的满足对应条件的交易hash值列表
@@ -4146,7 +4167,7 @@ def norAddrA3InNtxTx2():
         addr2athirdtxnum[addr] = 0
         addr2tx[addr] = []
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             end = addr2end[row['to']]# 每一行地址的结束时间戳，有的欺诈地址可能只是from地址而不是to地址
             if row['timeStamp'] < end:
                 addr2tx[row['to']].append(row['hash'])#每一个地址的满足对应条件的交易hash值列表
@@ -4167,7 +4188,7 @@ def norAddrA3InNtxTx3():
         addr2athirdtxnum[addr] = 0
         addr2tx[addr] = []
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             end = addr2end[row['to']]# 每一行地址的结束时间戳，有的欺诈地址可能只是from地址而不是to地址
             if row['timeStamp'] < end:
                 addr2tx[row['to']].append(row['hash'])#每一个地址的满足对应条件的交易hash值列表
@@ -4188,7 +4209,7 @@ def norAddrA3OutNtxTx1():
         addr2athirdtxnum[addr] = 0
         addr2tx[addr] = []
     for index, row in df.iterrows():
-        if row['from'] != 'NaN' and row['from'] in addrlist:
+        if isinstance(row['from'],str) and row['from'] in addrlist:
             end = addr2end[row['from']]# 每一行地址的结束时间戳，有的欺诈地址可能只是from地址而不是to地址
             if row['timeStamp'] < end:
                 addr2tx[row['from']].append(row['hash'])#每一个地址的满足对应条件的交易hash值列表
@@ -4209,7 +4230,7 @@ def norAddrA3OutNtxTx2():
         addr2athirdtxnum[addr] = 0
         addr2tx[addr] = []
     for index, row in df.iterrows():
-        if row['from'] != 'NaN' and row['from'] in addrlist:
+        if isinstance(row['from'],str) and row['from'] in addrlist:
             end = addr2end[row['from']]# 每一行地址的结束时间戳，有的欺诈地址可能只是from地址而不是to地址
             if row['timeStamp'] < end:
                 addr2tx[row['from']].append(row['hash'])#每一个地址的满足对应条件的交易hash值列表
@@ -4230,7 +4251,7 @@ def norAddrA3OutNtxTx3():
         addr2athirdtxnum[addr] = 0
         addr2tx[addr] = []
     for index, row in df.iterrows():
-        if row['from'] != 'NaN' and row['from'] in addrlist:
+        if isinstance(row['from'],str) and row['from'] in addrlist:
             end = addr2end[row['from']]# 每一行地址的结束时间戳，有的欺诈地址可能只是from地址而不是to地址
             if row['timeStamp'] < end:
                 addr2tx[row['from']].append(row['hash'])#每一个地址的满足对应条件的交易hash值列表
@@ -4248,7 +4269,7 @@ def norAddrA3InItxTime1():
     for addr in addrlist:
         addr2stamp[addr] = []
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:  # 统计每个地址的时间戳
+        if isinstance(row['to'],str) and row['to'] in addrlist:  # 统计每个地址的时间戳
             addr2stamp[row['to']].append(row['timeStamp'])
     for addr, time in addr2stamp.items():
         if len(time) > 0:  # 直接用时间戳计算
@@ -4269,7 +4290,7 @@ def norAddrA3OutItxTime1():
     for addr in addrlist:
         addr2stamp[addr] = []
     for index, row in df.iterrows():
-        if row['from'] != 'NaN' and row['from'] in addrlist:  # 统计每个地址的时间戳
+        if isinstance(row['from'],str) and row['from'] in addrlist:  # 统计每个地址的时间戳
             addr2stamp[row['from']].append(row['timeStamp'])
     for addr, time in addr2stamp.items():
         if len(time) > 0:  # 直接用时间戳计算
@@ -4293,7 +4314,7 @@ def norAddrA3InItxTx1():
         addr2athirdtxnum[addr] = 0
         addr2tx[addr] = []
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             end = addr2end[row['to']]  # 每一行地址的结束时间戳，有的欺诈地址可能只是from地址而不是to地址
             if row['timeStamp'] < end:
                 addr2tx[row['to']].append(row['hash'])  # 每一个地址的满足对应条件的交易hash值列表
@@ -4311,7 +4332,7 @@ def norAddrA3OutItxTx1():
     for addr in addrlist:
         addr2stamp[addr] = []
     for index, row in df.iterrows():
-        if row['from'] != 'NaN' and row['from'] in addrlist:  # 统计每个地址的时间戳
+        if isinstance(row['from'],str) and row['from'] in addrlist:  # 统计每个地址的时间戳
             addr2stamp[row['from']].append(row['timeStamp'])
     for addr, time in addr2stamp.items():
         if len(time) > 0:  # 直接用时间戳计算
@@ -4332,7 +4353,7 @@ def norAddrA3InEtxTime1():
     for addr in addrlist:
         addr2stamp[addr] = []
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:  # 统计每个地址的时间戳
+        if isinstance(row['to'],str) and row['to'] in addrlist:  # 统计每个地址的时间戳
             addr2stamp[row['to']].append(row['timeStamp'])
     for addr, time in addr2stamp.items():
         if len(time) > 0:  # 直接用时间戳计算
@@ -4353,7 +4374,7 @@ def norAddrA3OutEtxTime1():
     for addr in addrlist:
         addr2stamp[addr] = []
     for index, row in df.iterrows():
-        if row['from'] != 'NaN' and row['from'] in addrlist:  # 统计每个地址的时间戳
+        if isinstance(row['from'],str) and row['from'] in addrlist:  # 统计每个地址的时间戳
             addr2stamp[row['from']].append(row['timeStamp'])
     for addr, time in addr2stamp.items():
         if len(time) > 0:  # 直接用时间戳计算
@@ -4377,7 +4398,7 @@ def norAddrA3InEtxTx1():
         addr2athirdtxnum[addr] = 0
         addr2tx[addr] = []
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             end = addr2end[row['to']]# 每一行地址的结束时间戳，有的欺诈地址可能只是from地址而不是to地址
             if row['timeStamp'] < end:
                 addr2tx[row['to']].append(row['hash'])#每一个地址的满足对应条件的交易hash值列表
@@ -4398,7 +4419,7 @@ def norAddrA3OutEtxTx1():
         addr2athirdtxnum[addr] = 0
         addr2tx[addr] = []
     for index, row in df.iterrows():
-        if row['from'] != 'NaN' and row['from'] in addrlist:
+        if isinstance(row['from'],str) and row['from'] in addrlist:
             end = addr2end[row['to']]# 每一行地址的结束时间戳，有的欺诈地址可能只是from地址而不是to地址
             if row['timeStamp'] < end:
                 addr2tx[row['from']].append(row['hash'])#每一个地址的满足对应条件的交易hash值列表
@@ -4524,7 +4545,7 @@ def mixAddrFig9():
 #     for addr in addrlist:
 #         addr2day[addr] = []
 #     for index, row in df.iterrows():
-#         if row['to'] != 'NaN' and row['to'] in addrlist:
+#         if isinstance(row['to'],str) and row['to'] in addrlist:
 #             addr2day[row['to']].append(row['timeStamp'])
 #     for addr, time in addr2day.items():  # 将时间列表排序，计算时间差
 #         time.sort()
@@ -4576,7 +4597,7 @@ def scamLive():#living time
     for addr in addrlist:
         addr2day[addr] = []
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             addr2day[row['to']].append(row['timeStamp'])
     for addr, time in addr2day.items():  # 将时间列表排序，计算时间差
         time.sort()
@@ -4616,7 +4637,7 @@ def normalLive1():#living time截取正常地址的前三分之一进行living t
     for addr in addrlist:
         addr2day[addr] = []
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             addr2day[row['to']].append(row['timeStamp'])
     for addr, time in addr2day.items():  # 将时间列表排序，计算时间差
         time.sort()
@@ -4656,7 +4677,7 @@ def normalLive2():#living time
     for addr in addrlist:
         addr2day[addr] = []
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             addr2day[row['to']].append(row['timeStamp'])
     for addr, time in addr2day.items():  # 将时间列表排序，计算时间差
         time.sort()
@@ -4695,7 +4716,7 @@ def normalLive3():#living time
     for addr in addrlist:
         addr2day[addr] = []
     for index, row in df.iterrows():
-        if row['to'] != 'NaN' and row['to'] in addrlist:
+        if isinstance(row['to'],str) and row['to'] in addrlist:
             addr2day[row['to']].append(row['timeStamp'])
     for addr, time in addr2day.items():  # 将时间列表排序，计算时间差
         time.sort()
@@ -4825,16 +4846,31 @@ def scamTxDedupE():
     df.to_csv('etx.csv')
 def txdedupN():
     df = pandas.read_csv('normalAddrntx.csv')
-    df['hash'] = df['hash'].str.lower()
+    df['hash'] = df['hash'].str.lower()#根据小写哈希值去重
     df = df.drop_duplicates(subset=['hash'],keep='first')
+    for index, row in df.iterrows():
+        if isinstance(row['from'],str):
+            row['from'] = row['from'].lower()
+        if isinstance(row['to'],str):
+            row['to'] = row['to'].lower()
     df.to_csv('normalAddrntx2.csv')
 def txdedupI():
     df = pandas.read_csv('normalAddritx.csv')
     df = df.drop_duplicates(subset=['hash'],keep='first')
+    for index, row in df.iterrows():
+        if isinstance(row['from'],str):
+            row['from'] = row['from'].lower()
+        if isinstance(row['to'],str):
+            row['to'] = row['to'].lower()
     df.to_csv('normalAddritx2.csv')
 def txdedupE():
     df = pandas.read_csv('normalAddretx.csv')
     df = df.drop_duplicates(subset=['hash'],keep='first')
+    for index, row in df.iterrows():
+        if isinstance(row['from'], str):
+            row['from'] = row['from'].lower()
+        if isinstance(row['to'], str):
+            row['to'] = row['to'].lower()
     df.to_csv('normalAddretx2.csv')
 def bloxyaddrtax():
     #怎么处理bloxy的地址标记，从备注中获取，但是备注中有可能有多种欺诈，以etherscan的为主，因为bloxy的很少
@@ -5889,8 +5925,9 @@ def scamNtxMFG():
         addrlist = literal_eval(f.read())
     df1 = pandas.read_csv('ntx.csv')
     for index, row in df1.iterrows():
-        if isinstance(row['from'],str) and isinstance(row['to'],str):
+        if isinstance(row['from'],str):
             row['from'] = row['from'].lower()
+        if isinstance(row['to'],str):
             row['to'] = row['to'].lower()
     dict1 = {}
     addrlist2 = []
@@ -5923,8 +5960,9 @@ def scamItxMFG():
         addrlist = literal_eval(f.read())
     df1 = pandas.read_csv('itx.csv')
     for index, row in df1.iterrows():
-        if isinstance(row['from'],str) and isinstance(row['to'],str):
+        if isinstance(row['from'],str):
             row['from'] = row['from'].lower()
+        if isinstance(row['to'],str):
             row['to'] = row['to'].lower()
     dict1 = {}
     addrlist2 = []
@@ -5969,6 +6007,7 @@ def scamItxMFG():
 # scam group time and profit.csv 欺诈地址和时间和利润
 # tx_into.csv ?
 def character13():
+    # with open('')
     with open('mlchar.csv','w',encoding='utf-8') as f:
         writer = csv.writer(f)
         writer.writerow(["address","allIncome","allOutcome","avgIncome","avgOutcome","intxs","outtxs","front1/3 in","middle1/3 in","last1/3 in","front1/3 out","middle1/3 out","last1/3 out","type"])
@@ -6189,7 +6228,9 @@ if __name__ == '__main__':
     # scamTx2()
     # nfig9Outtx()
     # nfig9Intx()
-    scamAthirdInTxnum()
+    # txdedupN()
+    txdedupI()
+    txdedupE()
     # ifig9Intx()
 
 #收集整理大量数据时，尽量保存中间文件，即使由于机器性能原因或者ide设置原因等中断运行，也能避免效率的降低。
