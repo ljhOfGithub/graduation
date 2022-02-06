@@ -4856,6 +4856,7 @@ def txdedupN():
     df.to_csv('normalAddrntx2.csv')
 def txdedupI():
     df = pandas.read_csv('normalAddritx.csv')
+    df['hash'] = df['hash'].str.lower()
     df = df.drop_duplicates(subset=['hash'],keep='first')
     for index, row in df.iterrows():
         if isinstance(row['from'],str):
@@ -4865,6 +4866,7 @@ def txdedupI():
     df.to_csv('normalAddritx2.csv')
 def txdedupE():
     df = pandas.read_csv('normalAddretx.csv')
+    df['hash'] = df['hash'].str.lower()
     df = df.drop_duplicates(subset=['hash'],keep='first')
     for index, row in df.iterrows():
         if isinstance(row['from'], str):
@@ -6229,7 +6231,7 @@ if __name__ == '__main__':
     # nfig9Outtx()
     # nfig9Intx()
     # txdedupN()
-    txdedupI()
+    # txdedupI()
     txdedupE()
     # ifig9Intx()
 
