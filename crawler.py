@@ -3381,28 +3381,28 @@ def scamTx():
         print(addr2Outtxnum,file=f)
 
 def scamIOTxAna():
-    # with open('scamInTx.txt','r') as f:
-    #     scamInTx = literal_eval(f.read())
-    # with open('scamOutTx.txt','r') as f:
-    #     scamOutTx = literal_eval(f.read())
-    # scamInTx = sorted(scamInTx.items(),key = lambda x:(x[1]))
-    # scamOutTx = sorted(scamOutTx.items(),key = lambda x:(x[1]))
-    # print(scamInTx)
-    # print(scamOutTx)
+    with open('scamInTx.txt','r') as f:
+        scamInTx = literal_eval(f.read())
+    with open('scamOutTx.txt','r') as f:
+        scamOutTx = literal_eval(f.read())
+    scamInTx = sorted(scamInTx.items(),key = lambda x:(x[1]))
+    scamOutTx = sorted(scamOutTx.items(),key = lambda x:(x[1]))
+    print(scamInTx)
+    print(scamOutTx)
     # with open('scamInNtx.txt','r') as f:
     #     scamInNtx = literal_eval(f.read())
     # with open('scamOutNtx.txt','r') as f:
     #     scamOutNtx = literal_eval(f.read())
     # scamInNtx = sorted(scamInNtx.items(),key = lambda x:(x[1]))
     # scamOutNtx = sorted(scamOutNtx.items(),key = lambda x:(x[1]))
-    with open('scamInItx.txt','r') as f:
-        scamInItx = literal_eval(f.read())
-    with open('scamOutItx.txt','r') as f:
-        scamOutItx = literal_eval(f.read())
-    scamInItx = sorted(scamInItx.items(),key = lambda x:(x[1]))
-    scamOutItx = sorted(scamOutItx.items(),key = lambda x:(x[1]))
-    print(scamInItx)
-    print(scamOutItx)
+    # with open('scamInItx.txt','r') as f:
+    #     scamInItx = literal_eval(f.read())
+    # with open('scamOutItx.txt','r') as f:
+    #     scamOutItx = literal_eval(f.read())
+    # scamInItx = sorted(scamInItx.items(),key = lambda x:(x[1]))
+    # scamOutItx = sorted(scamOutItx.items(),key = lambda x:(x[1]))
+    # print(scamInItx)
+    # print(scamOutItx)
 def scamTx2():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
@@ -3761,26 +3761,19 @@ def normalAddrAvgIn():
     #打开存储有地址到交易数量的映射文件
     with open('txtypenum.txt','w') as f:
         addr2txnum = literal_eval(f.read())
-#欺诈地址的1/3生命周期的时间戳
-def scamAthirdtimeIntx():
+#欺诈地址的前1/3生命周期的时间戳
+def scamAthirdIntime():
     with open('addr.txt', 'r', encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    df1 = pandas.read_csv('ntx1.csv')
-    df2 = pandas.read_csv('ntx2.csv')
-    df3 = pandas.read_csv('ntx3.csv')
-    df4 = pandas.read_csv('ntx4.csv')
-    df5 = pandas.read_csv('itx1.csv')
-    df6 = pandas.read_csv('itx2.csv')
-    df7 = pandas.read_csv('itx3.csv')
-    df8 = pandas.read_csv('itx4.csv')
-    df9 = pandas.read_csv('bntx1.csv')
-    df10 = pandas.read_csv('bitx1.csv')
-    frames = [df1, df2, df3, df4, df5, df6, df7, df8, df9, df10]
+    df1 = pandas.read_csv('ntx.csv')
+    df2 = pandas.read_csv('itx.csv')
+    frames = [df1, df2]
     df = pandas.concat(frames)#拼接所有交易
     df = df.drop_duplicates()  # 去重
     df = df.sort_values('timeStamp')#将所有交易按时间戳排序
     addr2stamp = {}  # 地址到交易时间戳的字典
-    addr2living = {}
+    addr2living1 = {}
+    addr2living2 = {}
     for addr in addrlist:
         addr2stamp[addr] = []
     for index, row in df.iterrows():
@@ -3793,28 +3786,24 @@ def scamAthirdtimeIntx():
             start = time[0]
             end = time[-1]
             livingtime = end - start
-            addr2living[addr] = livingtime / 3 + start
-    with open('scam2athirdtimeIntx.txt','w') as f:
-        print(addr2living,file=f)
-def scamAthirdtimeOuttx():
+            addr2living1[addr] = livingtime / 3 + start
+            addr2living2[addr] = livingtime / 3 * 2 + start
+    with open('scam2athirdIntime1.txt','w') as f:
+        print(addr2living1,file=f)
+    with open('scam2athirdIntime2.txt','w') as f:
+        print(addr2living2,file=f)
+def scamAthirdOuttime():
     with open('addr.txt', 'r', encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    df1 = pandas.read_csv('ntx1.csv')
-    df2 = pandas.read_csv('ntx2.csv')
-    df3 = pandas.read_csv('ntx3.csv')
-    df4 = pandas.read_csv('ntx4.csv')
-    df5 = pandas.read_csv('itx1.csv')
-    df6 = pandas.read_csv('itx2.csv')
-    df7 = pandas.read_csv('itx3.csv')
-    df8 = pandas.read_csv('itx4.csv')
-    df9 = pandas.read_csv('bntx1.csv')
-    df10 = pandas.read_csv('bitx1.csv')
-    frames = [df1, df2, df3, df4, df5, df6, df7, df8, df9, df10]
+    df1 = pandas.read_csv('ntx.csv')
+    df2 = pandas.read_csv('itx.csv')
+    frames = [df1,df2]
     df = pandas.concat(frames)#拼接所有交易
     df = df.drop_duplicates()  # 去重
     df = df.sort_values('timeStamp')#将所有交易按时间戳排序
     addr2day = {}  # 地址到交易时间戳的字典
-    addr2living = {}
+    addr2living1 = {}
+    addr2living2 = {}
     for addr in addrlist:
         addr2day[addr] = []
     for index, row in df.iterrows():
@@ -3827,75 +3816,91 @@ def scamAthirdtimeOuttx():
             start = time[0]
             end = time[-1]
             livingtime = end - start
-            addr2living[addr] = livingtime / 3 + start
-    with open('scam2athirdtimeOuttx.txt','w') as f:
-        print(addr2living,file=f)
+            addr2living1[addr] = livingtime / 3 + start
+            addr2living2[addr] = livingtime / 3 * 2 + start
+    with open('scam2athirdOuttime1.txt', 'w') as f:
+        print(addr2living1, file=f)
+    with open('scam2athirdOuttime2.txt', 'w') as f:
+        print(addr2living2, file=f)
 #如何筛选某个时间戳之间的交易并统计其数量，小于指定时间戳的才统计，根据爬到的交易进行统计
 def scamAthirdInTxnum():
     with open('addr.txt', 'r', encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    with open('scam2athirdtime.txt','r') as f:
-        addr2end = literal_eval(f.read())
-    df1 = pandas.read_csv('ntx1.csv')
-    df2 = pandas.read_csv('ntx2.csv')
-    df3 = pandas.read_csv('ntx3.csv')
-    df4 = pandas.read_csv('ntx4.csv')
-    df5 = pandas.read_csv('itx1.csv')
-    df6 = pandas.read_csv('itx2.csv')
-    df7 = pandas.read_csv('itx3.csv')
-    df8 = pandas.read_csv('itx4.csv')
-    df9 = pandas.read_csv('bntx1.csv')
-    df10 = pandas.read_csv('bitx1.csv')
-    frames = [df1, df2, df3, df4, df5, df6, df7, df8, df9, df10]
+    with open('scam2athirdIntime1.txt','r') as f:
+        addr2end1 = literal_eval(f.read())
+    with open('scam2athirdIntime2.txt','r') as f:
+        addr2end2 = literal_eval(f.read())
+    df1 = pandas.read_csv('ntx.csv')
+    df2 = pandas.read_csv('itx.csv')
+    frames = [df1,df2]
     df = pandas.concat(frames)
     df = df.drop_duplicates()  # 去重
     df = df.sort_values('timeStamp')#统计每个地址的符合时间戳条件的交易
-    addr2athirdtxnum = {}
+    addr2athirdtxnum1 = {}
+    addr2athirdtxnum2 = {}
+    addr2athirdtxnum3 = {}
     addr2tx = {}
     for addr in addrlist:#初始化用于统计的字典
-        addr2athirdtxnum[addr] = 0
+        addr2athirdtxnum1[addr] = 0
+        addr2athirdtxnum2[addr] = 0
+        addr2athirdtxnum3[addr] = 0
         addr2tx[addr] = []
     for index, row in df.iterrows():
         if row['to'] != 'NaN' and row['to'] in addrlist:
-            end = addr2end[row['to']]  # 每一行地址的结束时间戳，有的欺诈地址可能只是from地址而不是to地址
-            if row['timeStamp'] < end:
+            end1 = addr2end1[row['to']]  # 每一行地址的结束时间戳，有的欺诈地址可能只是from地址而不是to地址
+            end2 = addr2end2[row['to']]
+            if row['timeStamp'] < end1:
                 addr2tx[row['to']].append(row['hash'])#每一个地址的满足对应条件的交易hash值列表
-                addr2athirdtxnum[row['to']] += 1
-    with open('scam2athirdIntxnum.txt','w') as f:
-        print(addr2athirdtxnum,file=f)
+                addr2athirdtxnum1[row['to']] += 1
+            if row['timeStamp'] >= end1 and row['timeStamp'] < end2:
+                addr2athirdtxnum2[row['to']] += 1
+            if row['timeStamp'] >= end2:
+                addr2athirdtxnum3[row['to']] += 1
+    with open('scam2athirdIntxnum1.txt','w') as f:
+        print(addr2athirdtxnum1,file=f)
+    with open('scam2athirdIntxnum2.txt','w') as f:
+        print(addr2athirdtxnum2,file=f)
+    with open('scam2athirdIntxnum3.txt','w') as f:
+        print(addr2athirdtxnum3,file=f)
 def scamAthirdOutTxnum():
     with open('addr.txt', 'r', encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    with open('scam2athirdtimeOuttx.txt','r') as f:
-        addr2end = literal_eval(f.read())
-    df1 = pandas.read_csv('ntx1.csv')
-    df2 = pandas.read_csv('ntx2.csv')
-    df3 = pandas.read_csv('ntx3.csv')
-    df4 = pandas.read_csv('ntx4.csv')
-    df5 = pandas.read_csv('itx1.csv')
-    df6 = pandas.read_csv('itx2.csv')
-    df7 = pandas.read_csv('itx3.csv')
-    df8 = pandas.read_csv('itx4.csv')
-    df9 = pandas.read_csv('bntx1.csv')
-    df10 = pandas.read_csv('bitx1.csv')
-    frames = [df1, df2, df3, df4, df5, df6, df7, df8, df9, df10]
+    with open('scam2athirdOuttime1.txt','r') as f:
+        addr2end1 = literal_eval(f.read())
+    with open('scam2athirdOuttime2.txt','r') as f:
+        addr2end2 = literal_eval(f.read())
+    df1 = pandas.read_csv('ntx.csv')
+    df2 = pandas.read_csv('itx.csv')
+    frames = [df1,df2]
     df = pandas.concat(frames)
     df = df.drop_duplicates()  # 去重
     df = df.sort_values('timeStamp')#统计每个地址的符合时间戳条件的交易
-    addr2athirdtxnum = {}
+    addr2athirdtxnum1 = {}
+    addr2athirdtxnum2 = {}
+    addr2athirdtxnum3 = {}
+
     addr2tx = {}
     for addr in addrlist:#初始化用于统计的字典
-        addr2athirdtxnum[addr] = 0
+        addr2athirdtxnum1[addr] = 0
+        addr2athirdtxnum2[addr] = 0
+        addr2athirdtxnum3[addr] = 0
         addr2tx[addr] = []
     for index, row in df.iterrows():
         if row['from'] != 'NaN' and row['from'] in addrlist:
-            end = addr2end[row['from']]# 每一行地址的结束时间戳，有的欺诈地址可能只是from地址而不是to地址
-            if row['timeStamp'] < end:
+            end1 = addr2end1[row['from']]# 每一行地址的结束时间戳，有的欺诈地址可能只是from地址而不是to地址
+            if row['timeStamp'] < end1:
                 addr2tx[row['from']].append(row['hash'])#每一个地址的满足对应条件的交易hash值列表
-                addr2athirdtxnum[row['from']] += 1
-    with open('scam2athirdOuttxnum.txt','w') as f:
-        print(addr2athirdtxnum,file=f)
-
+                addr2athirdtxnum1[row['from']] += 1
+            if row['timeStamp'] >= end1 and row['timeStamp'] < end2:
+                addr2athirdtxnum2[row['from']] += 1
+            if row['timeStamp'] >= end2:
+                addr2athirdtxnum1[row['from']] += 1
+    with open('scam2athirdOuttxnum1.txt','w') as f:
+        print(addr2athirdtxnum1,file=f)
+    with open('scam2athirdOuttxnum2.txt','w') as f:
+        print(addr2athirdtxnum2,file=f)
+    with open('scam2athirdOuttxnum3.txt','w') as f:
+        print(addr2athirdtxnum3,file=f)
 def norAddrA3InNtxTime1():
     with open('normalAddr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
@@ -5963,7 +5968,10 @@ def scamItxMFG():
 # scam group NO.csv 地址和块号
 # scam group time and profit.csv 欺诈地址和时间和利润
 # tx_into.csv ?
-
+def character13():
+    with open('mlchar.csv','w',encoding='utf-8') as f:
+        writer = csv.writer(f)
+        writer.writerow(["address","allIncome","allOutcome","avgIncome","avgOutcome","intxs","outtxs","front1/3 in","middle1/3 in","last1/3 in","front1/3 out","middle1/3 out","last1/3 out","type"])
 
 if __name__ == '__main__':
     # try:
@@ -6181,7 +6189,7 @@ if __name__ == '__main__':
     # scamTx2()
     # nfig9Outtx()
     # nfig9Intx()
-    scamIOTxAna()
+    scamAthirdInTxnum()
     # ifig9Intx()
 
 #收集整理大量数据时，尽量保存中间文件，即使由于机器性能原因或者ide设置原因等中断运行，也能避免效率的降低。
