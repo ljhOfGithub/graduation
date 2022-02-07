@@ -4202,6 +4202,42 @@ def norAddrA3OutNtxTime5():
         print(addr2living1, file=f)
     with open('normal2athirdtimeOutNtx52.txt', 'w') as f:
         print(addr2living2, file=f)
+def norAddrA3InNtxTx():
+    with open('normalAddr.txt', 'r', encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    with open('normal2athirdtimeInNtx1.txt', 'r') as f:
+        addr2end1 = literal_eval(f.read())
+    with open('normal2athirdtimeInNtx2.txt', 'r') as f:
+        addr2end2 = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv')  # 读取去重交易后的正常地址交易
+    df = df.drop_duplicates()
+    df = df.sort_values('timeStamp')
+    addr2athirdtxnum1 = {}
+    addr2athirdtxnum2 = {}
+    addr2athirdtxnum3 = {}
+    addr2tx = {}
+    for addr in addrlist:
+        addr2athirdtxnum1[addr] = 0
+        addr2athirdtxnum2[addr] = 0
+        addr2athirdtxnum3[addr] = 0
+        addr2tx[addr] = []
+    for index, row in df.iterrows():#每一个地址的满足对应条件的交易hash值列表
+        if isinstance(row['to'],str) and row['to'] in addrlist:# 每一行地址的结束时间戳，有的欺诈地址可能只是from地址而不是to地址
+            end1 = addr2end1[row['to']]
+            end2 = addr2end2[row['to']]
+            if row['timeStamp'] < end1:
+                addr2tx[row['to']].append(row['hash'])
+                addr2athirdtxnum1[row['to']] += 1
+            if row['timeStamp'] <= end2 and row['timeStamp'] > end1:
+                addr2athirdtxnum2[row['to']] += 1
+            if row['timeStamp'] > end2:
+                addr2athirdtxnum3[row['to']] += 1
+    with open('normal2athirdInNtxnum1.txt','w') as f:
+        print(addr2athirdtxnum1,file=f)
+    with open('normal2athirdInNtxnum2.txt','w') as f:
+        print(addr2athirdtxnum2,file=f)
+    with open('normal2athirdInNtxnum3.txt','w') as f:
+        print(addr2athirdtxnum3,file=f)
 def norAddrA3InNtxTx1():
     with open('normalAddr.txt', 'r', encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
@@ -4382,6 +4418,42 @@ def norAddrA3InNtxTx5():
         print(addr2athirdtxnum2, file=f)
     with open('normal2athirdInNtxnum53.txt', 'w') as f:
         print(addr2athirdtxnum3, file=f)
+def norAddrA3OutNtxTx():
+    with open('normalAddr.txt', 'r', encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    with open('normal2athirdtimeOutNtx1.txt', 'r') as f:
+        addr2end1 = literal_eval(f.read())
+    with open('normal2athirdtimeOutNtx2.txt', 'r') as f:
+        addr2end2 = literal_eval(f.read())
+    df = pandas.read_csv('normalAddrntx2.csv')  # 读取去重交易后的正常地址交易
+    df = df.drop_duplicates()
+    df = df.sort_values('timeStamp')
+    addr2athirdtxnum1 = {}
+    addr2athirdtxnum2 = {}
+    addr2athirdtxnum3 = {}
+    addr2tx = {}
+    for addr in addrlist:  # 初始化用于统计的字典
+        addr2athirdtxnum1[addr] = 0
+        addr2athirdtxnum2[addr] = 0
+        addr2athirdtxnum3[addr] = 0
+        addr2tx[addr] = []
+    for index, row in df.iterrows():
+        if isinstance(row['from'],str) and row['from'] in addrlist:
+            end1 = addr2end1[row['from']]
+            end2 = addr2end2[row['from']]
+            if row['timeStamp'] < end1:
+                addr2tx[row['from']].append(row['hash'])
+                addr2athirdtxnum1[row['from']] += 1
+            if row['timeStamp'] >= end1 and row['timeStamp'] < end2:
+                addr2athirdtxnum2[row['from']] += 1
+            if row['timeStamp'] >= end2:
+                addr2athirdtxnum3[row['from']] += 1
+    with open('normal2athirdOutNtxnum1.txt','w') as f:
+        print(addr2athirdtxnum1,file=f)
+    with open('normal2athirdOutNtxnum2.txt','w') as f:
+        print(addr2athirdtxnum2,file=f)
+    with open('normal2athirdOutNtxnum3.txt','w') as f:
+        print(addr2athirdtxnum3,file=f)
 def norAddrA3OutNtxTx1():
     with open('normalAddr.txt', 'r', encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
@@ -6534,7 +6606,7 @@ if __name__ == '__main__':
     # try:
     #     print("etxs2")
     # normalLive2()
-    norAddrA3OutNtxTime()
+    norAddrA3OutNtxTx()
 
 #收集整理大量数据时，尽量保存中间文件，即使由于机器性能原因或者ide设置原因等中断运行，也能避免效率的降低。
 #涉及网络爬虫的工作中可能会出现由于当时的网络原因出现问题，包括但不限于整个代码停止运行，某个url的网站爬取失败，为此需要增加异常处理，以便于事后补充未完成的url爬取工作
