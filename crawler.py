@@ -6533,7 +6533,9 @@ def scamItxMFG():
 # scam group time and profit.csv 欺诈地址和时间和利润
 # tx_into.csv ?
 def character13():
-    # with open('')
+    with open('scamAvgIncome.txt', 'w', encoding='utf-8') as f:
+        scamAvgIncome = literal_eval(f.read())
+    
     with open('mlchar.csv','w',encoding='utf-8') as f:
         writer = csv.writer(f)
         writer.writerow(["address","allIncome","allOutcome","avgIncome","avgOutcome","intxs","outtxs","front1/3 in","middle1/3 in","last1/3 in","front1/3 out","middle1/3 out","last1/3 out","type"])
