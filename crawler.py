@@ -3778,15 +3778,14 @@ def scamAthirdLivingtime():
     addr2living3 = {}
     for addr in addrlist:
         addr2stamp[addr] = []
+        addr2living1[addr] = 0
+        addr2living2[addr] = 0
+        addr2living3[addr] = 0
     for index, row in df.iterrows():
         if isinstance(row['to'], str) and row['to'] in addrlist:  # 统计每个地址的时间戳
             addr2stamp[row['to']].append(row['timeStamp'])
     for addr, time in addr2stamp.items():
         time.sort()
-    for addr in addrlist:
-        addr2living1[addr] = 0
-        addr2living2[addr] = 0
-        addr2living3[addr] = 0
     for addr, time in addr2stamp.items():
         if len(time) > 0:  # 直接用时间戳计算
             start = time[0]
@@ -3941,10 +3940,10 @@ def scamAthirdOutTxnum():
         print(addr2athirdtxnum2,file=f)
     with open('scam2athirdOuttxnum3.txt','w') as f:
         print(addr2athirdtxnum3,file=f)
-def norAddrA3IntxTime():
+def norAddrA3LivingTime():
     with open('normalAddr.txt','r',encoding='utf-8') as f:
-        addrlist = literal_eval(f.read())
-    df1 = pandas.read_csv('normalAddrntx2.csv')  # 读取去重交易后的正常地址交易
+        addrlist = literal_eval(f.read()) # 读取去重交易后的正常地址交易
+    df1 = pandas.read_csv('normalAddrntx2.csv') 
     df2 = pandas.read_csv('normalAddritx2.csv')
     frames = [df1, df2]
     df = pandas.concat(frames)
@@ -3956,6 +3955,9 @@ def norAddrA3IntxTime():
     addr2living3 = {}
     for addr in addrlist:
         addr2stamp[addr] = []
+        addr2living1[addr] = 0
+        addr2living2[addr] = 0
+        addr2living3[addr] = 0
     for index, row in df.iterrows():
         if isinstance(row['to'],str) and row['to'] in addrlist:#统计每个地址的时间戳
             addr2stamp[row['to']].append(row['timeStamp'])
@@ -3969,11 +3971,11 @@ def norAddrA3IntxTime():
             addr2living1[addr] = livingtime / 3 + start
             addr2living2[addr] = livingtime / 3 * 2 + start
             addr2living3 = livingtime
-    with open('normal2athirdtimeIntx1.txt','w') as f:
+    with open('normal2athirdtime1.txt','w') as f:
         print(addr2living1,file=f)
-    with open('normal2athirdtimeIntx2.txt','w') as f:
+    with open('normal2athirdtime2.txt','w') as f:
         print(addr2living2,file=f)
-    with open('normal2athirdtimeIntx3.txt','w') as f:
+    with open('normal2athirdtime3.txt','w') as f:
         print(addr2living3,file=f)
 def norAddrA3InNtxTime():
     with open('normalAddr.txt','r',encoding='utf-8') as f:
@@ -4300,6 +4302,45 @@ def norAddrA3OutNtxTime5():
         print(addr2living1, file=f)
     with open('normal2athirdtimeOutNtx52.txt', 'w') as f:
         print(addr2living2, file=f)
+def norAddrA3Intxnum():
+    with open('normalAddr.txt', 'r', encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    with open('normal2athirdtime1.txt', 'r') as f:
+        addr2end1 = literal_eval(f.read())
+    with open('normal2athirdtime2.txt', 'r') as f:
+        addr2end2 = literal_eval(f.read())
+    df1 = pandas.read_csv('normalAddrntx2.csv')
+    df2 = pandas.read_csv('normalAddritx2.csv')
+    frames = [df1, df2]
+    df = pandas.concat(frames)
+    df = df.drop_duplicates()
+    df = df.sort_values('timeStamp')
+    addr2athirdtxnum1 = {}
+    addr2athirdtxnum2 = {}
+    addr2athirdtxnum3 = {}
+    addr2tx = {}
+    for addr in addrlist:
+        addr2athirdtxnum1[addr] = 0
+        addr2athirdtxnum2[addr] = 0
+        addr2athirdtxnum3[addr] = 0
+        addr2tx[addr] = []
+    for index, row in df.iterrows():#每一个地址的满足对应条件的交易hash值列表
+        if isinstance(row['to'],str) and row['to'] in addrlist:# 每一行地址的结束时间戳，有的欺诈地址可能只是from地址而不是to地址
+            end1 = addr2end1[row['to']]
+            end2 = addr2end2[row['to']]
+            if row['timeStamp'] < end1:
+                addr2tx[row['to']].append(row['hash'])
+                addr2athirdtxnum1[row['to']] += 1
+            if row['timeStamp'] <= end2 and row['timeStamp'] > end1:
+                addr2athirdtxnum2[row['to']] += 1
+            if row['timeStamp'] > end2:
+                addr2athirdtxnum3[row['to']] += 1
+    with open('normal2athirdIntxnum1.txt','w') as f:
+        print(addr2athirdtxnum1,file=f)
+    with open('normal2athirdIntxnum2.txt','w') as f:
+        print(addr2athirdtxnum2,file=f)
+    with open('normal2athirdIntxnum3.txt','w') as f:
+        print(addr2athirdtxnum3,file=f)
 def norAddrA3InNtxTx():
     with open('normalAddr.txt', 'r', encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
@@ -7020,6 +7061,6 @@ if __name__ == '__main__':
     # except Exception:
     #     traceback.print_exc()
     # scamAvgIncomeOutcome()
-    norAddrA3IntxTime()
+    norAddrA3LivingTime()
 #收集整理大量数据时，尽量保存中间文件，即使由于机器性能原因或者ide设置原因等中断运行，也能避免效率的降低。
 #涉及网络爬虫的工作中可能会出现由于当时的网络原因出现问题，包括但不限于整个代码停止运行，某个url的网站爬取失败，为此需要增加异常处理，以便于事后补充未完成的url爬取工作
