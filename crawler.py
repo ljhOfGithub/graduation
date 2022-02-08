@@ -4814,52 +4814,72 @@ def norAddr3IOTxnum():
         normal2athirdOutNtxnum2 = literal_eval(f.read())
     with open('normal2athirdOutNtxnum3.txt', 'r') as f:
         normal2athirdOutNtxnum3 = literal_eval(f.read())
+    normal2athirdIntxnum = {}
     normal2athirdIntxnum1 = {}
     normal2athirdIntxnum2 = {}
     normal2athirdIntxnum3 = {}
+    normal2athirdOuttxnum = {}
     normal2athirdOuttxnum1 = {}
     normal2athirdOuttxnum2 = {}
     normal2athirdOuttxnum3 = {}
     for addr in addrlist:
+        normal2athirdIntxnum[addr] = 0
         normal2athirdIntxnum1[addr] = 0
         normal2athirdIntxnum2[addr] = 0
         normal2athirdIntxnum3[addr] = 0
+        normal2athirdOuttxnum[addr] = 0
         normal2athirdOuttxnum1[addr] = 0
         normal2athirdOuttxnum2[addr] = 0
         normal2athirdOuttxnum3[addr] = 0
     for addr in addrlist:
         if addr in normal2athirdInItxnum1.keys():
             normal2athirdIntxnum1[addr] += normal2athirdInItxnum1[addr]
+            normal2athirdIntxnum[addr] += normal2athirdInItxnum1[addr]
         if addr in normal2athirdInNtxnum1.keys():
             normal2athirdIntxnum1[addr] += normal2athirdInNtxnum1[addr]
+            normal2athirdIntxnum[addr] += normal2athirdInNtxnum1[addr]
         if addr in normal2athirdInItxnum2.keys():
             normal2athirdIntxnum2[addr] += normal2athirdInItxnum2[addr]
+            normal2athirdIntxnum[addr] += normal2athirdInItxnum2[addr]
         if addr in normal2athirdInNtxnum2.keys():
             normal2athirdIntxnum2[addr] += normal2athirdInNtxnum2[addr]
+            normal2athirdIntxnum[addr] += normal2athirdInNtxnum2[addr]
         if addr in normal2athirdInItxnum3.keys():
             normal2athirdIntxnum3[addr] += normal2athirdInItxnum3[addr]
+            normal2athirdIntxnum[addr] += normal2athirdInItxnum3[addr]
         if addr in normal2athirdInNtxnum3.keys():
             normal2athirdIntxnum3[addr] += normal2athirdInNtxnum3[addr]
+            normal2athirdIntxnum[addr] += normal2athirdInNtxnum3[addr]
 
         if addr in normal2athirdOutItxnum1.keys():
             normal2athirdOuttxnum1[addr] += normal2athirdOutItxnum1[addr]
+            normal2athirdOuttxnum[addr] += normal2athirdOutItxnum1[addr]
         if addr in normal2athirdOutNtxnum1.keys():
             normal2athirdOuttxnum1[addr] += normal2athirdOutNtxnum1[addr]
+            normal2athirdOuttxnum[addr] += normal2athirdOutNtxnum1[addr]
         if addr in normal2athirdOutItxnum2.keys():
             normal2athirdOuttxnum2[addr] += normal2athirdOutItxnum2[addr]
+            normal2athirdOuttxnum[addr] += normal2athirdOutItxnum2[addr]
         if addr in normal2athirdOutNtxnum2.keys():
             normal2athirdOuttxnum2[addr] += normal2athirdOutNtxnum2[addr]
+            normal2athirdOuttxnum[addr] += normal2athirdOutNtxnum2[addr]
         if addr in normal2athirdOutItxnum3.keys():
             normal2athirdOuttxnum3[addr] += normal2athirdOutItxnum3[addr]
+            normal2athirdOuttxnum[addr] += normal2athirdOutItxnum3[addr]
         if addr in normal2athirdOutNtxnum3.keys():
             normal2athirdOuttxnum3[addr] += normal2athirdOutNtxnum3[addr]
-    
+            normal2athirdOuttxnum[addr] += normal2athirdOutNtxnum3[addr]
+    with open('normal2athirdIntxnum.txt', 'w') as f:
+        print(normal2athirdIntxnum, file=f)
     with open('normal2athirdIntxnum1.txt', 'w') as f:
         print(normal2athirdIntxnum1, file=f)
     with open('normal2athirdIntxnum2.txt', 'w') as f:
         print(normal2athirdIntxnum2, file=f)
     with open('normal2athirdIntxnum3.txt', 'w') as f:
         print(normal2athirdIntxnum3, file=f)
+        
+    with open('normal2athirdOuttxnum.txt', 'w') as f:
+        print(normal2athirdOuttxnum, file=f)
     with open('normal2athirdOuttxnum1.txt', 'w') as f:
         print(normal2athirdOuttxnum1, file=f)
     with open('normal2athirdOuttxnum2.txt', 'w') as f:
@@ -6571,6 +6591,10 @@ def character13():
         normalAvgIncome = literal_eval(f.read())
     with open('normalAvgOutcome.txt','r') as f:
         normalAvgOutcome = literal_eval(f.read())
+    with open('normal2athirdIntxnum.txt','r') as f:
+        normal2athirdIntxnum = literal_eval(f.read())
+    with open('normal2athirdOuttxnum.txt','r') as f:
+        normal2athirdOuttxnum = literal_eval(f.read())
     with open('normal2athirdIntxnum1.txt','r') as f:
         normal2athirdIntxnum1 = literal_eval(f.read())
     with open('normal2athirdIntxnum2.txt','r') as f:
@@ -6583,17 +6607,50 @@ def character13():
         normal2athirdOuttxnum2 = literal_eval(f.read())
     with open('normal2athirdOuttxnum3.txt','r') as f:
         normal2athirdOuttxnum3 = literal_eval(f.read())
-    
-    
     with open('addr.txt', 'w', encoding='utf-8') as f:
         scamaddrlist = literal_eval(f.read())
     with open('norAddr.txt', 'w', encoding='utf-8') as f:
-        norAddrlist = literal_eval(f.read())
-    scamdf = {}
-    nordf = {}
+        noraddrlist = literal_eval(f.read())
+    scamlist = []
+    norlist = []
+    for addr in scamaddrlist:
+        scamdict = {}
+        scamdict['address'] = addr
+        scamdict['allIncome'] = scamIncome.get(addr,0)
+        scamdict['allOutcome'] = scamOutcome.get(addr,0)
+        scamdict['avgIncome'] = scamAvgIncome.get(addr,0)
+        scamdict['avgOutcome'] = scamAvgOutcome.get(addr,0)
+        scamdict['intxs'] = scamInTx.get(addr,0)
+        scamdict['outtxs'] = scamOutTx.get(addr,0)
+        scamdict['front1/3in'] = scam2athirdIntxnum1.get(addr,0)
+        scamdict['middle1/3in'] = scam2athirdIntxnum2.get(addr,0)
+        scamdict['last1/3in'] = scam2athirdIntxnum3.get(addr,0)
+        scamdict['front1/3out'] = scam2athirdOuttxnum1.get(addr,0)
+        scamdict['middle1/3out'] = scam2athirdOuttxnum2.get(addr,0)
+        scamdict['last1/3out'] = scam2athirdOuttxnum3.get(addr,0)
+        scamdict['type'] = 1
+        scamlist.append(scamdict)
+    for addr in noraddrlist:
+        nordict = {}
+        nordict['address'] = addr
+        nordict['allIncome'] = normalIncome.get(addr,0)
+        nordict['allOutcome'] = normalOutcome.get(addr,0)
+        nordict['avgIncome'] = normalAvgIncome.get(addr,0)
+        nordict['avgOutcome'] = normalAvgOutcome.get(addr, 0)
+        nordict['intxs'] = normal2athirdIntxnum.get(addr, 0)
+        nordict['outtxs'] = normal2athirdOuttxnum.get(addr, 0)
+        nordict['front1/3in'] = normal2athirdIntxnum1.get(addr, 0)
+        nordict['middle1/3in'] = normal2athirdIntxnum2.get(addr, 0)
+        nordict['last1/3in'] = normal2athirdIntxnum3.get(addr, 0)
+        nordict['front1/3out'] = normal2athirdOuttxnum1.get(addr, 0)
+        nordict['middle1/3out'] = normal2athirdOuttxnum2.get(addr, 0)
+        nordict['last1/3out'] = normal2athirdOuttxnum3.get(addr, 0)
+        nordict['type'] = 0
+        norlist.append(nordict)
     with open('mlchar.csv','w',encoding='utf-8') as f:
         writer = csv.writer(f)
-        writer.writerow(["address","allIncome","allOutcome","avgIncome","avgOutcome","intxs","outtxs","front1/3 in","middle1/3 in","last1/3 in","front1/3 out","middle1/3 out","last1/3 out","type"])
+        writer.writerow(["address","allIncome","allOutcome","avgIncome","avgOutcome","intxs","outtxs","front1/3in","middle1/3in","last1/3in","front1/3out","middle1/3out","last1/3out","type"])
+        
 if __name__ == '__main__':
     # try:
     #     print("ntxs1")
@@ -6806,6 +6863,6 @@ if __name__ == '__main__':
     #     norAddrA3OutNtxTx()
     # except Exception:
     #     traceback.print_exc()
-    mixnormalAvgIOcome()
+    character13()
 #收集整理大量数据时，尽量保存中间文件，即使由于机器性能原因或者ide设置原因等中断运行，也能避免效率的降低。
 #涉及网络爬虫的工作中可能会出现由于当时的网络原因出现问题，包括但不限于整个代码停止运行，某个url的网站爬取失败，为此需要增加异常处理，以便于事后补充未完成的url爬取工作
