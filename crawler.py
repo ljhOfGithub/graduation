@@ -3762,6 +3762,45 @@ def normalAddrAvgIn():
     with open('txtypenum.txt','w') as f:
         addr2txnum = literal_eval(f.read())
 #欺诈地址的前1/3生命周期的时间戳
+#有的欺诈地址可能livingtime为0，因为不是所有欺诈地址都发出交易
+def scamAthirdLivingtime():
+    with open('addr.txt', 'r', encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df1 = pandas.read_csv('ntx.csv')
+    df2 = pandas.read_csv('itx.csv')
+    frames = [df1, df2]
+    df = pandas.concat(frames)  # 拼接所有交易
+    df = df.drop_duplicates()  # 去重
+    df = df.sort_values('timeStamp')  # 将所有交易按时间戳排序
+    addr2stamp = {}  # 地址到交易时间戳的字典
+    addr2living1 = {}
+    addr2living2 = {}
+    addr2living3 = {}
+    for addr in addrlist:
+        addr2stamp[addr] = []
+    for index, row in df.iterrows():
+        if isinstance(row['to'], str) and row['to'] in addrlist:  # 统计每个地址的时间戳
+            addr2stamp[row['to']].append(row['timeStamp'])
+    for addr, time in addr2stamp.items():
+        time.sort()
+    for addr in addrlist:
+        addr2living1[addr] = 0
+        addr2living2[addr] = 0
+        addr2living3[addr] = 0
+    for addr, time in addr2stamp.items():
+        if len(time) > 0:  # 直接用时间戳计算
+            start = time[0]
+            end = time[-1]
+            livingtime = end - start
+            addr2living1[addr] = livingtime / 3 + start
+            addr2living2[addr] = livingtime / 3 * 2 + start
+            addr2living3[addr] = livingtime
+    with open('scam2athirdLivingtime1.txt','w') as f:
+        print(addr2living1,file=f)
+    with open('scam2athirdLivingtime2.txt','w') as f:
+        print(addr2living2,file=f)
+    with open('scam2athirdLivingtime3.txt','w') as f:
+        print(addr2living3,file=f)
 def scamAthirdIntime():
     with open('addr.txt', 'r', encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
@@ -3792,6 +3831,7 @@ def scamAthirdIntime():
         print(addr2living1,file=f)
     with open('scam2athirdIntime2.txt','w') as f:
         print(addr2living2,file=f)
+
 def scamAthirdOuttime():
     with open('addr.txt', 'r', encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
@@ -3826,9 +3866,9 @@ def scamAthirdOuttime():
 def scamAthirdInTxnum():
     with open('addr.txt', 'r', encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    with open('scam2athirdIntime1.txt','r') as f:
+    with open('scam2athirdLivingtime1.txt','r') as f:
         addr2end1 = literal_eval(f.read())
-    with open('scam2athirdIntime2.txt','r') as f:
+    with open('scam2athirdLivingtime2.txt','r') as f:
         addr2end2 = literal_eval(f.read())
     df1 = pandas.read_csv('ntx.csv')
     df2 = pandas.read_csv('itx.csv')
@@ -3865,9 +3905,9 @@ def scamAthirdInTxnum():
 def scamAthirdOutTxnum():
     with open('addr.txt', 'r', encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    with open('scam2athirdOuttime1.txt','r') as f:
+    with open('scam2athirdLivingtime1.txt','r') as f:
         addr2end1 = literal_eval(f.read())
-    with open('scam2athirdOuttime2.txt','r') as f:
+    with open('scam2athirdLivingtime2.txt','r') as f:
         addr2end2 = literal_eval(f.read())
     df1 = pandas.read_csv('ntx.csv')
     df2 = pandas.read_csv('itx.csv')
@@ -3901,6 +3941,40 @@ def scamAthirdOutTxnum():
         print(addr2athirdtxnum2,file=f)
     with open('scam2athirdOuttxnum3.txt','w') as f:
         print(addr2athirdtxnum3,file=f)
+def norAddrA3IntxTime():
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    df1 = pandas.read_csv('normalAddrntx2.csv')  # 读取去重交易后的正常地址交易
+    df2 = pandas.read_csv('normalAddritx2.csv')
+    frames = [df1, df2]
+    df = pandas.concat(frames)
+    df = df.drop_duplicates()
+    df = df.sort_values('timeStamp')
+    addr2stamp = {}  # 地址到交易时间戳的字典
+    addr2living1 = {}
+    addr2living2 = {}
+    addr2living3 = {}
+    for addr in addrlist:
+        addr2stamp[addr] = []
+    for index, row in df.iterrows():
+        if isinstance(row['to'],str) and row['to'] in addrlist:#统计每个地址的时间戳
+            addr2stamp[row['to']].append(row['timeStamp'])
+    for addr, time in addr2stamp.items():
+        time.sort()
+    for addr, time in addr2stamp.items():
+        if len(time) > 0:#直接用时间戳计算
+            start = time[0]
+            end = time[-1]
+            livingtime = end - start
+            addr2living1[addr] = livingtime / 3 + start
+            addr2living2[addr] = livingtime / 3 * 2 + start
+            addr2living3 = livingtime
+    with open('normal2athirdtimeIntx1.txt','w') as f:
+        print(addr2living1,file=f)
+    with open('normal2athirdtimeIntx2.txt','w') as f:
+        print(addr2living2,file=f)
+    with open('normal2athirdtimeIntx3.txt','w') as f:
+        print(addr2living3,file=f)
 def norAddrA3InNtxTime():
     with open('normalAddr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
@@ -3912,11 +3986,11 @@ def norAddrA3InNtxTime():
     addr2living2 = {}
     for addr in addrlist:
         addr2stamp[addr] = []
-    for addr, time in addr2stamp.items():
-        time.sort()
     for index, row in df.iterrows():
         if isinstance(row['to'],str) and row['to'] in addrlist:#统计每个地址的时间戳
             addr2stamp[row['to']].append(row['timeStamp'])
+    for addr, time in addr2stamp.items():
+        time.sort()
     for addr, time in addr2stamp.items():
         if len(time) > 0:#直接用时间戳计算
             start = time[0]
@@ -6663,6 +6737,76 @@ def character13():
                                  nordict['front1/3out'], nordict['middle1/3out'],
                                  nordict['last1/3out'], nordict['type']])
 
+import matplotlib.pyplot as plt
+import numpy as np
+from sklearn import datasets, linear_model
+from sklearn.metrics import mean_squared_error, r2_score
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import classification_report
+def logReg():
+    data = pandas.read_csv('mlchar.csv')[["allIncome","allOutcome","avgIncome","avgOutcome","intxs","outtxs","front1/3in","middle1/3in","last1/3in","front1/3out","middle1/3out","last1/3out","type"]]
+    # data = (data - data.min()) / (data.max() - data.min())
+    # # Load the diabetes dataset
+    # print(data)
+    # return
+    X1 = data["allIncome"].to_list()
+    X2 = data["allOutcome"].to_list()
+    X3 = data["avgIncome"].to_list()
+    X4 = data["avgOutcome"].to_list()
+    X5 = data["intxs"].to_list()
+    X6 = data["outtxs"].to_list()
+    X7 = data["front1/3in"].to_list()
+    X8 = data["middle1/3in"].to_list()
+    X9 = data["last1/3in"].to_list()
+    X10 = data["front1/3out"].to_list()
+    X11 = data["middle1/3out"].to_list()
+    X12 = data["last1/3out"].to_list()
+    X = pandas.read_csv('mlchar.csv')[["allIncome","allOutcome","avgIncome","avgOutcome","intxs","outtxs","front1/3in","middle1/3in","last1/3in","front1/3out","middle1/3out","last1/3out"]]
+    Y = pandas.read_csv('mlchar.csv')[["type"]]
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_state=1)
+    logreg = LogisticRegression()
+    logreg.fit(X_train, Y_train)
+    return
+    diabetes_X, diabetes_y = datasets.load_diabetes(return_X_y=True)
+    print(datasets.load_diabetes(return_X_y=True))
+
+    # Use only one feature
+    diabetes_X = diabetes_X[:, np.newaxis, 2]
+
+    # Split the data into training/testing sets
+    diabetes_X_train = diabetes_X[:-20]
+    diabetes_X_test = diabetes_X[-20:]
+
+    # Split the targets into training/testing sets
+    diabetes_y_train = diabetes_y[:-20]
+    diabetes_y_test = diabetes_y[-20:]
+
+    # Create linear regression object
+    regr = linear_model.LinearRegression()
+
+    # Train the model using the training sets
+    regr.fit(diabetes_X_train, diabetes_y_train)
+
+    # Make predictions using the testing set
+    diabetes_y_pred = regr.predict(diabetes_X_test)
+
+    # The coefficients
+    print("Coefficients: \n", regr.coef_)
+    # The mean squared error
+    print("Mean squared error: %.2f" % mean_squared_error(diabetes_y_test, diabetes_y_pred))
+    # The coefficient of determination: 1 is perfect prediction
+    print("Coefficient of determination: %.2f" % r2_score(diabetes_y_test, diabetes_y_pred))
+
+    # Plot outputs
+    plt.scatter(diabetes_X_test, diabetes_y_test, color="black")
+    plt.plot(diabetes_X_test, diabetes_y_pred, color="blue", linewidth=3)
+
+    plt.xticks(())
+    plt.yticks(())
+
+    plt.show()
 if __name__ == '__main__':
     # try:
     #     print("ntxs1")
@@ -6876,6 +7020,6 @@ if __name__ == '__main__':
     # except Exception:
     #     traceback.print_exc()
     # scamAvgIncomeOutcome()
-    character13()
+    norAddrA3IntxTime()
 #收集整理大量数据时，尽量保存中间文件，即使由于机器性能原因或者ide设置原因等中断运行，也能避免效率的降低。
 #涉及网络爬虫的工作中可能会出现由于当时的网络原因出现问题，包括但不限于整个代码停止运行，某个url的网站爬取失败，为此需要增加异常处理，以便于事后补充未完成的url爬取工作
