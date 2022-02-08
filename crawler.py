@@ -6056,13 +6056,18 @@ def mixnormalAvgIOcome():
             addr2OutTxnum[addr] += addr2outtx1[addr]
         if addr in addr2outtx2.keys():
             addr2OutTxnum[addr] += addr2outtx2[addr]
-    for addr in addrlist:
-        if addr2InTxnum[addr] != 0:
-            addr2avgincome[addr] = addr2income[addr] / addr2InTxnum[addr]
-        if addr2OutTxnum[addr] != 0:
-            addr2avgoutcome[addr] = addr2outcome[addr] / addr2OutTxnum[addr]
-    print(addr2avgincome)
-    print(addr2avgoutcome)
+    # for addr in addrlist:
+    #     if addr2InTxnum[addr] != 0:
+    #         addr2avgincome[addr] = addr2income[addr] / addr2InTxnum[addr]
+    #     if addr2OutTxnum[addr] != 0:
+    #         addr2avgoutcome[addr] = addr2outcome[addr] / addr2OutTxnum[addr]
+    # print(addr2avgincome)
+    # print(addr2avgoutcome)
+    with open('normalIncome.txt','w') as f:
+        print(addr2income,file=f)
+    with open('normalOutcome.txt','w') as f:
+        print(addr2outcome,file=f)
+    return
     with open('normalAvgIncome.txt','w') as f:
         print(addr2avgincome,file=f)
     with open('normalAvgOutcome.txt','w') as f:
@@ -6533,9 +6538,38 @@ def scamItxMFG():
 # scam group time and profit.csv 欺诈地址和时间和利润
 # tx_into.csv ?
 def character13():
+    with open('scamIncome.txt','r',encoding='utf-8') as f:
+        scamIncome = literal_eval(f.read())
+    with open('scamOutcome.txt','r',encoding='utf-8') as f:
+        scamOutcome = literal_eval(f.read())
     with open('scamAvgIncome.txt', 'w', encoding='utf-8') as f:
         scamAvgIncome = literal_eval(f.read())
-    
+    with open('scamAvgOutcome.txt', 'w', encoding='utf-8') as f:
+        scamAvgOutcome = literal_eval(f.read())
+    with open('scamInTx.txt','r') as f:
+        scamInTx = literal_eval(f.read())
+    with open('scamOutTx.txt','r') as f:
+        scamOutTx = literal_eval(f.read())
+    with open('scam2athirdIntxnum1.txt','r') as f:
+        scam2athirdIntxnum1 = literal_eval(f.read())
+    with open('scam2athirdIntxnum2.txt','r') as f:
+        scam2athirdIntxnum2 = literal_eval(f.read())
+    with open('scam2athirdIntxnum3.txt','r') as f:
+        scam2athirdIntxnum3 = literal_eval(f.read())
+    with open('scam2athirdOuttxnum1.txt','r') as f:
+        scam2athirdOuttxnum1 = literal_eval(f.read())
+    with open('scam2athirdOuttxnum2.txt','r') as f:
+        scam2athirdOuttxnum2 = literal_eval(f.read())
+    with open('scam2athirdOuttxnum3.txt','r') as f:
+        scam2athirdOuttxnum3 = literal_eval(f.read())
+
+
+    with open('addr.txt', 'w', encoding='utf-8') as f:
+        scamaddrlist = literal_eval(f.read())
+    with open('norAddr.txt', 'w', encoding='utf-8') as f:
+        norAddrlist = literal_eval(f.read())
+    scamdf = {}
+    nordf = {}
     with open('mlchar.csv','w',encoding='utf-8') as f:
         writer = csv.writer(f)
         writer.writerow(["address","allIncome","allOutcome","avgIncome","avgOutcome","intxs","outtxs","front1/3 in","middle1/3 in","last1/3 in","front1/3 out","middle1/3 out","last1/3 out","type"])
@@ -6730,7 +6764,7 @@ if __name__ == '__main__':
     #     print("etxs2")
     # normalLive2()
     # norAddrA3OutItxTx()
-    norAddr3IOTxnum()
+    # norAddr3IOTxnum()
     # try:
     #     print("norAddrA3InNtxTime")
     #     norAddrA3InNtxTime()
@@ -6751,5 +6785,6 @@ if __name__ == '__main__':
     #     norAddrA3OutNtxTx()
     # except Exception:
     #     traceback.print_exc()
+    mixnormalAvgIOcome()
 #收集整理大量数据时，尽量保存中间文件，即使由于机器性能原因或者ide设置原因等中断运行，也能避免效率的降低。
 #涉及网络爬虫的工作中可能会出现由于当时的网络原因出现问题，包括但不限于整个代码停止运行，某个url的网站爬取失败，为此需要增加异常处理，以便于事后补充未完成的url爬取工作
