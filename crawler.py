@@ -263,9 +263,9 @@ def deduplicate():
     ret = [i for i in alladdr1 if i not in alladdr2]
     print(ret)
     print(len(alladdr1))
-    return ret
-    # with open('addr.txt','w',encoding='utf-8') as f:
-    #     print(alladdr,file=f)
+    # return ret
+    with open('addr.txt','w',encoding='utf-8') as f:
+        print(alladdr1,file=f)
 def readxlsx():
     workbook = xlrd.open_workbook('scam.xlsx')
     worksheet = workbook.sheet_by_index(0)
@@ -4877,7 +4877,7 @@ def norAddr3IOTxnum():
         print(normal2athirdIntxnum2, file=f)
     with open('normal2athirdIntxnum3.txt', 'w') as f:
         print(normal2athirdIntxnum3, file=f)
-        
+
     with open('normal2athirdOuttxnum.txt', 'w') as f:
         print(normal2athirdOuttxnum, file=f)
     with open('normal2athirdOuttxnum1.txt', 'w') as f:
@@ -6563,9 +6563,9 @@ def character13():
         scamIncome = literal_eval(f.read())
     with open('scamOutcome.txt','r',encoding='utf-8') as f:
         scamOutcome = literal_eval(f.read())
-    with open('scamAvgIncome.txt', 'w', encoding='utf-8') as f:
+    with open('scamAvgIncome.txt', 'r', encoding='utf-8') as f:
         scamAvgIncome = literal_eval(f.read())
-    with open('scamAvgOutcome.txt', 'w', encoding='utf-8') as f:
+    with open('scamAvgOutcome.txt', 'r', encoding='utf-8') as f:
         scamAvgOutcome = literal_eval(f.read())
     with open('scamInTx.txt','r') as f:
         scamInTx = literal_eval(f.read())
@@ -6607,9 +6607,9 @@ def character13():
         normal2athirdOuttxnum2 = literal_eval(f.read())
     with open('normal2athirdOuttxnum3.txt','r') as f:
         normal2athirdOuttxnum3 = literal_eval(f.read())
-    with open('addr.txt', 'w', encoding='utf-8') as f:
+    with open('addr.txt', 'r', encoding='utf-8') as f:
         scamaddrlist = literal_eval(f.read())
-    with open('norAddr.txt', 'w', encoding='utf-8') as f:
+    with open('normalAddr.txt', 'r', encoding='utf-8') as f:
         noraddrlist = literal_eval(f.read())
     scamlist = []
     norlist = []
@@ -6647,10 +6647,20 @@ def character13():
         nordict['last1/3out'] = normal2athirdOuttxnum3.get(addr, 0)
         nordict['type'] = 0
         norlist.append(nordict)
-    with open('mlchar.csv','w',encoding='utf-8') as f:
+    with open('mlchar.csv','w',encoding='utf-8',newline='') as f:
         writer = csv.writer(f)
         writer.writerow(["address","allIncome","allOutcome","avgIncome","avgOutcome","intxs","outtxs","front1/3in","middle1/3in","last1/3in","front1/3out","middle1/3out","last1/3out","type"])
-        
+        for scamdict in scamlist:
+            writer.writerow([scamdict['address'], scamdict['allIncome'], scamdict['allOutcome'], scamdict['avgIncome'], scamdict['avgOutcome'], scamdict['intxs'],
+                             scamdict['outtxs'], scamdict['front1/3in'], scamdict['middle1/3in'], scamdict['last1/3in'], scamdict['front1/3out'], scamdict['middle1/3out'],
+                             scamdict['last1/3out'], scamdict['type']])
+        for nordict in norlist:
+            writer.writerow([nordict['address'], nordict['allIncome'], nordict['allOutcome'], nordict['avgIncome'],
+                             nordict['avgOutcome'], nordict['intxs'],
+                             nordict['outtxs'], nordict['front1/3in'], nordict['middle1/3in'], nordict['last1/3in'],
+                             nordict['front1/3out'], nordict['middle1/3out'],
+                             nordict['last1/3out'], nordict['type']])
+
 if __name__ == '__main__':
     # try:
     #     print("ntxs1")
@@ -6863,6 +6873,7 @@ if __name__ == '__main__':
     #     norAddrA3OutNtxTx()
     # except Exception:
     #     traceback.print_exc()
+    # scamAvgIncomeOutcome()
     character13()
 #收集整理大量数据时，尽量保存中间文件，即使由于机器性能原因或者ide设置原因等中断运行，也能避免效率的降低。
 #涉及网络爬虫的工作中可能会出现由于当时的网络原因出现问题，包括但不限于整个代码停止运行，某个url的网站爬取失败，为此需要增加异常处理，以便于事后补充未完成的url爬取工作
