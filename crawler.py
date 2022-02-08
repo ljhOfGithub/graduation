@@ -4853,6 +4853,7 @@ def norAddr3IOTxnum():
             normal2athirdOuttxnum3[addr] += normal2athirdOutItxnum3[addr]
         if addr in normal2athirdOutNtxnum3.keys():
             normal2athirdOuttxnum3[addr] += normal2athirdOutNtxnum3[addr]
+    
     with open('normal2athirdIntxnum1.txt', 'w') as f:
         print(normal2athirdIntxnum1, file=f)
     with open('normal2athirdIntxnum2.txt', 'w') as f:
@@ -6562,8 +6563,28 @@ def character13():
         scam2athirdOuttxnum2 = literal_eval(f.read())
     with open('scam2athirdOuttxnum3.txt','r') as f:
         scam2athirdOuttxnum3 = literal_eval(f.read())
-
-
+    with open('normalIncome.txt','r') as f:
+        normalIncome = literal_eval(f.read())
+    with open('normalOutcome.txt','r') as f:
+        normalOutcome = literal_eval(f.read())
+    with open('normalAvgIncome.txt','r') as f:
+        normalAvgIncome = literal_eval(f.read())
+    with open('normalAvgOutcome.txt','r') as f:
+        normalAvgOutcome = literal_eval(f.read())
+    with open('normal2athirdIntxnum1.txt','r') as f:
+        normal2athirdIntxnum1 = literal_eval(f.read())
+    with open('normal2athirdIntxnum2.txt','r') as f:
+        normal2athirdIntxnum2 = literal_eval(f.read())
+    with open('normal2athirdIntxnum3.txt','r') as f:
+        normal2athirdIntxnum3 = literal_eval(f.read())
+    with open('normal2athirdOuttxnum1.txt','r') as f:
+        normal2athirdOuttxnum1 = literal_eval(f.read())
+    with open('normal2athirdOuttxnum2.txt','r') as f:
+        normal2athirdOuttxnum2 = literal_eval(f.read())
+    with open('normal2athirdOuttxnum3.txt','r') as f:
+        normal2athirdOuttxnum3 = literal_eval(f.read())
+    
+    
     with open('addr.txt', 'w', encoding='utf-8') as f:
         scamaddrlist = literal_eval(f.read())
     with open('norAddr.txt', 'w', encoding='utf-8') as f:
