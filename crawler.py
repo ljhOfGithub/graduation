@@ -6651,15 +6651,17 @@ def character13():
         writer = csv.writer(f)
         writer.writerow(["address","allIncome","allOutcome","avgIncome","avgOutcome","intxs","outtxs","front1/3in","middle1/3in","last1/3in","front1/3out","middle1/3out","last1/3out","type"])
         for scamdict in scamlist:
-            writer.writerow([scamdict['address'], scamdict['allIncome'], scamdict['allOutcome'], scamdict['avgIncome'], scamdict['avgOutcome'], scamdict['intxs'],
-                             scamdict['outtxs'], scamdict['front1/3in'], scamdict['middle1/3in'], scamdict['last1/3in'], scamdict['front1/3out'], scamdict['middle1/3out'],
-                             scamdict['last1/3out'], scamdict['type']])
+            if int(scamdict['intxs']) != 0 and int(scamdict['outtxs']) != 0:
+                writer.writerow([scamdict['address'], scamdict['allIncome'], scamdict['allOutcome'], scamdict['avgIncome'], scamdict['avgOutcome'], scamdict['intxs'],
+                                 scamdict['outtxs'], scamdict['front1/3in'], scamdict['middle1/3in'], scamdict['last1/3in'], scamdict['front1/3out'], scamdict['middle1/3out'],
+                                 scamdict['last1/3out'], scamdict['type']])
         for nordict in norlist:
-            writer.writerow([nordict['address'], nordict['allIncome'], nordict['allOutcome'], nordict['avgIncome'],
-                             nordict['avgOutcome'], nordict['intxs'],
-                             nordict['outtxs'], nordict['front1/3in'], nordict['middle1/3in'], nordict['last1/3in'],
-                             nordict['front1/3out'], nordict['middle1/3out'],
-                             nordict['last1/3out'], nordict['type']])
+            if int(nordict['intxs']) != 0 and int(nordict['outtxs']) != 0:
+                writer.writerow([nordict['address'], nordict['allIncome'], nordict['allOutcome'], nordict['avgIncome'],
+                                 nordict['avgOutcome'], nordict['intxs'],
+                                 nordict['outtxs'], nordict['front1/3in'], nordict['middle1/3in'], nordict['last1/3in'],
+                                 nordict['front1/3out'], nordict['middle1/3out'],
+                                 nordict['last1/3out'], nordict['type']])
 
 if __name__ == '__main__':
     # try:
