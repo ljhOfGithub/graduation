@@ -3857,6 +3857,7 @@ def scamAthirdOuttime():
             livingtime = end - start
             addr2living1[addr] = livingtime / 3 + start
             addr2living2[addr] = livingtime / 3 * 2 + start
+
     with open('scam2athirdOuttime1.txt', 'w') as f:
         print(addr2living1, file=f)
     with open('scam2athirdOuttime2.txt', 'w') as f:
@@ -3943,7 +3944,7 @@ def scamAthirdOutTxnum():
 def norAddrA3LivingTime():
     with open('normalAddr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read()) # 读取去重交易后的正常地址交易
-    df1 = pandas.read_csv('normalAddrntx2.csv') 
+    df1 = pandas.read_csv('normalAddrntx2.csv')
     df2 = pandas.read_csv('normalAddritx2.csv')
     frames = [df1, df2]
     df = pandas.concat(frames)
@@ -3970,7 +3971,7 @@ def norAddrA3LivingTime():
             livingtime = end - start
             addr2living1[addr] = livingtime / 3 + start
             addr2living2[addr] = livingtime / 3 * 2 + start
-            addr2living3 = livingtime
+            addr2living3[addr] = livingtime
     with open('normal2athirdtime1.txt','w') as f:
         print(addr2living1,file=f)
     with open('normal2athirdtime2.txt','w') as f:
@@ -4557,6 +4558,45 @@ def norAddrA3InNtxTx5():
         print(addr2athirdtxnum2, file=f)
     with open('normal2athirdInNtxnum53.txt', 'w') as f:
         print(addr2athirdtxnum3, file=f)
+def norAddrA3Outtxnum():
+    with open('normalAddr.txt', 'r', encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    with open('normal2athirdtime1.txt', 'r') as f:
+        addr2end1 = literal_eval(f.read())
+    with open('normal2athirdtime2.txt', 'r') as f:
+        addr2end2 = literal_eval(f.read())
+    df1 = pandas.read_csv('normalAddrntx2.csv')
+    df2 = pandas.read_csv('normalAddritx2.csv')
+    frames = [df1, df2]
+    df = pandas.concat(frames)
+    df = df.drop_duplicates()
+    df = df.sort_values('timeStamp')
+    addr2athirdtxnum1 = {}
+    addr2athirdtxnum2 = {}
+    addr2athirdtxnum3 = {}
+    addr2tx = {}
+    for addr in addrlist:  # 初始化用于统计的字典
+        addr2athirdtxnum1[addr] = 0
+        addr2athirdtxnum2[addr] = 0
+        addr2athirdtxnum3[addr] = 0
+        addr2tx[addr] = []
+    for index, row in df.iterrows():
+        if isinstance(row['from'],str) and row['from'] in addrlist:
+            end1 = addr2end1[row['from']]
+            end2 = addr2end2[row['from']]
+            if row['timeStamp'] < end1:
+                addr2tx[row['from']].append(row['hash'])
+                addr2athirdtxnum1[row['from']] += 1
+            if row['timeStamp'] >= end1 and row['timeStamp'] < end2:
+                addr2athirdtxnum2[row['from']] += 1
+            if row['timeStamp'] >= end2:
+                addr2athirdtxnum3[row['from']] += 1
+    with open('normal2athirdOuttxnum1.txt','w') as f:
+        print(addr2athirdtxnum1,file=f)
+    with open('normal2athirdOuttxnum2.txt','w') as f:
+        print(addr2athirdtxnum2,file=f)
+    with open('normal2athirdOuttxnum3.txt','w') as f:
+        print(addr2athirdtxnum3,file=f)
 def norAddrA3OutNtxTx():
     with open('normalAddr.txt', 'r', encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
@@ -6686,6 +6726,8 @@ def character13():
         scamInTx = literal_eval(f.read())
     with open('scamOutTx.txt','r') as f:
         scamOutTx = literal_eval(f.read())
+    with open('scam2athirdLivingtime3.txt', 'r') as f:
+        scamLivingtime = literal_eval(f.read())
     with open('scam2athirdIntxnum1.txt','r') as f:
         scam2athirdIntxnum1 = literal_eval(f.read())
     with open('scam2athirdIntxnum2.txt','r') as f:
@@ -6698,6 +6740,7 @@ def character13():
         scam2athirdOuttxnum2 = literal_eval(f.read())
     with open('scam2athirdOuttxnum3.txt','r') as f:
         scam2athirdOuttxnum3 = literal_eval(f.read())
+
     with open('normalIncome.txt','r') as f:
         normalIncome = literal_eval(f.read())
     with open('normalOutcome.txt','r') as f:
@@ -6710,6 +6753,8 @@ def character13():
         normal2athirdIntxnum = literal_eval(f.read())
     with open('normal2athirdOuttxnum.txt','r') as f:
         normal2athirdOuttxnum = literal_eval(f.read())
+    with open('normal2athirdtime3.txt', 'r') as f:
+        normalLivingtime = literal_eval(f.read())
     with open('normal2athirdIntxnum1.txt','r') as f:
         normal2athirdIntxnum1 = literal_eval(f.read())
     with open('normal2athirdIntxnum2.txt','r') as f:
@@ -6737,6 +6782,7 @@ def character13():
         scamdict['avgOutcome'] = scamAvgOutcome.get(addr,0)
         scamdict['intxs'] = scamInTx.get(addr,0)
         scamdict['outtxs'] = scamOutTx.get(addr,0)
+        scamdict['livingTime'] = scamLivingtime.get(addr,0)
         scamdict['front1/3in'] = scam2athirdIntxnum1.get(addr,0)
         scamdict['middle1/3in'] = scam2athirdIntxnum2.get(addr,0)
         scamdict['last1/3in'] = scam2athirdIntxnum3.get(addr,0)
@@ -6754,6 +6800,7 @@ def character13():
         nordict['avgOutcome'] = normalAvgOutcome.get(addr, 0)
         nordict['intxs'] = normal2athirdIntxnum.get(addr, 0)
         nordict['outtxs'] = normal2athirdOuttxnum.get(addr, 0)
+        nordict['livingTime'] = normalLivingtime.get(addr,0)
         nordict['front1/3in'] = normal2athirdIntxnum1.get(addr, 0)
         nordict['middle1/3in'] = normal2athirdIntxnum2.get(addr, 0)
         nordict['last1/3in'] = normal2athirdIntxnum3.get(addr, 0)
@@ -6764,19 +6811,17 @@ def character13():
         norlist.append(nordict)
     with open('mlchar.csv','w',encoding='utf-8',newline='') as f:
         writer = csv.writer(f)
-        writer.writerow(["address","allIncome","allOutcome","avgIncome","avgOutcome","intxs","outtxs","front1/3in","middle1/3in","last1/3in","front1/3out","middle1/3out","last1/3out","type"])
+        writer.writerow(["address","allIncome","allOutcome","avgIncome","avgOutcome","intxs","outtxs","livingTime","front1/3in","middle1/3in","last1/3in","front1/3out","middle1/3out","last1/3out","type"])
         for scamdict in scamlist:
             if int(scamdict['intxs']) != 0 and int(scamdict['outtxs']) != 0:
                 writer.writerow([scamdict['address'], scamdict['allIncome'], scamdict['allOutcome'], scamdict['avgIncome'], scamdict['avgOutcome'], scamdict['intxs'],
-                                 scamdict['outtxs'], scamdict['front1/3in'], scamdict['middle1/3in'], scamdict['last1/3in'], scamdict['front1/3out'], scamdict['middle1/3out'],
+                                 scamdict['outtxs'], scamdict['livingTime'], scamdict['front1/3in'], scamdict['middle1/3in'], scamdict['last1/3in'], scamdict['front1/3out'], scamdict['middle1/3out'],
                                  scamdict['last1/3out'], scamdict['type']])
         for nordict in norlist:
             if int(nordict['intxs']) != 0 and int(nordict['outtxs']) != 0:
                 writer.writerow([nordict['address'], nordict['allIncome'], nordict['allOutcome'], nordict['avgIncome'],
-                                 nordict['avgOutcome'], nordict['intxs'],
-                                 nordict['outtxs'], nordict['front1/3in'], nordict['middle1/3in'], nordict['last1/3in'],
-                                 nordict['front1/3out'], nordict['middle1/3out'],
-                                 nordict['last1/3out'], nordict['type']])
+                                 nordict['avgOutcome'], nordict['intxs'],nordict['outtxs'], nordict['livingTime'], nordict['front1/3in'], nordict['middle1/3in'], nordict['last1/3in'],
+                                 nordict['front1/3out'], nordict['middle1/3out'], nordict['last1/3out'], nordict['type']])
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -7051,16 +7096,17 @@ if __name__ == '__main__':
     # except Exception:
     #     traceback.print_exc()
     # try:
-    #     print("norAddrA3InNtxTx")
-    #     norAddrA3InNtxTx()
+    #     print("norAddrA3Intxnum")
+    #     norAddrA3Intxnum()
     # except Exception:
     #     traceback.print_exc()
     # try:
-    #     print("norAddrA3OutNtxTx")
-    #     norAddrA3OutNtxTx()
+    #     print("norAddrA3Outtxnum")
+    #     norAddrA3Outtxnum()
     # except Exception:
     #     traceback.print_exc()
-    # scamAvgIncomeOutcome()
     norAddrA3LivingTime()
+    # scamAvgIncomeOutcome()
+    # norAddrA3LivingTime()
 #收集整理大量数据时，尽量保存中间文件，即使由于机器性能原因或者ide设置原因等中断运行，也能避免效率的降低。
 #涉及网络爬虫的工作中可能会出现由于当时的网络原因出现问题，包括但不限于整个代码停止运行，某个url的网站爬取失败，为此需要增加异常处理，以便于事后补充未完成的url爬取工作
