@@ -6831,68 +6831,219 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import classification_report
+from sklearn.utils import shuffle
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn import svm
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.naive_bayes import GaussianNB
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import GradientBoostingClassifier
+from sklearn.neural_network import MLPClassifier
+
+
 def logReg():
-    data = pandas.read_csv('mlchar.csv')[["allIncome","allOutcome","avgIncome","avgOutcome","intxs","outtxs","front1/3in","middle1/3in","last1/3in","front1/3out","middle1/3out","last1/3out","type"]]
-    # data = (data - data.min()) / (data.max() - data.min())
-    # # Load the diabetes dataset
-    # print(data)
-    # return
+    data = pandas.read_csv('mlchar.csv')[["allIncome","allOutcome","avgIncome","avgOutcome","intxs","outtxs","livingTime","front1/3in","middle1/3in","last1/3in","front1/3out","middle1/3out","last1/3out","type"]]
+    data = shuffle(data)
     X1 = data["allIncome"].to_list()
     X2 = data["allOutcome"].to_list()
     X3 = data["avgIncome"].to_list()
     X4 = data["avgOutcome"].to_list()
     X5 = data["intxs"].to_list()
     X6 = data["outtxs"].to_list()
-    X7 = data["front1/3in"].to_list()
-    X8 = data["middle1/3in"].to_list()
-    X9 = data["last1/3in"].to_list()
-    X10 = data["front1/3out"].to_list()
-    X11 = data["middle1/3out"].to_list()
-    X12 = data["last1/3out"].to_list()
-    X = pandas.read_csv('mlchar.csv')[["allIncome","allOutcome","avgIncome","avgOutcome","intxs","outtxs","front1/3in","middle1/3in","last1/3in","front1/3out","middle1/3out","last1/3out"]]
-    Y = pandas.read_csv('mlchar.csv')[["type"]]
+    X7 = data["livingTime"].to_list()
+    X8 = data["front1/3in"].to_list()
+    X9 = data["middle1/3in"].to_list()
+    X10 = data["last1/3in"].to_list()
+    X11 = data["front1/3out"].to_list()
+    X12 = data["middle1/3out"].to_list()
+    X13 = data["last1/3out"].to_list()
+    X = numpy.array([X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11,X12,X13]).T
+    Y = data["type"].to_list()
     X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_state=1)
+
+    print('LogisticRegression')
     logreg = LogisticRegression()
     logreg.fit(X_train, Y_train)
+    Ypred = logreg.predict(X_test)
+    print(logreg.coef_)
+    print(classification_report(Y_test, Ypred))
+    # print( mean_squared_error(Y_test, Ypred))
+
+    print('KNeighborsClassifier')
+    logreg = KNeighborsClassifier(n_neighbors=3)
+    logreg.fit(X_train, Y_train)
+    Ypred = logreg.predict(X_test)
+    # print(logreg.coef_)
+    print(classification_report(Y_test, Ypred))
+    # print( mean_squared_error(Y_test, Ypred))
+
+    print('svm')
+    logreg = svm.SVC()
+    logreg.fit(X_train, Y_train)
+    Ypred = logreg.predict(X_test)
+    print(classification_report(Y_test, Ypred))
+    # print( mean_squared_error(Y_test, Ypred))
+
+    print('DecisionTreeClassifier')
+    logreg = DecisionTreeClassifier(random_state=1,splitter="best")
+    logreg.fit(X_train, Y_train)
+    Ypred = logreg.predict(X_test)
+    print(classification_report(Y_test, Ypred))
+    # print(mean_squared_error(Y_test, Ypred))
+
+    print('GaussianNB')
+    logreg = GaussianNB()
+    logreg.fit(X_train, Y_train)
+    Ypred = logreg.predict(X_test)
+    print(classification_report(Y_test, Ypred))
+    # print(mean_squared_error(Y_test, Ypred))
+
+    print('RandomForestClassifier')
+    logreg = RandomForestClassifier()
+    logreg.fit(X_train, Y_train)
+    Ypred = logreg.predict(X_test)
+    print(classification_report(Y_test, Ypred))
+    # print(mean_squared_error(Y_test, Ypred))
+
+    print('GradientBoostingClassifier')
+    logreg = GradientBoostingClassifier()
+    logreg.fit(X_train, Y_train)
+    Ypred = logreg.predict(X_test)
+    print(classification_report(Y_test, Ypred))
+    # print(mean_squared_error(Y_test, Ypred))
+
+    print('MLPClassifier')
+    logreg = MLPClassifier(verbose=True, max_iter=300)
+    logreg.fit(X_train, Y_train)
+    Ypred = logreg.predict(X_test)
+    print(classification_report(Y_test, Ypred))
+    # print(mean_squared_error(Y_test, Ypred))
+
+def getscamNodeEdgeCSV():
+    with open('addr.txt','r',encoding='utf-8') as f:
+        scamaddrlist = literal_eval(f.read())
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        noraddrlist = literal_eval(f.read())
+    df1 = pandas.read_csv('ntx.csv')
+    df2 = pandas.read_csv('itx.csv')
+    frames = [df1,df2]
+    df = pandas.concat(frames)
+    print(len(df))
+    nodecsv = {}
+    edgecsv = {}
+    for index, row in df.iterrows():
+        if isinstance(row['from'],str):
+            nodecsv[row['from']] = {}
+            edgecsv[row['from']] = {}
+        if isinstance(row['to'],str):
+            nodecsv[row['to']] = {}
+            edgecsv[row['to']] = {}
+    for index, row in df.iterrows():
+        if isinstance(row['to'],str):
+            addr = row['to']
+            nodecsv[addr]['indegree'] = nodecsv[addr].get('indegree', 0) + 1
+            if row['to'] in scamaddrlist:
+                nodecsv[addr]['type'] = 'scam'
+            elif row['to'] in noraddrlist:
+                nodecsv[addr]['type'] = 'normal'
+            elif row['to'] not in scamaddrlist and row['to'] not in noraddrlist:
+                nodecsv[addr]['type'] = 'unknown'
+        if isinstance(row['from'],str):
+            addr = row['from']
+            nodecsv[addr]['outdegree'] = nodecsv[addr].get('outdegree', 0) + 1
+            if row['from'] in scamaddrlist:
+                nodecsv[addr]['type'] = 'scam'
+            elif row['from'] in noraddrlist:
+                nodecsv[addr]['type'] = 'normal'
+            elif row['from'] not in scamaddrlist and row['from'] not in noraddrlist:
+                nodecsv[addr]['type'] = 'unknown'
+        if isinstance(row['from'],str) and isinstance(row['to'],str):
+            edgecsv[row['from']][row['to']] = edgecsv[row['from']].get(row['to'],0) + 1
+        print(index)
+    for addr,attr in nodecsv.items():
+        nodecsv[addr]['degree'] = nodecsv[addr]['indegree'] + nodecsv[addr]['outdegree']
+    with open('mlnode.txt','w',encoding='utf-8',newline='') as f:
+        print(nodecsv,file=f)
+    with open('mledge.txt','w',encoding='utf-8',newline='') as f:
+        print(edgecsv,file=f)
+    with open('mlnode.csv','w',encoding='utf-8',newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(['Id','type','indegree','outdegree','degree'])
+        for addr,attr in nodecsv.items():
+            writer.writerow([addr,nodecsv[addr]['type'],nodecsv[addr]['indegree'],nodecsv[addr]['outdegree'],nodecsv[addr]['degree']])
+    with open('mledge.csv','w',encoding='utf-8',newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(['Source','Target','Weight'])
+        for fromaddr,toaddr2weight in edgecsv.items():
+            for toaddr,weight in toaddr2weight.items():
+                writer.writerow(fromaddr,toaddr,weight)
+
     return
-    diabetes_X, diabetes_y = datasets.load_diabetes(return_X_y=True)
-    print(datasets.load_diabetes(return_X_y=True))
 
-    # Use only one feature
-    diabetes_X = diabetes_X[:, np.newaxis, 2]
+def getnorNodeEdgeCSV():
+    with open('addr.txt', 'r', encoding='utf-8') as f:
+        scamaddrlist = literal_eval(f.read())
+    with open('normalAddr.txt', 'r', encoding='utf-8') as f:
+        noraddrlist = literal_eval(f.read())
+    df1 = pandas.read_csv('normalAddrntx2.csv')
+    df2 = pandas.read_csv('normalAddritx2.csv')
+    frames = [df1, df2]
+    df = pandas.concat(frames)
+    print(len(df))
+    nodecsv = {}
+    edgecsv = {}
+    for index, row in df.iterrows():
+        if isinstance(row['from'], str):
+            nodecsv[row['from']] = {}
+            edgecsv[row['from']] = {}
+        if isinstance(row['to'], str):
+            nodecsv[row['to']] = {}
+            edgecsv[row['to']] = {}
+    for index, row in df.iterrows():
+        if isinstance(row['to'], str):
+            addr = row['to']
+            nodecsv[addr]['indegree'] = nodecsv[addr].get('indegree', 0) + 1
+            if row['to'] in scamaddrlist:
+                nodecsv[addr]['type'] = 'scam'
+            elif row['to'] in noraddrlist:
+                nodecsv[addr]['type'] = 'normal'
+            elif row['to'] not in scamaddrlist and row['to'] not in noraddrlist:
+                nodecsv[addr]['type'] = 'unknown'
+        if isinstance(row['from'], str):
+            addr = row['from']
+            nodecsv[addr]['outdegree'] = nodecsv[addr].get('outdegree', 0) + 1
+            if row['from'] in scamaddrlist:
+                nodecsv[addr]['type'] = 'scam'
+            elif row['from'] in noraddrlist:
+                nodecsv[addr]['type'] = 'normal'
+            elif row['from'] not in scamaddrlist and row['from'] not in noraddrlist:
+                nodecsv[addr]['type'] = 'unknown'
+        if isinstance(row['from'], str) and isinstance(row['to'], str):
+            edgecsv[row['from']][row['to']] = edgecsv[row['from']].get(row['to'], 0) + 1
+        print(index)
+    for addr, attr in nodecsv.items():
+        nodecsv[addr]['degree'] = nodecsv[addr]['indegree'] + nodecsv[addr]['outdegree']
+    with open('mlnode2.txt', 'w', encoding='utf-8', newline='') as f:
+        print(nodecsv, file=f)
+    with open('mledge2.txt', 'w', encoding='utf-8', newline='') as f:
+        print(edgecsv, file=f)
+    with open('mlnode2.csv', 'w', encoding='utf-8', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(['Id', 'type', 'indegree', 'outdegree', 'degree'])
+        for addr, attr in nodecsv.items():
+            writer.writerow([addr, nodecsv[addr]['type'], nodecsv[addr]['indegree'], nodecsv[addr]['outdegree'],
+                             nodecsv[addr]['degree']])
+    with open('mledge2.csv', 'w', encoding='utf-8', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(['Source', 'Target', 'Weight'])
+        for fromaddr, toaddr2weight in edgecsv.items():
+            for toaddr, weight in toaddr2weight.items():
+                writer.writerow(fromaddr, toaddr, weight)
 
-    # Split the data into training/testing sets
-    diabetes_X_train = diabetes_X[:-20]
-    diabetes_X_test = diabetes_X[-20:]
+    return
 
-    # Split the targets into training/testing sets
-    diabetes_y_train = diabetes_y[:-20]
-    diabetes_y_test = diabetes_y[-20:]
 
-    # Create linear regression object
-    regr = linear_model.LinearRegression()
 
-    # Train the model using the training sets
-    regr.fit(diabetes_X_train, diabetes_y_train)
-
-    # Make predictions using the testing set
-    diabetes_y_pred = regr.predict(diabetes_X_test)
-
-    # The coefficients
-    print("Coefficients: \n", regr.coef_)
-    # The mean squared error
-    print("Mean squared error: %.2f" % mean_squared_error(diabetes_y_test, diabetes_y_pred))
-    # The coefficient of determination: 1 is perfect prediction
-    print("Coefficient of determination: %.2f" % r2_score(diabetes_y_test, diabetes_y_pred))
-
-    # Plot outputs
-    plt.scatter(diabetes_X_test, diabetes_y_test, color="black")
-    plt.plot(diabetes_X_test, diabetes_y_pred, color="blue", linewidth=3)
-
-    plt.xticks(())
-    plt.yticks(())
-
-    plt.show()
 if __name__ == '__main__':
     # try:
     #     print("ntxs1")
@@ -7094,7 +7245,7 @@ if __name__ == '__main__':
     #     print("norAddrA3OutNtxTime")
     #     norAddrA3OutNtxTime()
     # except Exception:
-    #     traceback.print_exc()
+    # #     traceback.print_exc()
     # try:
     #     print("norAddrA3Intxnum")
     #     norAddrA3Intxnum()
@@ -7105,7 +7256,7 @@ if __name__ == '__main__':
     #     norAddrA3Outtxnum()
     # except Exception:
     #     traceback.print_exc()
-    norAddrA3LivingTime()
+    getscamNodeEdgeCSV()
     # scamAvgIncomeOutcome()
     # norAddrA3LivingTime()
 #收集整理大量数据时，尽量保存中间文件，即使由于机器性能原因或者ide设置原因等中断运行，也能避免效率的降低。
