@@ -7006,31 +7006,51 @@ def getnorIOAddr():
             for addr2 in addrlist:
                 writer.writerow([addr,addr2])
 def getnorNodeEdgeCSV():
-    with open('normaladdr2addr.txt', 'r', encoding='utf-8') as f:
-        addr2addr = literal_eval(f.read())
-    return
+    addr2addr = pandas.read_csv('normaladdr2addr.csv')
     with open('addr.txt', 'r', encoding='utf-8') as f:
         scamaddrlist = literal_eval(f.read())
     with open('normalAddr.txt', 'r', encoding='utf-8') as f:
         noraddrlist = literal_eval(f.read())
     nodecsv = {}
     edgecsv = {}
-    for addr,addrlist in addr2addr.items():
-        nodecsv[addr] = {}
-        edgecsv[addr] = {}
-    for addr,addrlist in addr2addr.items():
-        nodecsv[addr]['outdegree'] = len(addrlist)
-        if addr in scamaddrlist:
-            nodecsv[addr]['type'] = 'scam'
-        elif addr in noraddrlist:
-            nodecsv[addr]['type'] = 'normal'
-        elif addr not in scamaddrlist and addr not in noraddrlist:
-            nodecsv[addr]['type'] = 'unknown'
-        for addr2 in addrlist:
-            edgecsv[addr][addr2] += edgecsv[addr].get(addr2,0) + 1
-    for addr,addrlist in addr2addr.items():
-        for addr2 in addrlist:
-            nodecsv[addr2]['indegree'] += 1
+    # for addr,addrlist in addr2addr.items():
+    #     nodecsv[addr] = {}
+    #     edgecsv[addr] = {}
+    # for addr,addrlist in addr2addr.items():
+    #     nodecsv[addr]['outdegree'] = len(addrlist)
+    #     if addr in scamaddrlist:
+    #         nodecsv[addr]['type'] = 'scam'
+    #     elif addr in noraddrlist:
+    #         nodecsv[addr]['type'] = 'normal'
+    #     elif addr not in scamaddrlist and addr not in noraddrlist:
+    #         nodecsv[addr]['type'] = 'unknown'
+    #     for addr2 in addrlist:
+    #         edgecsv[addr][addr2] += edgecsv[addr].get(addr2,0) + 1
+    # for addr,addrlist in addr2addr.items():
+    #     for addr2 in addrlist:
+    #         nodecsv[addr2]['indegree'] += 1
+    for index,row in addr2addr.iterrows():
+        nodecsv[row['Source']] = {}
+        nodecsv[row['Target']] = {}
+        edgecsv[row['Source']] = {}
+        # edgecsv[row['Target']] = {}
+    for index,row in addr2addr.iterrows():
+        nodecsv[row['Source']]['outdegree'] = nodecsv[row['Source']].get('outdegree',0) + 1
+        if row['Source'] in scamaddrlist:
+            nodecsv[row['Source']]['type'] = 'scam'
+        if row['Source'] in noraddrlist:
+            row['Source']['type'] = 'normal'
+        if row['Source'] not in scamaddrlist and row['Source'] not in noraddrlist:
+            row['Source']['type'] = 'unknown'
+        
+        nodecsv[row['Target']]['indegree'] = nodecsv[row['Target']].get('indegree',0) + 1
+        if row['Target'] in scamaddrlist:
+            nodecsv[row['Target']]['type'] = 'scam'
+        if row['Target'] in noraddrlist:
+            row['Target']['type'] = 'normal'
+        if row['Target'] not in scamaddrlist and row['Target'] not in noraddrlist:
+            row['Target']['type'] = 'unknown'
+        edgecsv[row['Source']][row['Target']] = edgecsv[row['Source']].get(row['Target'],0) + 1
     with open('mlnode2.txt', 'w', encoding='utf-8') as f:
         print(nodecsv, file=f)
     with open('mledge2.txt', 'w', encoding='utf-8') as f:
@@ -7324,7 +7344,7 @@ if __name__ == '__main__':
     #     norAddrA3Outtxnum()
     # except Exception:
     #     traceback.print_exc()
-    getnorIOAddr()
+    getnorNodeEdgeCSV()
     # scamAvgIncomeOutcome()
     # norAddrA3LivingTime()
 #收集整理大量数据时，尽量保存中间文件，即使由于机器性能原因或者ide设置原因等中断运行，也能避免效率的降低。
