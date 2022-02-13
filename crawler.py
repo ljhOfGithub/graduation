@@ -7013,7 +7013,7 @@ def getnorNodeEdgeCSV():
         scamaddrlist = literal_eval(f.read())
     with open('normalAddr.txt', 'r', encoding='utf-8') as f:
         noraddrlist = literal_eval(f.read())
-    nodecsv = defaultdict(defaultdict)
+    nodecsv = defaultdict(defaultdict)#
     edgecsv = defaultdict(defaultdict)
     for index,row in addr2addr.iterrows():
         nodecsv[row['Source']]['outdegree'] = nodecsv[row['Source']].setdefault('outdegree',0) + 1
@@ -7050,6 +7050,7 @@ def getnorNodeEdgeCSV():
             for toaddr, weight in toaddr2weight.items():
                 writer.writerow([fromaddr, toaddr, weight])
 def mixNodeEdgeCsv():
+    normaladdr2addr = pandas.read_csv('normaladdr2addr.csv')
     mlnode = pandas.read_csv('mlnode.csv')
     mledge = pandas.read_csv('mledge.csv')
     mlnode2 = pandas.read_csv('mlnode2.csv')
@@ -7057,28 +7058,45 @@ def mixNodeEdgeCsv():
     print(len(mlnode))
     print(len(mlnode2))
     print(len(mlnode)+len(mlnode2))
-    norNodeIndex = []
-    norEdgeIndex = []
-    norNodelist = []
-    newNorNode = mlnode2.loc[(mlnode2.degree < 5)]
-    newNorNode = newNorNode.sample(len(mlnode),random_state=1)
-    newNodelist = list(newNorNode['Id'])
-    newNorEdge1 = mledge2[(mledge2['Source'].isin(newNodelist))]
-    newNorEdge2 = mledge2[(mledge2['Target'].isin(newNodelist))]
-    frames3 = [newNorEdge1,newNorEdge2]
-    newNorEdge = pandas.concat(frames3).drop_duplicates()
-    newNorNode.to_csv('mlnode3.csv')
-    newNorEdge.to_csv('mledge3.csv')
+    newNorNode = mlnode2[(mlnode2['degree'] < 5)]
+    newNorNode = newNorNode.sample(len(mlnode),random_state=3)#随机挑选和欺诈node相同数量的正常node，但还要算和这些正常node相连的node，根据这些正常node的地址，找直接连接的node
+    newNodelist = list(newNorNode['Id'])#先随机选然后再找直接连接的，即需要迭代一次
+    directNode = []
+    for addr in newNodelist:
+        if addr in normaladdr2addr.keys():
+            directNode = directNode + normaladdr2addr[addr]#出的边
+    for addr,addrlist in normaladdr2addr.items():
+        for newaddr in newNodelist:
+            if newaddr in addrlist:
+                directNode.append(addr)#入的边
+    newNodelist = newNodelist + directNode
+    newNorNode = mlnode2[(mlnode2['degree'] < 5) & mlnode2['Id'].isin(newNodelist)]
+    newNorEdge = mledge2[(mledge2['Source'].isin(newNodelist)) & (mledge2['Target'].isin(newNodelist))]
+    newNorNode.to_csv('mlnode5.csv')#中间node
+    newNorEdge.to_csv('mledge5.csv')#中间edge
     frames1 = [mlnode,newNorNode]
     frames2 = [mledge,newNorEdge]
-    nodecsv = pandas.concat(frames1)
-    edgecsv = pandas.concat(frames2)
+    nodecsv = pandas.concat(frames1).drop_duplicates()
+    edgecsv = pandas.concat(frames2).drop_duplicates()
     print(len(nodecsv))
     print(len(edgecsv))
-    nodecsv.to_csv('node.csv')
-    edgecsv.to_csv('edge.csv')
+    nodecsv.to_csv('node3.csv')
+    edgecsv.to_csv('edge3.csv')
+    # nodecsv = pandas.read_csv('node.csv')
+    # edgecsv = pandas.read_csv('edge.csv')
+    # print(len(nodecsv))
+    # print(len(edgecsv))
+#node:332191 332063 332124
+#edge:197687 197687 197689
 
-
+def getpred():
+    pred = pandas.read_csv('predict-gdc.csv')
+    num = 0
+    for index,row in pred.iterrows():
+        if row['pred'] == 'tensor(1)':
+            num += 1
+    print(num)
+#11249
 if __name__ == '__main__':
     # try:
     #     print("ntxs1")
@@ -7291,8 +7309,9 @@ if __name__ == '__main__':
     #     norAddrA3Outtxnum()
     # except Exception:
     #     traceback.print_exc()
-    mixNodeEdgeCsv()
+    getpred()
     # scamAvgIncomeOutcome()
     # norAddrA3LivingTime()
+#gcn gdc tagcn
 #收集整理大量数据时，尽量保存中间文件，即使由于机器性能原因或者ide设置原因等中断运行，也能避免效率的降低。
 #涉及网络爬虫的工作中可能会出现由于当时的网络原因出现问题，包括但不限于整个代码停止运行，某个url的网站爬取失败，为此需要增加异常处理，以便于事后补充未完成的url爬取工作
