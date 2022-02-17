@@ -7080,6 +7080,8 @@ def mixNodeEdgeCsv():
     edgecsv = pandas.concat(frames2).drop_duplicates()
     print(len(nodecsv))
     print(len(edgecsv))
+    nodecsv['Label'] = ""
+    nodecsv['Interval'] = ""
     nodecsv.to_csv('node3.csv')
     edgecsv.to_csv('edge3.csv')
     # nodecsv = pandas.read_csv('node.csv')
@@ -7097,6 +7099,88 @@ def getpred():
             num += 1
     print(num)
 #11249
+def fig11():
+    addr = '0x83053c32b7819f420dcfed2d218335fe430fe3b5'
+    mledge = pandas.read_csv('mledge.csv')
+    mlnode = pandas.read_csv('mlnode.csv')
+    df = pandas.DataFrame(columns=['Source','Target','Weight'])
+    specialNode = []
+    for index,row in mledge.iterrows():
+        if isinstance(row['Source'],str) and row['Source'] == addr:
+            # Source = row['Source']
+            # Target = row['Target']
+            # Weight = row['Weight']
+            # df2 = pandas.DataFrame(data=[[Source, Target, Weight]], columns=['Source','Target','Weight'])
+            # frames = [df,df2]
+            # df = pandas.concat(frames)
+            specialNode.append(row['Target'])
+        if isinstance(row['Target'],str) and row['Target'] == addr:
+            specialNode.append(row['Source'])
+    specialEdge = mledge[(mledge['Source'].notnull()) & (mledge['Source'] == addr) | (mledge['Target'].notnull()) & (mledge['Target'] == addr)]
+    specialEdge.to_csv('specialEdge.csv')
+    with open('specialNode.txt','w') as f:
+        print(specialNode,file=f)
+    return
+    with open('specialNode.txt','r') as f:
+        specialNode = literal_eval(f.read())
+    df = mlnode[(mlnode['Id'].isin(specialNode))]#单节点的直接连接节点的全部信息
+    specialEdge2 = mledge[(isinstance(mledge['Source'],str))  & (mledge['Source'].isin(specialNode)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(specialNode)) ]
+    specialEdge2.to_csv('specialEdge2.csv')
+    with open('norMinerAddr.txt','r') as f:#小写地址
+        norMinerAddr = literal_eval(f.read())
+    with open('norExchangeAddr.txt','r') as f:
+        norExchangeAddr = literal_eval(f.read())
+    with open('norTokenAddr.txt', 'r') as f:
+        norTokenAddr = literal_eval(f.read())
+    for index,row in df.iterrows():
+        if row['Id'] in norMinerAddr:
+            row['type'] = 'Miner'
+        if row['Id'] in norExchangeAddr:
+            row['type'] = 'Exchange'
+        if row['Id'] in norTokenAddr:
+            row['type'] = 'Token'
+    df.to_csv('specialNode.csv')
+    #将所有的直接连接的节点添加为待添加边的节点，然后对其边进行统计
+    #再迭代一次
+
+    with open('specialNode.txt', 'r') as f:
+        specialNode = literal_eval(f.read())
+    for index, row in mledge.iterrows():
+        if isinstance(row['Source'], str) and row['Source'] == addr:
+            Source = row['Source']
+            Target = row['Target']
+            Weight = row['Weight']
+            df2 = pandas.DataFrame(data=[[Source, Target, Weight]], columns=['Source', 'Target', 'Weight'])
+            frames = [df, df2]
+            df = pandas.concat(frames)
+            specialNode.append(row['Target'])
+        if isinstance(row['Target'], str) and row['Target'] == addr:
+            Source = row['Source']
+            Target = row['Target']
+            Weight = row['Weight']
+            df2 = pandas.DataFrame(data=[[Source, Target, Weight]], columns=['Source', 'Target', 'Weight'])
+            frames = [df, df2]
+            df = pandas.concat(frames)
+            specialNode.append(row['Source'])
+def taxoNormalAddr():
+    normalAddr = pandas.read_csv('ethereum_tagged_address.csv',encoding='ISO-8859-1')
+    minerAddr = []
+    tokenAddr = []
+    exchangeAddr = []
+    for index,row in normalAddr.iterrows():
+        if 'blacklist' not in row['label'].lower() and 'miner' in row['label'].lower():
+            minerAddr.append(row['addr'].lower())
+        elif 'blacklist' not in row['label'].lower() and 'exchange' in row['label'].lower():
+            exchangeAddr.append(row['addr'].lower())
+        elif 'blacklist' not in row['label'].lower():
+            tokenAddr.append(row['addr'].lower())
+    with open('norMinerAddr.txt','w') as f:
+        print(minerAddr,file=f)
+    with open('norExchangeAddr.txt','w') as f:
+        print(exchangeAddr,file=f)
+    with open('norTokenAddr.txt','w') as f:
+        print(tokenAddr,file=f)
+
 if __name__ == '__main__':
     # try:
     #     print("ntxs1")
@@ -7309,7 +7393,7 @@ if __name__ == '__main__':
     #     norAddrA3Outtxnum()
     # except Exception:
     #     traceback.print_exc()
-    getpred()
+    fig11()
     # scamAvgIncomeOutcome()
     # norAddrA3LivingTime()
 #gcn gdc tagcn
