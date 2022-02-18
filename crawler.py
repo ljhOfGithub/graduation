@@ -6919,7 +6919,7 @@ def logReg():
     Ypred = logreg.predict(X_test)
     print(classification_report(Y_test, Ypred))
     # print(mean_squared_error(Y_test, Ypred))
-
+#使用相邻的节点也是欺诈节点规则判断
 def getscamNodeEdgeCSV():
     # with open('addr.txt','r',encoding='utf-8') as f:
     #     scamaddrlist = literal_eval(f.read())
@@ -7107,7 +7107,9 @@ def fig11():
     # addr = '0x536a6ba0d913d5d6a4ce2c6eb7ed0de3c0f0b89e'
     addr = '0x74886dd45da313f3d3d32235fed4595827d0865d'#没有scam
     addr = '0x917a417d938b9f9e6ae7f9e5253fb6de410343e3'#节点太少
-    addr = '0x7c9001c50ea57c1b2ec1e3e63cf04c297534bfc1'
+    # addr = '0x7c9001c50ea57c1b2ec1e3e63cf04c297534bfc1'
+    addr = '0xba83e9ce38b10522e3d6061a12779b7526839eda'#第二次迭代节点太多
+    addr = '0x050022eba4d55d242d9568794961df5596f968f2'
     #选0x4fed1
     mledge = pandas.read_csv('mledge.csv')
     mlnode = pandas.read_csv('mlnode.csv')
@@ -7127,74 +7129,82 @@ def fig11():
     #         specialNode.append(row['Source'])
     # with open('specialNode.txt','w') as f:
     #     print(specialNode,file=f)
-    # return
-
-    specialEdge1 = mledge[(mledge['Source'].notnull()) & (mledge['Source'] == addr) | (mledge['Target'].notnull()) & (mledge['Target'] == addr)]
-    specialEdge2 = mledge2[(mledge2['Source'].notnull()) & (mledge2['Source'] == addr) | (mledge2['Target'].notnull()) & (mledge2['Target'] == addr)]
-    frames = [specialEdge1,specialEdge2]
-    specialEdge = pandas.concat(frames)
-    specialEdge.to_csv('specialEdge.csv')
-    # return
-    with open('specialNode.txt','r') as f:
+    # # return
+    #
+    # specialEdge1 = mledge[(mledge['Source'].notnull()) & (mledge['Source'] == addr) | (mledge['Target'].notnull()) & (mledge['Target'] == addr)]
+    # specialEdge2 = mledge2[(mledge2['Source'].notnull()) & (mledge2['Source'] == addr) | (mledge2['Target'].notnull()) & (mledge2['Target'] == addr)]
+    # frames = [specialEdge1,specialEdge2]
+    # specialEdge = pandas.concat(frames)
+    # specialEdge.to_csv('specialEdge.csv')
+    # # return
+    with open('specialNode0x05002.txt','r') as f:
         specialNode = literal_eval(f.read())
-    specialNodecsv1 = mlnode[(mlnode['Id'].isin(specialNode))]#单节点的直接连接节点的全部信息
-    specialNodecsv2 = mlnode2[(mlnode2['Id'].isin(specialNode))]
-    frames = [specialNodecsv1,specialNodecsv2]
-    specialNodecsv = pandas.concat(frames)
-    specialNodecsv.reset_index(drop=True,inplace=True)
+    # specialNodecsv1 = mlnode[(mlnode['Id'].isin(specialNode))]#单节点的直接连接节点的全部信息
+    # specialNodecsv2 = mlnode2[(mlnode2['Id'].isin(specialNode))]
+    # frames = [specialNodecsv1,specialNodecsv2]
+    # specialNodecsv = pandas.concat(frames)
+    # specialNodecsv.reset_index(drop=True,inplace=True)
 
+    specialEdge1 = pandas.read_csv('specialEdge0x05002.csv')
     specialEdge2csv1 = mledge[(isinstance(mledge['Source'],str))  & (mledge['Source'].isin(specialNode)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(specialNode)) ]
     specialEdge2csv2 = mledge2[(isinstance(mledge2['Source'],str))  & (mledge2['Source'].isin(specialNode)) | (mledge2['Target'].notnull()) & (mledge2['Target'].isin(specialNode)) ]
-    frames = [specialEdge2csv1,specialEdge2csv2]
+    frames = [specialEdge1,specialEdge2csv1,specialEdge2csv2]
     specialEdge2 = pandas.concat(frames)
     specialEdge2.to_csv('specialEdge2.csv')
-
+    return
     with open('norMinerAddr.txt','r') as f:#小写地址
         norMinerAddr = literal_eval(f.read())
     with open('norExchangeAddr.txt','r') as f:
         norExchangeAddr = literal_eval(f.read())
     with open('norTokenAddr.txt', 'r') as f:
         norTokenAddr = literal_eval(f.read())
-    for index,row in specialNodecsv.iterrows():
-        if row['Id'].lower() in norMinerAddr:
-            row['type'] = 'Miner'
-            specialNodecsv.iloc[index] = row
-        if row['Id'].lower() in norExchangeAddr:
-            row['type'] = 'Exchange'
-            specialNodecsv.iloc[index] = row
-        if row['Id'].lower() in norTokenAddr:
-            row['type'] = 'Token'
-            specialNodecsv.iloc[index] = row
-    specialNodecsv.to_csv('specialNode.csv')
+    # for index,row in specialNodecsv.iterrows():
+    #     if row['Id'].lower() in norMinerAddr:
+    #         row['type'] = 'Miner'
+    #         specialNodecsv.iloc[index] = row
+    #     if row['Id'].lower() in norExchangeAddr:
+    #         row['type'] = 'Exchange'
+    #         specialNodecsv.iloc[index] = row
+    #     if row['Id'].lower() in norTokenAddr:
+    #         row['type'] = 'Token'
+    #         specialNodecsv.iloc[index] = row
+    # specialNodecsv.to_csv('specialNode.csv')
     # return
     #将所有的直接连接的节点添加为待添加边的节点，然后对其边进行统计
     #再迭代一次
-    with open('specialNode.txt', 'r') as f:
-        specialNode = literal_eval(f.read())
-    with open('norMinerAddr.txt','r') as f:#小写地址
-        norMinerAddr = literal_eval(f.read())
-    with open('norExchangeAddr.txt','r') as f:
-        norExchangeAddr = literal_eval(f.read())
-    with open('norTokenAddr.txt', 'r') as f:
-        norTokenAddr = literal_eval(f.read())
-    specialEdge2 = pandas.read_csv('specialEdge2.csv')
-    specialNode2list1 = list(specialEdge2['Source'])
-    specialNode2list2 = list(specialEdge2['Target'])
-    specialNode2 = list(set(specialNode2list1 + specialNode2list2 + specialNode))
-    specialNode2csv1 = mlnode[(mlnode['Id'].isin(specialNode2))]
-    specialNode2csv2 = mlnode2[(mlnode2['Id'].isin(specialNode2))]
-    frames = [specialNode2csv1,specialNode2csv2]
-    specialNode2csv = pandas.concat(frames)
+
+    # with open('specialNode.txt', 'r') as f:
+    #     specialNode = literal_eval(f.read())
+    # with open('norMinerAddr.txt','r') as f:#小写地址
+    #     norMinerAddr = literal_eval(f.read())
+    # with open('norExchangeAddr.txt','r') as f:
+    #     norExchangeAddr = literal_eval(f.read())
+    # with open('norTokenAddr.txt', 'r') as f:
+    #     norTokenAddr = literal_eval(f.read())
+    # specialEdge2 = pandas.read_csv('specialEdge2.csv')
+    # specialNode2list1 = list(specialEdge2['Source'])
+    # specialNode2list2 = list(specialEdge2['Target'])
+    # specialNode2 = list(set(specialNode2list1 + specialNode2list2 + specialNode))
+    # specialNode2csv1 = mlnode[(mlnode['Id'].isin(specialNode2))]
+    # specialNode2csv2 = mlnode2[(mlnode2['Id'].isin(specialNode2))]
+    # frames = [specialNode2csv1,specialNode2csv2]
+    # specialNode2csv = pandas.concat(frames)
+
+    specialNode2csv = pandas.read_csv('specialNode2.csv')
+    specialNode2csv.reset_index(drop=True,inplace=True)
     for index,row in specialNode2csv.iterrows():
         if row['Id'].lower() in norMinerAddr:
             row['type'] = 'Miner'
+            specialNode2csv.iloc[index] = row
         if row['Id'].lower() in norExchangeAddr:
             row['type'] = 'Exchange'
+            specialNode2csv.iloc[index] = row
         if row['Id'].lower() in norTokenAddr:
             row['type'] = 'Token'
+            specialNode2csv.iloc[index] = row
     specialNode2csv.to_csv('specialNode2.csv')
-    with open('specialNode2.txt','w') as f:
-        print(specialNode2,file=f)
+    # with open('specialNode2.txt','w') as f:
+    #     print(specialNode2,file=f)
 
 def taxoNormalAddr():
     normalAddr = pandas.read_csv('ethereum_tagged_address.csv',encoding='ISO-8859-1')
@@ -7217,13 +7227,18 @@ def taxoNormalAddr():
 def fig12():
     mledge = pandas.read_csv('mledge.csv')
     mlnode = pandas.read_csv('mlnode.csv')
-    with open('addr.txt', 'r', encoding='utf-8') as f:
-        scamaddrlist = literal_eval(f.read())
-    mlnode = mlnode[mlnode['degree'] > 0]
+    # with open('addr.txt', 'r', encoding='utf-8') as f:
+    #     scamaddrlist = literal_eval(f.read())
+    mlnode = mlnode[(mlnode['degree'] > 0) & (mlnode['type']=='scam')]
     degreeScamnode = list(mlnode['Id'])
-    mledge = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(degreeScamnode)) & (mledge['Source'].isin(scamaddrlist)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(degreeScamnode)) & (mledge['Target'].isin(scamaddrlist))]
-    mlnode.to_csv('scamNodeDegree.csv')
+    mledge = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(degreeScamnode)) & (mledge['Target'].notnull()) & (mledge['Target'].isin(degreeScamnode))]
     mledge.to_csv('scamNodeDegreeEdge.csv')
+    mledgeSource = list(mledge['Source'])
+    mledgeTarget = list(mledge['Target'])
+    mledgelist = mledgeSource + mledgeTarget
+    mlnode = mlnode[(mlnode['Id'].isin(mledgelist))]
+    mlnode.to_csv('scamNodeDegree.csv')
+
 if __name__ == '__main__':
     # try:
     #     print("ntxs1")
