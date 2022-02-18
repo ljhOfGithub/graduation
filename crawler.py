@@ -7101,6 +7101,14 @@ def getpred():
 #11249
 def fig11():
     addr = '0x83053c32b7819f420dcfed2d218335fe430fe3b5'
+    # addr = '0x21f74c6bbc1e3ab9f0205e12de3a9daa14351aed'
+    # addr = '0x4fed1fc4144c223ae3c1553be203cdfcbd38c581'
+    # addr = '0x4bf722014e54aeab05fcf1519e6e4c0c3f742e43'
+    # addr = '0x536a6ba0d913d5d6a4ce2c6eb7ed0de3c0f0b89e'
+    addr = '0x74886dd45da313f3d3d32235fed4595827d0865d'#没有scam
+    addr = '0x917a417d938b9f9e6ae7f9e5253fb6de410343e3'#节点太少
+    addr = '0x7c9001c50ea57c1b2ec1e3e63cf04c297534bfc1'
+    #选0x4fed1
     mledge = pandas.read_csv('mledge.csv')
     mlnode = pandas.read_csv('mlnode.csv')
     mledge2 = pandas.read_csv('mledge2.csv')
@@ -7119,9 +7127,14 @@ def fig11():
     #         specialNode.append(row['Source'])
     # with open('specialNode.txt','w') as f:
     #     print(specialNode,file=f)
+    # return
 
-    # specialEdge = mledge[(mledge['Source'].notnull()) & (mledge['Source'] == addr) | (mledge['Target'].notnull()) & (mledge['Target'] == addr)]
-    # specialEdge.to_csv('specialEdge.csv')
+    specialEdge1 = mledge[(mledge['Source'].notnull()) & (mledge['Source'] == addr) | (mledge['Target'].notnull()) & (mledge['Target'] == addr)]
+    specialEdge2 = mledge2[(mledge2['Source'].notnull()) & (mledge2['Source'] == addr) | (mledge2['Target'].notnull()) & (mledge2['Target'] == addr)]
+    frames = [specialEdge1,specialEdge2]
+    specialEdge = pandas.concat(frames)
+    specialEdge.to_csv('specialEdge.csv')
+    # return
     with open('specialNode.txt','r') as f:
         specialNode = literal_eval(f.read())
     specialNodecsv1 = mlnode[(mlnode['Id'].isin(specialNode))]#单节点的直接连接节点的全部信息
@@ -7129,11 +7142,13 @@ def fig11():
     frames = [specialNodecsv1,specialNodecsv2]
     specialNodecsv = pandas.concat(frames)
     specialNodecsv.reset_index(drop=True,inplace=True)
-    # specialEdge2csv1 = mledge[(isinstance(mledge['Source'],str))  & (mledge['Source'].isin(specialNode)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(specialNode)) ]
-    # specialEdge2csv2 = mledge[(isinstance(mledge['Source'],str))  & (mledge['Source'].isin(specialNode)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(specialNode)) ]
-    # frames = [specialEdge2csv1,specialEdge2csv2]
-    # specialEdge2 = pandas.concat(frames)
-    # specialEdge2.to_csv('specialEdge2.csv')
+
+    specialEdge2csv1 = mledge[(isinstance(mledge['Source'],str))  & (mledge['Source'].isin(specialNode)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(specialNode)) ]
+    specialEdge2csv2 = mledge2[(isinstance(mledge2['Source'],str))  & (mledge2['Source'].isin(specialNode)) | (mledge2['Target'].notnull()) & (mledge2['Target'].isin(specialNode)) ]
+    frames = [specialEdge2csv1,specialEdge2csv2]
+    specialEdge2 = pandas.concat(frames)
+    specialEdge2.to_csv('specialEdge2.csv')
+
     with open('norMinerAddr.txt','r') as f:#小写地址
         norMinerAddr = literal_eval(f.read())
     with open('norExchangeAddr.txt','r') as f:
@@ -7151,7 +7166,7 @@ def fig11():
             row['type'] = 'Token'
             specialNodecsv.iloc[index] = row
     specialNodecsv.to_csv('specialNode.csv')
-    return
+    # return
     #将所有的直接连接的节点添加为待添加边的节点，然后对其边进行统计
     #再迭代一次
     with open('specialNode.txt', 'r') as f:
@@ -7199,7 +7214,16 @@ def taxoNormalAddr():
         print(exchangeAddr,file=f)
     with open('norTokenAddr.txt','w') as f:
         print(tokenAddr,file=f)
-
+def fig12():
+    mledge = pandas.read_csv('mledge.csv')
+    mlnode = pandas.read_csv('mlnode.csv')
+    with open('addr.txt', 'r', encoding='utf-8') as f:
+        scamaddrlist = literal_eval(f.read())
+    mlnode = mlnode[mlnode['degree'] > 0]
+    degreeScamnode = list(mlnode['Id'])
+    mledge = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(degreeScamnode)) & (mledge['Source'].isin(scamaddrlist)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(degreeScamnode)) & (mledge['Target'].isin(scamaddrlist))]
+    mlnode.to_csv('scamNodeDegree.csv')
+    mledge.to_csv('scamNodeDegreeEdge.csv')
 if __name__ == '__main__':
     # try:
     #     print("ntxs1")
