@@ -7252,34 +7252,32 @@ def fig12():
     #0.56 11个
     #0.56 11个
     #0.56 11个
-
-
-    #0x0111a93692b5ccff5c4b006d88d82664f76dfd21 2.03
-    #0xb1898895a2ac9ef09afeda89ee559427b7142f2e 1.78
-    #0x7f183cce61efcabb8d2eb1340f2a94c5eb1bf8e5 1.57
-    #0x408fac2d2d3d3ac4e356aa188119f5624fd8c9f6 1.32
-    #0x13098fdefba2129b8873bcff5c9ce2de1cf7f32f 0.81
-    #0x24ecad110119e2c763f1afc7f4e5dd159238d143 0.81
-    #0xb70f65c1faa2f1160d006b585ebf564781e8dae6 0.71
-    #0xe7d60131d3773a8cdf75162c2cb8be459600d9b2 0.71
-    #0x2b065809f6ec6df32878bcd26711a0e2bcf59c26 0.66
-    #0x3da2bb8c828643d13c399e71d9c7b70852d45492 0.61
-    #0xa9d499f4e14d5046cbdfd01cde3e8c3ea0ac94d7 0.61
-    #0xe8ddafab7212f988d84c973471c6feab851769e8 0.56
-    #0x0084515449b037205a33d6d3940a5684126aa4b5 0.56
-    #0xb7686c343be859d7875f8d6bb7c228858e229b8d 0.51
-    #0x5416400b0d5798dfdcefa2d22335f18982ee22fa 0.46
-    #0x1ea3ecc937bae79353d198db2cdab1e5cbe625dd 0.46
-    #0xe0430890f9c7010ad6743293fc352680e2f01b4e 0.46
-    #0xdafc2a2d4e070f863cfcb5887bc2516e05e18877 0.46
-    #0xe7860fd151cbbad28141dfd4cc7cd6d090e4ead8 0.46
-    #0x7970780b07b6a8c814eaeab01a09c4f922906da4 0.41
-    #0xb3958757fd6d2dfbcc934f39faa1f82210da6f50 0.41
-    #0xf9c8c57fe9eaabc5dfef8a8d03ef308f2a28c91c 0.41
-    #0x7fa4cbcfed0362516ab52c16d4fde35a72a5c829 0.36
-    #0x1ee6b25a0e3f855a10916766df3a056e924e5dce 0.36
-    #0xbbdef8b12babd3ab6018566bc17ec3aa302b8348 0.36
-def fig13():
+    #0x0111a93692b5ccff5c4b006d88d82664f76dfd21 2.03 40
+    #0xb1898895a2ac9ef09afeda89ee559427b7142f2e 1.78 35
+    #0x7f183cce61efcabb8d2eb1340f2a94c5eb1bf8e5 1.57 31
+    #0x408fac2d2d3d3ac4e356aa188119f5624fd8c9f6 1.32 26
+    #0x13098fdefba2129b8873bcff5c9ce2de1cf7f32f 0.81 16
+    #0x24ecad110119e2c763f1afc7f4e5dd159238d143 0.81 16
+    #0xb70f65c1faa2f1160d006b585ebf564781e8dae6 0.71 14
+    #0xe7d60131d3773a8cdf75162c2cb8be459600d9b2 0.71 14
+    #0x2b065809f6ec6df32878bcd26711a0e2bcf59c26 0.66 14
+    #0x3da2bb8c828643d13c399e71d9c7b70852d45492 0.61 13
+    #0xa9d499f4e14d5046cbdfd01cde3e8c3ea0ac94d7 0.61 12
+    #0xe8ddafab7212f988d84c973471c6feab851769e8 0.56 11
+    #0x0084515449b037205a33d6d3940a5684126aa4b5 0.56 11
+    #0xb7686c343be859d7875f8d6bb7c228858e229b8d 0.51 11
+    #0x5416400b0d5798dfdcefa2d22335f18982ee22fa 0.46 10
+    #0x1ea3ecc937bae79353d198db2cdab1e5cbe625dd 0.46 10
+    #0xe0430890f9c7010ad6743293fc352680e2f01b4e 0.46 10
+    #0xdafc2a2d4e070f863cfcb5887bc2516e05e18877 0.46 10
+    #0xe7860fd151cbbad28141dfd4cc7cd6d090e4ead8 0.46 10
+    #0x7970780b07b6a8c814eaeab01a09c4f922906da4 0.41 9
+    #0xb3958757fd6d2dfbcc934f39faa1f82210da6f50 0.41 9
+    #0xf9c8c57fe9eaabc5dfef8a8d03ef308f2a28c91c 0.41 9
+    #0x7fa4cbcfed0362516ab52c16d4fde35a72a5c829 0.36 8
+    #0x1ee6b25a0e3f855a10916766df3a056e924e5dce 0.36 8
+    #0xbbdef8b12babd3ab6018566bc17ec3aa302b8348 0.36 8
+def fig13evo():
     #如何通过拓展得到community，和某个欺诈地址进行交易的可疑地址作为同个community
     addrlist = ['0x83053c32b7819f420dcfed2d218335fe430fe3b5',
                 '0x0111a93692b5ccff5c4b006d88d82664f76dfd21',
@@ -7309,37 +7307,64 @@ def fig13():
                 '0x1ee6b25a0e3f855a10916766df3a056e924e5dce',
                 '0xbbdef8b12babd3ab6018566bc17ec3aa302b8348',
                 ]
+    # 29056
+    # 766
+    # 766
+    # 76
+    # 906
+    # 4688
+    # 3232
+    # 2210
+    # 1016
+    # 1136
+    # 1038
+    # 1244
+    # 3602
+    # 626
+    # 960
+    # 6884
+    # 22
+    # 234
+    # 684
+    # 4516
+    # 24
+    # 1564
+    # 13908
+    # 4300
+    # 1228
+    # 5598
+    # 3344
     #一个一个community算，在mledge（不需要在mledge2找）中找和代表的欺诈地址列表有交易的地址，动态添加某个community的欺诈地址列表，比较快的办法用csv的布尔搜索，迭代一次
     mledge = pandas.read_csv('mledge.csv')
     mlnode = pandas.read_csv('mlnode.csv')
-    mledge0 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[0])]
-    mledge1 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[1])]
-    mledge2 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[2])]
-    mledge3 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[3])]
-    mledge4 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[4])]
-    mledge5 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[5])]
-    mledge6 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[6])]
-    mledge7 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[7])]
-    mledge8 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[8])]
-    mledge9 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[9])]
-    mledge10 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[10])]
-    mledge11 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[11])]
-    mledge12 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[12])]
-    mledge13 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[13])]
-    mledge14 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[14])]
-    mledge15 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[15])]
-    mledge16 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[16])]
-    mledge17 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[17])]
-    mledge18 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[18])]
-    mledge19 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[19])]
-    mledge20 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[20])]
-    mledge21 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[21])]
-    mledge22 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[22])]
-    mledge23 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[23])]
-    mledge24 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[24])]
-    mledge25 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[25])]
-    mledge26 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[26])]
-    
+    mledge0 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[0]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[0])]
+    mledge1 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[1]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[1])]
+    mledge2 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[2]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[2])]
+    mledge3 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[3]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[3])]
+    mledge4 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[4]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[4])]
+    mledge5 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[5]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[5])]
+    mledge6 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[6]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[6])]
+    mledge7 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[7]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[7])]
+    mledge8 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[8]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[8])]
+    mledge9 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[9]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[9])]
+    mledge10 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[10]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[10])]
+    mledge11 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[11]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[11])]
+    mledge12 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[12]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[12])]
+    mledge13 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[13]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[13])]
+    mledge14 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[14]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[14])]
+    mledge15 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[15]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[15])]
+    mledge16 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[16]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[16])]
+    mledge17 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[17]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[17])]
+    mledge18 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[18]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[18])]
+    mledge19 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[19]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[19])]
+    mledge20 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[20]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[20])]
+    mledge21 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[21]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[21])]
+    mledge22 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[22]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[22])]
+    mledge23 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[23]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[23])]
+    mledge24 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[24]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[24])]
+    mledge25 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[25]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[25])]
+    mledge26 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[26]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[26])]
+
     list0 = list(mledge0['Source']) + list(mledge0['Target'])
     list1 = list(mledge1['Source']) + list(mledge1['Target'])
     list2 = list(mledge2['Source']) + list(mledge2['Target'])
@@ -7368,36 +7393,106 @@ def fig13():
     list25 = list(mledge25['Source']) + list(mledge25['Target'])
     list26 = list(mledge26['Source']) + list(mledge26['Target'])
 
-    mledge0 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list0))]
-    mledge1 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list1))]
-    mledge2 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list2))]
-    mledge3 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list3))]
-    mledge4 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list4))]
-    mledge5 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list5))]
-    mledge6 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list6))]
-    mledge7 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list7))]
-    mledge8 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list8))]
-    mledge9 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list9))]
-    mledge10 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list10))]
-    mledge11 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list11))]
-    mledge12 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list12))]
-    mledge13 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list13))]
-    mledge14 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list14))]
-    mledge15 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list15))]
-    mledge16 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list16))]
-    mledge17 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list17))]
-    mledge18 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list18))]
-    mledge19 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list19))]
-    mledge20 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list20))]
-    mledge21 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list21))]
-    mledge22 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list22))]
-    mledge23 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list23))]
-    mledge24 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list24))]
-    mledge25 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list25))]
-    mledge26 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list26))]
+    mledge0 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list0)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list0))]
+    mledge1 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list1)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list1))]
+    mledge2 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list2)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list2))]
+    mledge3 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list3)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list3))]
+    mledge4 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list4)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list4))]
+    mledge5 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list5)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list5))]
+    mledge6 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list6)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list6))]
+    mledge7 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list7)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list7))]
+    mledge8 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list8)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list8))]
+    mledge9 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list9)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list9))]
+    mledge10 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list10)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list10))]
+    mledge11 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list11)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list11))]
+    mledge12 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list12)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list12))]
+    mledge13 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list13)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list13))]
+    mledge14 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list14)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list14))]
+    mledge15 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list15)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list15))]
+    mledge16 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list16)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list16))]
+    mledge17 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list17)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list17))]
+    mledge18 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list18)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list18))]
+    mledge19 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list19)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list19))]
+    mledge20 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list20)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list20))]
+    mledge21 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list21)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list21))]
+    mledge22 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list22)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list22))]
+    mledge23 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list23)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list23))]
+    mledge24 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list24)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list24))]
+    mledge25 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list25)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list25))]
+    mledge26 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list26)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list26))]
 
+    list0 = list(mledge0['Source']) + list(mledge0['Target'])
+    list1 = list(mledge1['Source']) + list(mledge1['Target'])
+    list2 = list(mledge2['Source']) + list(mledge2['Target'])
+    list3 = list(mledge3['Source']) + list(mledge3['Target'])
+    list4 = list(mledge4['Source']) + list(mledge4['Target'])
+    list5 = list(mledge5['Source']) + list(mledge5['Target'])
+    list6 = list(mledge6['Source']) + list(mledge6['Target'])
+    list7 = list(mledge7['Source']) + list(mledge7['Target'])
+    list8 = list(mledge8['Source']) + list(mledge8['Target'])
+    list9 = list(mledge9['Source']) + list(mledge9['Target'])
+    list10 = list(mledge10['Source']) + list(mledge10['Target'])
+    list11 = list(mledge11['Source']) + list(mledge11['Target'])
+    list12 = list(mledge12['Source']) + list(mledge12['Target'])
+    list13 = list(mledge13['Source']) + list(mledge13['Target'])
+    list14 = list(mledge14['Source']) + list(mledge14['Target'])
+    list15 = list(mledge15['Source']) + list(mledge15['Target'])
+    list16 = list(mledge16['Source']) + list(mledge16['Target'])
+    list17 = list(mledge17['Source']) + list(mledge17['Target'])
+    list18 = list(mledge18['Source']) + list(mledge18['Target'])
+    list19 = list(mledge19['Source']) + list(mledge19['Target'])
+    list20 = list(mledge20['Source']) + list(mledge20['Target'])
+    list21 = list(mledge21['Source']) + list(mledge21['Target'])
+    list22 = list(mledge22['Source']) + list(mledge22['Target'])
+    list23 = list(mledge23['Source']) + list(mledge23['Target'])
+    list24 = list(mledge24['Source']) + list(mledge24['Target'])
+    list25 = list(mledge25['Source']) + list(mledge25['Target'])
+    list26 = list(mledge26['Source']) + list(mledge26['Target'])
 
-    
+    print(len(list0))
+    print(len(list1))
+    print(len(list2))
+    print(len(list3))
+    print(len(list4))
+    print(len(list5))
+    print(len(list6))
+    print(len(list7))
+    print(len(list8))
+    print(len(list9))
+    print(len(list10))
+    print(len(list11))
+    print(len(list12))
+    print(len(list13))
+    print(len(list14))
+    print(len(list15))
+    print(len(list16))
+    print(len(list17))
+    print(len(list18))
+    print(len(list19))
+    print(len(list20))
+    print(len(list21))
+    print(len(list22))
+    print(len(list23))
+    print(len(list24))
+    print(len(list25))
+    print(len(list26))
+def fig13():
+    len1 = [29056,4688,3602,6884,4516,13908,4300,1228,5598,3344]
+    len2 = [816,16,11,10,9,9,9,8,8,8]
+    x = numpy.array([1,2,3,4,5,6,7,8,9,10])
+    width = 0.2
+    plt.bar(x,len1,width,label='After Expansion',color='black')
+    plt.bar(x+width,len2,width,label='Before Expasion',color='gray')
+    for a, b in zip(x, len1):
+        plt.text(a, b + 0.05, '%.0f' % b, ha='center', va='bottom', fontsize=6)
+    x = x + width
+    for a, b in zip(x, len2):
+        plt.text(a, b + 0.05, '%.0f' % b, ha='center', va='bottom', fontsize=6)
+    plt.yscale('log')
+    plt.legend()
+    plt.savefig('fig13.jpg')
+    plt.show()
+
 
 
 
