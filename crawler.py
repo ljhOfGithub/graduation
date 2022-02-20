@@ -1294,7 +1294,6 @@ def fig7nCdf():
     ax.set_xlabel('the profit of address($)')
     ax.set_xlim(1)
     plt.savefig('fig7nCdf2.jpg')
-    # ax.set_xlim(1)
     plt.show()
 
 def fig7i():
@@ -7569,44 +7568,70 @@ def fig15x():#community拓展后的size
     print(num)
     # 14 / 393 = 0.03
 def fig15a():
-    with open('weakly_connected_components15.txt','r') as f:
-        weakly_connected_components15 = literal_eval(f.read())
-    with open('fig15addr2time.txt', 'r', encoding='utf-8') as f:
-        fig15addr2time = literal_eval(f.read())
-    for addr, time in fig15addr2time.items():
-        if len(time) > 0:
-            start = datetime.datetime.fromtimestamp(time[0])
-            end = datetime.datetime.fromtimestamp(time[-1])
-            fig15addr2time[addr] = (end - start).days * 24 + (end - start).seconds / 3600
-    with open('fig15addr2living.txt','w') as f:
-        print(fig15addr2time,file=f)
+    # mledge = pandas.read_csv('mledge.csv')
+    # mlnode = pandas.read_csv('mlnode.csv')
+    # addrlist = list(mledge['Source']) + list(mledge['Target'])#欺诈地址相连的所有地址，如果需要精确到unknown节点可以再从mlnode中筛选
+    #
+    # df1 = pandas.read_csv('ntx.csv')
+    # df2 = pandas.read_csv('itx.csv')
+    # frames = [df1, df2]
+    # df = pandas.concat(frames)
+    # #不能转换为月份，要计算living hours
+    # df = df.sort_values('timeStamp')
 
+    # fig15addr2timestamp = {}
+    # for addr in addrlist:
+    #     fig15addr2timestamp[addr] = []
+    # for index, row in df.iterrows():
+    #     if isinstance(row['to'], str) and row['to'] in addrlist:
+    #         fig15addr2timestamp[row['to']].append(row['timeStamp'])
+    # with open('fig15addr2timestamp.txt', 'w', encoding='utf-8') as f:
+    #     print(fig15addr2timestamp,file=f)
+
+    # fig15addr2livinghours = {}
+    # for addr, time in fig15addr2timestamp.items():
+    #     if len(time) > 0:
+    #         start = datetime.datetime.fromtimestamp(time[0])
+    #         end = datetime.datetime.fromtimestamp(time[-1])
+    #         fig15addr2livinghours[addr] = (end - start).days * 24 + (end - start).seconds / 3600
+    # with open('fig15addr2livinghours.txt','w') as f:
+    #     print(fig15addr2livinghours,file=f)
+
+    with open('fig15addr2timestamp.txt', 'r', encoding='utf-8') as f:
+        fig15addr2timestamp = literal_eval(f.read())
+    with open('fig15addr2livinghours.txt', 'r', encoding='utf-8') as f:
+        fig15addr2livinghours = literal_eval(f.read())
+    
 def fig15b():
-    mledge = pandas.read_csv('mledge.csv')
-    mlnode = pandas.read_csv('mlnode.csv')
-    addrlist = list(mledge['Source']) + list(mledge['Target'])#欺诈地址相连的所有地址，如果需要精确到unknown节点可以再从mlnode中筛选
-    df1 = pandas.read_csv('ntx.csv')
-    df2 = pandas.read_csv('itx.csv')
-    frames = [df1, df2]
-    df = pandas.concat(frames)
-    df['timeStamp'] = df['timeStamp'].map(lambda x: datetime.datetime.fromtimestamp(x).strftime("%Y-%m"))
-    df = df.sort_values('timeStamp')
-    addr2time = {}
-    for addr in addrlist:
-        addr2time[addr] = []
-    for index, row in df.iterrows():
-        if isinstance(row['to'], str) and row['to'] in addrlist:
-            addr2time[row['to']].append(row['timeStamp'])
-    for addr, time in addr2time.items():
-        time.sort()
-    addr2mon = {}
-    for addr, time in addr2time.items():
-        if len(time) > 0:
-            addr2mon[addr] = time[0]
-    with open('fig15addr2time.txt', 'w', encoding='utf-8') as f:
-        print(addr2time,file=f)
-    with open('fig15addr2mon.txt', 'w', encoding='utf-8') as f:
-        print(addr2mon,file=f)
+    # mledge = pandas.read_csv('mledge.csv')
+    # mlnode = pandas.read_csv('mlnode.csv')
+    # addrlist = list(mledge['Source']) + list(mledge['Target'])#欺诈地址相连的所有地址，如果需要精确到unknown节点可以再从mlnode中筛选
+    # df1 = pandas.read_csv('ntx.csv')
+    # df2 = pandas.read_csv('itx.csv')
+    # frames = [df1, df2]
+    # df = pandas.concat(frames)
+    # df['timeStamp'] = df['timeStamp'].map(lambda x: datetime.datetime.fromtimestamp(x).strftime("%Y-%m"))
+    # df = df.sort_values('timeStamp')
+    # addr2time = {}
+    # for addr in addrlist:
+    #     addr2time[addr] = []
+    # for index, row in df.iterrows():
+    #     if isinstance(row['to'], str) and row['to'] in addrlist:
+    #         addr2time[row['to']].append(row['timeStamp'])
+    # with open('fig15addr2time.txt', 'w', encoding='utf-8') as f:
+    #     print(addr2time,file=f)
+    with open('fig15addr2time.txt', 'r', encoding='utf-8') as f:
+        addr2time = literal_eval(f.read())
+    with open('fig15addr2mon.txt', 'r', encoding='utf-8') as f:
+        addr2mon = literal_eval(f.read())
+    # for addr, time in addr2time.items():
+    #     time.sort()
+    # addr2mon = {}
+    # for addr, time in addr2time.items():
+    #     if len(time) > 0:
+    #         addr2mon[addr] = time[0]
+    # with open('fig15addr2mon.txt', 'w', encoding='utf-8') as f:
+    #     print(addr2mon,file=f)
     #每个group查询appearance time，确定每个group的最早时间和living time（计算方法改变），先求最早时间取最值
     with open('weakly_connected_components15.txt','r') as f:
         weakly_connected_components15 = literal_eval(f.read())
@@ -7614,18 +7639,40 @@ def fig15b():
     for index,weakset in enumerate(weakly_connected_components15):
         group2appearance[index] = []
         for addr in weakset:
-            group2appearance[index].append(addr2mon[addr])
+            if addr in addr2mon.keys():#通过to地址才计算timestamp会遗漏一部分只是输出的地址
+                group2appearance[index].append(addr2mon[addr])
         group2appearance[index].sort()
+    # print(group2appearance)#不同组的每个地址的最先出现时间
+    group2single = {}
+    for index,appearlist in group2appearance.items():
+        group2single[index] = appearlist[0]
+    # print(group2single)
     mon2count = {}
-    for index,mon in enumerate(group2appearance):
+    for index,mon in group2single.items():
         mon2count[mon] = mon2count.get(mon,0) + 1
-    with open('fig15b.txt','w') as f:
-        print(mon2count)
+    x = mon2count.keys()
+    y = mon2count.values()
+    zipped = zip(x, y)
+    sort_zipped = sorted(zipped, key=lambda x: (x[0]))
+    result = zip(*sort_zipped)
+    x, y = [list(x) for x in result]
+    fig, ax = plt.subplots()
+    ax.set_ylabel('Number Of Scam Group')
+    ax.set_xlabel('Appearance Date')
+    plt.xticks(rotation=30)
+    x_major_locator = MultipleLocator(3)
+    ax.xaxis.set_major_locator(x_major_locator)
+    plt.savefig('fig15b.jpg')
+    plt.plot(x,y)
+    plt.show()
+    # with open('fig15b.txt','w') as f:
+    #     print(mon2count,file=f)
 def fig16a():
     df1 = pandas.read_csv('ntx.csv')
     df2 = pandas.read_csv('itx.csv')
     frames = [df1, df2]
     df = pandas.concat(frames)
+
 if __name__ == '__main__':
     # try:
     #     print("ntxs1")
