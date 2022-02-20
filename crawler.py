@@ -1274,7 +1274,6 @@ def fig7nCdf():
     for addr,prof in addr2prof.items():
         if prof == maxp:
             print(addr)
-
     zipped = zip(prof2num.keys(), prof2num.values())
     sort_zipped = sorted(zipped, key=lambda x: (x[0]))
     result = zip(*sort_zipped)
@@ -7597,11 +7596,32 @@ def fig15a():
     # with open('fig15addr2livinghours.txt','w') as f:
     #     print(fig15addr2livinghours,file=f)
 
-    with open('fig15addr2timestamp.txt', 'r', encoding='utf-8') as f:
-        fig15addr2timestamp = literal_eval(f.read())
+    # with open('fig15addr2timestamp.txt', 'r', encoding='utf-8') as f:
+    #     fig15addr2timestamp = literal_eval(f.read())
     with open('fig15addr2livinghours.txt', 'r', encoding='utf-8') as f:
         fig15addr2livinghours = literal_eval(f.read())
-    
+    addr2day = {}
+    for addr,living in fig15addr2livinghours.items():
+        addr2day[addr] = living / 24
+    living2num = {}
+    for addr,living in addr2day.items():
+        living2num[living] = living2num.get(living,0) + 1
+    print(len(fig15addr2livinghours))
+    zipped = zip(living2num.keys(), living2num.values())
+    sort_zipped = sorted(zipped, key=lambda x: (x[0]))
+    result = zip(*sort_zipped)
+    x, y = [list(x) for x in result]
+    fig, ax = plt.subplots()
+    cum = numpy.cumsum(y)
+    percentage = cum / list(cum)[-1]
+    line = ax.plot(x, percentage)
+    x_major_locator = MultipleLocator(200)
+    ax.xaxis.set_major_locator(x_major_locator)
+    ax.set_ylabel('CDF of Addresses')
+    ax.set_xlabel('the living time of address')
+    ax.set_xlim(1)
+    plt.savefig('fig15a.jpg')
+    plt.show()
 def fig15b():
     # mledge = pandas.read_csv('mledge.csv')
     # mlnode = pandas.read_csv('mlnode.csv')
@@ -7885,7 +7905,7 @@ if __name__ == '__main__':
     #     norAddrA3Outtxnum()
     # except Exception:
     #     traceback.print_exc()
-    fig15b()
+    fig15a()
     # scamAvgIncomeOutcome()
     # norAddrA3LivingTime()
 #gcn gdc tagcn
