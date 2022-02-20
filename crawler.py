@@ -23,6 +23,8 @@ import matplotlib.pyplot as plt
 from scipy import stats
 from statsmodels.distributions.empirical_distribution import ECDF
 import random
+import networkx as nx
+
 def bloxyhack():
     pagenum = 177
     url2type = {}  # 将所有的链接和种类注解存入字典中再进行筛选
@@ -700,13 +702,12 @@ def fig2():
             addr2time[row['to']].append(row['timeStamp'])
     for addr,time in addr2time.items():
         time.sort()
-    # print(addr2time)
     addr2mon = {}
     for addr,time in addr2time.items():
         if len(time) > 0:
             addr2mon[addr] = time[0]
     # print(addr2mon)
-    with open('fig2addr2mon.txt','w',encoding='utf-8') as f:
+    with open('fig2addr2mon.txt','w',encoding='utf-8') as f:#只存储了欺诈地址对应的月份，没存储unknown节点对应的月份
         print(addr2mon,file=f)
     mon2count = {}
     for addr,mon in addr2mon.items():
@@ -7230,14 +7231,14 @@ def fig12():
     # with open('addr.txt', 'r', encoding='utf-8') as f:
     #     scamaddrlist = literal_eval(f.read())
     mlnode = mlnode[(mlnode['degree'] > 0) & (mlnode['type']=='scam')]
-    degreeScamnode = list(mlnode['Id'])
+    degreeScamnode = list(mlnode['Id'])#只筛选度>0且互相连接的欺诈节点
     mledge = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(degreeScamnode)) & (mledge['Target'].notnull()) & (mledge['Target'].isin(degreeScamnode))]
     mledge.to_csv('scamNodeDegreeEdge.csv')
     mledgeSource = list(mledge['Source'])
     mledgeTarget = list(mledge['Target'])
     mledgelist = mledgeSource + mledgeTarget
     mlnode = mlnode[(mlnode['Id'].isin(mledgelist))]
-    mlnode.to_csv('scamNodeDegree.csv')
+    mlnode.to_csv('scamNodeDegree.csv')#和没有迭代没区别
     #34.8+4.62+0.96+0.81+0.2=41.39 816个 0x83053c32b7819f420dcfed2d218335fe430fe3b5
     #2.03 40个
     #1.78 35个
@@ -7277,6 +7278,33 @@ def fig12():
     #0x7fa4cbcfed0362516ab52c16d4fde35a72a5c829 0.36 8
     #0x1ee6b25a0e3f855a10916766df3a056e924e5dce 0.36 8
     #0xbbdef8b12babd3ab6018566bc17ec3aa302b8348 0.36 8
+    #0.21 5
+    #48个community点数大于5 占比12%，通过在fig12中的scam拓展unknown节点获得新的节点和边，然后再次模块化得到新的community
+    #397个community
+def fig12x():
+    mlnode = pandas.read_csv('mlnode.csv')
+    mledge = pandas.read_csv('mledge.csv')
+    scamNodeDegree = pandas.read_csv('scamNodeDegree.csv')
+    scamNodeDegreeList = list(scamNodeDegree['Id'])
+    scamNodeDegreeEdge = pandas.read_csv('scamNodeDegreeEdge.csv')
+    G1 = nx.DiGraph()
+    G1.add_nodes_from(scamNodeDegreeList)
+    edges = []
+    for index,row in scamNodeDegreeEdge.iterrows():
+        mytuple = (row['Source'],row['Target'],row['Weight'])
+        edges.append(mytuple)
+    G1.add_weighted_edges_from(edges)
+    num = 0
+    weakly_connected_components12 = []
+    for c in nx.weakly_connected_components(G1):
+        weakly_connected_components12.append(c)
+        num += 1
+    with open('weakly_connected_components12.txt','w') as f:
+        print(weakly_connected_components12,file=f)
+    # print(num)
+    # plt.subplot(111)
+    # nx.draw(G1,node_size=10)
+    # plt.show()
 def fig13evo():
     #如何通过拓展得到community，和某个欺诈地址进行交易的可疑地址作为同个community
     addrlist = ['0x83053c32b7819f420dcfed2d218335fe430fe3b5',
@@ -7364,7 +7392,6 @@ def fig13evo():
     mledge24 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[24]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[24])]
     mledge25 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[25]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[25])]
     mledge26 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[26]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[26])]
-
     list0 = list(mledge0['Source']) + list(mledge0['Target'])
     list1 = list(mledge1['Source']) + list(mledge1['Target'])
     list2 = list(mledge2['Source']) + list(mledge2['Target'])
@@ -7392,7 +7419,6 @@ def fig13evo():
     list24 = list(mledge24['Source']) + list(mledge24['Target'])
     list25 = list(mledge25['Source']) + list(mledge25['Target'])
     list26 = list(mledge26['Source']) + list(mledge26['Target'])
-
     mledge0 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list0)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list0))]
     mledge1 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list1)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list1))]
     mledge2 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list2)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list2))]
@@ -7420,7 +7446,6 @@ def fig13evo():
     mledge24 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list24)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list24))]
     mledge25 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list25)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list25))]
     mledge26 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list26)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list26))]
-
     list0 = list(mledge0['Source']) + list(mledge0['Target'])
     list1 = list(mledge1['Source']) + list(mledge1['Target'])
     list2 = list(mledge2['Source']) + list(mledge2['Target'])
@@ -7448,7 +7473,6 @@ def fig13evo():
     list24 = list(mledge24['Source']) + list(mledge24['Target'])
     list25 = list(mledge25['Source']) + list(mledge25['Target'])
     list26 = list(mledge26['Source']) + list(mledge26['Target'])
-
     print(len(list0))
     print(len(list1))
     print(len(list2))
@@ -7492,9 +7516,94 @@ def fig13():
     plt.legend()
     plt.savefig('fig13.jpg')
     plt.show()
-
-
-
+def fig14():
+    mlnode = pandas.read_csv('mlnode.csv')
+    mledge = pandas.read_csv('mledge.csv')
+    print(len(mlnode))
+    print(len(mledge))
+    mlnode14 = mlnode[(mlnode['type']!='normal')]
+    mlnodelist = list(mlnode14['Id'])#排除正常节点后的节点
+    mlnodescam = mlnode14[(mlnode14['type']=='scam')]
+    mlnodescamlist = list(mlnodescam['Id'])#edge导入gephi，如果边的节点不在mlnode14中则会显示null类
+    mledge14 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(mlnodelist)) & (mledge['Target'].notnull()) & (mledge['Target'].isin(mlnodelist))]
+    mlnode14.to_csv('mlnodefig14.csv')
+    mledge14.to_csv('mledgefig14.csv')
+    mledgescam14 = mledge14[(mledge14['Source'].notnull()) & (mledge14['Source'].isin(mlnodescamlist)) | (mledge14['Target'].notnull()) & (mledge14['Target'].isin(mlnodescamlist))]
+    mlnodeSusp = list(set(list(mledgescam14['Source']) + list(mledgescam14['Target'])))
+    print(len(mlnodeSusp))
+    #166513
+    #197687
+    #132129
+def fig15():
+    scamNodeDegree = pandas.read_csv('scamNodeDegree.csv')
+    mledge = pandas.read_csv('mledge.csv')
+    mlnode15 = pandas.read_csv('mlnode.csv')
+    degreeScamnode = list(scamNodeDegree['Id'])#根据原来的community进行筛选
+    mledge15 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(degreeScamnode)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(degreeScamnode))]
+    mledgeSource = list(mledge['Source'])
+    mledgeTarget = list(mledge['Target'])
+    mledgelist = mledgeSource + mledgeTarget
+    # mlnode15 = mlnode[(mlnode['Id'].isin(mledgelist))]#拓展后和原来有区别
+    mlnode15.to_csv('scamNodeDegree15.csv')
+    mledge15.to_csv('scamNodeDegreeEdge15.csv')
+    #92768
+def fig15x():#community拓展后的size
+    # with open('weakly_connected_components12.txt','r') as f:
+    #     weakly_connected_components12 = literal_eval(f.read())
+    # mledge = pandas.read_csv('mledge.csv')
+    # for index,weakset in enumerate(weakly_connected_components12):
+    #     expansionEdge = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(weakset)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(weakset))]
+    #     expansionNode = set(list(expansionEdge['Source']) + list(expansionEdge['Target']))
+    #     weakly_connected_components12[index] = weakset.union(expansionNode)
+        # print(index)
+    #     print(weakly_connected_components12[index])
+    # print(weakly_connected_components12)
+    # with open('weakly_connected_components15.txt','w') as f:
+    #     print(weakly_connected_components12,file=f)
+    with open('weakly_connected_components15.txt','r') as f:
+        weakly_connected_components15 = literal_eval(f.read())
+    num = 0
+    for weakset in weakly_connected_components15:
+        if len(weakset) < 5:
+            num += 1
+    print(num)
+    # 14 / 393 = 0.03
+def fig15b():
+    mledge = pandas.read_csv('mledge.csv')
+    mlnode = pandas.read_csv('mlnode.csv')
+    addrlist = list(mledge['Source']) + list(mledge['Target'])#欺诈地址相连的所有地址，如果需要精确到unknown节点可以再从mlnode中筛选
+    df1 = pandas.read_csv('ntx.csv')
+    df2 = pandas.read_csv('itx.csv')
+    frames = [df1, df2]
+    df = pandas.concat(frames)
+    df['timeStamp'] = df['timeStamp'].map(lambda x: datetime.datetime.fromtimestamp(x).strftime("%Y-%m"))
+    df = df.sort_values('timeStamp')
+    addr2time = {}
+    for addr in addrlist:
+        addr2time[addr] = []
+    for index, row in df.iterrows():
+        if isinstance(row['to'], str) and row['to'] in addrlist:
+            addr2time[row['to']].append(row['timeStamp'])
+    for addr, time in addr2time.items():
+        time.sort()
+    addr2mon = {}
+    for addr, time in addr2time.items():
+        if len(time) > 0:
+            addr2mon[addr] = time[0]
+    with open('fig15addr2mon.txt', 'w', encoding='utf-8') as f:
+        print(addr2mon,file=f)
+    #每个group查询appearance time，确定每个group的最早时间和living time（计算方法改变），先求最早时间取最值
+    group2appearance = {}#每个group的首次出现时间
+    for index,weakset in enumerate(weakly_connected_components15):
+        group2appearance[index] = []
+        for addr in weakset:
+            group2appearance[index].append(addr2mon[addr])
+        group2appearance[index].sort()
+    mon2count = {}
+    for index,mon in enumerate(group2appearance):
+        mon2count[mon] = mon2count.get(mon,0) + 1
+    with open('fig15b.txt','w') as f:
+        print(mon2count)
 
 if __name__ == '__main__':
     # try:
@@ -7708,7 +7817,7 @@ if __name__ == '__main__':
     #     norAddrA3Outtxnum()
     # except Exception:
     #     traceback.print_exc()
-    fig13()
+    fig15b()
     # scamAvgIncomeOutcome()
     # norAddrA3LivingTime()
 #gcn gdc tagcn
