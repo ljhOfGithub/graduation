@@ -7568,6 +7568,19 @@ def fig15x():#community拓展后的size
             num += 1
     print(num)
     # 14 / 393 = 0.03
+def fig15a():
+    with open('weakly_connected_components15.txt','r') as f:
+        weakly_connected_components15 = literal_eval(f.read())
+    with open('fig15addr2time.txt', 'r', encoding='utf-8') as f:
+        fig15addr2time = literal_eval(f.read())
+    for addr, time in fig15addr2time.items():
+        if len(time) > 0:
+            start = datetime.datetime.fromtimestamp(time[0])
+            end = datetime.datetime.fromtimestamp(time[-1])
+            fig15addr2time[addr] = (end - start).days * 24 + (end - start).seconds / 3600
+    with open('fig15addr2living.txt','w') as f:
+        print(fig15addr2time,file=f)
+
 def fig15b():
     mledge = pandas.read_csv('mledge.csv')
     mlnode = pandas.read_csv('mlnode.csv')
@@ -7590,9 +7603,13 @@ def fig15b():
     for addr, time in addr2time.items():
         if len(time) > 0:
             addr2mon[addr] = time[0]
+    with open('fig15addr2time.txt', 'w', encoding='utf-8') as f:
+        print(addr2time,file=f)
     with open('fig15addr2mon.txt', 'w', encoding='utf-8') as f:
         print(addr2mon,file=f)
     #每个group查询appearance time，确定每个group的最早时间和living time（计算方法改变），先求最早时间取最值
+    with open('weakly_connected_components15.txt','r') as f:
+        weakly_connected_components15 = literal_eval(f.read())
     group2appearance = {}#每个group的首次出现时间
     for index,weakset in enumerate(weakly_connected_components15):
         group2appearance[index] = []
@@ -7604,7 +7621,11 @@ def fig15b():
         mon2count[mon] = mon2count.get(mon,0) + 1
     with open('fig15b.txt','w') as f:
         print(mon2count)
-
+def fig16a():
+    df1 = pandas.read_csv('ntx.csv')
+    df2 = pandas.read_csv('itx.csv')
+    frames = [df1, df2]
+    df = pandas.concat(frames)
 if __name__ == '__main__':
     # try:
     #     print("ntxs1")
