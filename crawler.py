@@ -7789,6 +7789,11 @@ def fig16b():
             group2victim[index] += addr2vitctim[addr]
     with open('fig16group2victim.txt', 'w') as f:
         print(group2victim,file=f)
+    
+    with open('fig16addr2victim.txt', 'r') as f:
+        addr2vitctim = literal_eval(f.read())
+    with open('fig16group2victim.txt', 'r') as f:
+        group2victim = literal_eval(f.read())
     victim2num = {}
     for group,victim in group2victim.items():
         victim2num[victim] = victim2num.get(victim,0) + 1
@@ -7803,7 +7808,7 @@ def fig16b():
     percentage = cum / list(cum)[-1]
     line = ax.plot(x, percentage)
     ax.set_ylabel('CDF of Addresses')
-    ax.set_xlabel('Profit(Eth)')
+    ax.set_xlabel('# of victim')
     x_major_locator = MultipleLocator(500)
     ax.xaxis.set_major_locator(x_major_locator)
     ax.set_xlim(1)
