@@ -7688,35 +7688,36 @@ def fig15b():
     # with open('fig15b.txt','w') as f:
     #     print(mon2count,file=f)
 def fig16a():
-    # df1 = pandas.read_csv('ntx.csv')
-    # df2 = pandas.read_csv('itx.csv')
-    # frames = [df1, df2]
-    # df = pandas.concat(frames)
+    df1 = pandas.read_csv('ntx.csv')
+    df2 = pandas.read_csv('itx.csv')
+    frames = [df1, df2]
+    df = pandas.concat(frames)
     with open('weakly_connected_components15.txt','r') as f:#根据拓展一次后的scam group分组进行计算
         weakly_connected_components15 = literal_eval(f.read())
     eth = 2460.268204521556
 
-    # addr2profit = {}
-    # mledge = pandas.read_csv('mledge.csv')
-    # addrlist = list(mledge['Source']) + list(mledge['Target'])#得出所有需要计算利润的地址，然后计算每个地址的利润，再分给每个组
-    # #将scamgroup扁平化得到所有的地址当作一个需要排除的列表，因为不同的group之间不会互相转账，同一个group的转账不能用于计算利润
-    # # #每个group逐条地址进行计算，不能这样算，因为同一个group的可能重复计算
-    # scamgroupAddr = []
-    # for group in weakly_connected_components15:
-    #     scamgroupAddr += list(group)
-    # for addr in scamgroupAddr:
-    #     addr2profit[addr] = 0
-    # for index, row in df.iterrows():
-    #     if isinstance(row['to'],str) and row['to'].lower() in scamgroupAddr and isinstance(row['from'],str) and row['from'].lower() not in scamgroupAddr:
-    #         try:
-    #             if isinstance(row['value'],str):
-    #                 addr2profit[row['to']] += int(row['value']) / 1000000000000000000 * eth
-    #         except Exception:
-    #             print(row['value'])
-    #             print(row['to'])
-    #             traceback.print_exc()
-    # with open('fig16addr2profit.txt', 'w') as f:
-    #     print(addr2profit,file=f)
+    addr2profit = {}
+    mledge = pandas.read_csv('mledge.csv')
+    addrlist = list(mledge['Source']) + list(mledge['Target'])#得出所有需要计算利润的地址，然后计算每个地址的利润，再分给每个组
+    #将scamgroup扁平化得到所有的地址当作一个需要排除的列表，因为不同的group之间不会互相转账，同一个group的转账不能用于计算利润
+    # #每个group逐条地址进行计算，不能这样算，因为同一个group的可能重复计算
+    scamgroupAddr = []
+    for group in weakly_connected_components15:
+        scamgroupAddr += list(group)
+    for addr in scamgroupAddr:
+        addr2profit[addr] = 0
+    for index, row in df.iterrows():
+        if isinstance(row['to'],str) and row['to'].lower() in scamgroupAddr and isinstance(row['from'],str) and row['from'].lower() not in scamgroupAddr:
+            try:
+                if isinstance(row['value'],str):
+                    addr2profit[row['to']] += int(row['value']) / 1000000000000000000
+            except Exception:
+                print(row['value'])
+                print(row['to'])
+                traceback.print_exc()
+    with open('fig16addr2profit2.txt', 'w') as f:
+        print(addr2profit,file=f)
+    return
     group2profit = {}
     # profit2num = {}
     with open('fig16addr2profit.txt', 'r') as f:
@@ -7737,9 +7738,8 @@ def fig16a():
     profit2num = {}
     for group,profit in group2profit.items():
         profit2num[profit] = profit2num.get(profit,0) + 1
-    print(profit2num)
-    print(len(profit2num))
-    return
+    # print(profit2num)
+    # print(len(profit2num))
     x = profit2num.keys()
     y = profit2num.values()
     zipped = zip(x, y)
@@ -7752,10 +7752,9 @@ def fig16a():
     line = ax.plot(x, percentage)
     ax.set_ylabel('CDF of Addresses')
     ax.set_xlabel('Profit(Eth)')
-    plt.xticks(rotation=30)
-    x_major_locator = MultipleLocator(10)
+    x_major_locator = MultipleLocator(5000)
     ax.xaxis.set_major_locator(x_major_locator)
-    plt.plot(x, y)
+    ax.set_xlim(1)
     plt.savefig('fig16a.jpg')
     plt.show()
 def fig16b():
@@ -7763,9 +7762,53 @@ def fig16b():
     df2 = pandas.read_csv('itx.csv')
     frames = [df1, df2]
     df = pandas.concat(frames)
-    with open('weakly_connected_components15.txt','r') as f:#根据拓展一次后的scam group分组进行计算
+    mledge = pandas.read_csv('mledge.csv')
+    mlnode = pandas.read_csv('mlnode.csv')
+    addrlist = list(mledge['Source']) + list(mledge['Target'])
+    with open('weakly_connected_components15.txt','r') as f:#计算每个group的from地址数，排除同一个group互相转账的交易
         weakly_connected_components15 = literal_eval(f.read())
-
+    scamgroupAddr = []
+    addr2vitctim = {}
+    for group in weakly_connected_components15:
+        scamgroupAddr += list(group)
+    for addr in scamgroupAddr:
+        addr2vitctim[addr] = 0
+    for index, row in df.iterrows():
+        if isinstance(row['to'],str) and row['to'].lower() in scamgroupAddr and isinstance(row['from'],str) and row['from'].lower() not in scamgroupAddr:
+            try:
+                addr2vitctim[row['to']] += 1
+            except Exception:
+                print(row['to'])
+                traceback.print_exc()
+    with open('fig16addr2victim.txt', 'w') as f:
+        print(addr2vitctim,file=f)
+    group2victim = {}
+    for index,weakset in enumerate(weakly_connected_components15):
+        group2victim[index] = 0
+        for addr in weakset:
+            group2victim[index] += addr2vitctim[addr]
+    with open('fig16group2victim.txt', 'w') as f:
+        print(group2victim,file=f)
+    victim2num = {}
+    for group,victim in group2victim.items():
+        victim2num[victim] = victim2num.get(victim,0) + 1
+    x = victim2num.keys()
+    y = victim2num.values()
+    zipped = zip(x, y)
+    sort_zipped = sorted(zipped, key=lambda x: (x[0]))
+    result = zip(*sort_zipped)
+    x, y = [list(x) for x in result]
+    fig, ax = plt.subplots()
+    cum = numpy.cumsum(y)
+    percentage = cum / list(cum)[-1]
+    line = ax.plot(x, percentage)
+    ax.set_ylabel('CDF of Addresses')
+    ax.set_xlabel('Profit(Eth)')
+    x_major_locator = MultipleLocator(500)
+    ax.xaxis.set_major_locator(x_major_locator)
+    ax.set_xlim(1)
+    plt.savefig('fig16b.jpg')
+    plt.show()
 if __name__ == '__main__':
     # try:
     #     print("ntxs1")
@@ -7978,7 +8021,7 @@ if __name__ == '__main__':
     #     norAddrA3Outtxnum()
     # except Exception:
     #     traceback.print_exc()
-    fig16a()
+    fig16b()
     # scamAvgIncomeOutcome()
     # norAddrA3LivingTime()
 #gcn gdc tagcn
