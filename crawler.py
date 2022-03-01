@@ -7098,7 +7098,7 @@ def getpred():
             num += 1
     print(num)
 #11249
-def fig11():
+def wrongfig11():
     addr = '0x83053c32b7819f420dcfed2d218335fe430fe3b5'
     # addr = '0x21f74c6bbc1e3ab9f0205e12de3a9daa14351aed'
     # addr = '0x4fed1fc4144c223ae3c1553be203cdfcbd38c581'
@@ -7171,7 +7171,6 @@ def fig11():
     # return
     #将所有的直接连接的节点添加为待添加边的节点，然后对其边进行统计
     #再迭代一次
-
     with open('specialNode.txt', 'r') as f:
         specialNode = literal_eval(f.read())
     with open('norMinerAddr.txt','r') as f:#小写地址
@@ -7188,7 +7187,6 @@ def fig11():
     specialNode2csv2 = mlnode2[(mlnode2['Id'].isin(specialNode2))]
     frames = [specialNode2csv1,specialNode2csv2]
     specialNode2csv = pandas.concat(frames)
-
     specialNode2csv = pandas.read_csv('specialNode2.csv')
     specialNode2csv.reset_index(drop=True,inplace=True)
     for index,row in specialNode2csv.iterrows():
@@ -7204,6 +7202,103 @@ def fig11():
     specialNode2csv.to_csv('specialNode2.csv')
     with open('specialNode2.txt','w') as f:
         print(specialNode2,file=f)
+
+def fig11():
+    # mledge = pandas.read_csv('mledge.csv')
+    # mlnode = pandas.read_csv('mlnode.csv')
+    # mledge2 = pandas.read_csv('mledge2.csv')
+    # mlnode2 = pandas.read_csv('mlnode2.csv')
+    # with open('specialNode0x83053.txt','r') as f:
+    #     specialNode = literal_eval(f.read())
+    # specialNodecsv1 = mlnode[(mlnode['Id'].isin(specialNode))]#单节点的直接连接节点的全部信息
+    # specialNodecsv2 = mlnode2[(mlnode2['Id'].isin(specialNode))]
+    # frames = [specialNodecsv1,specialNodecsv2]
+    # specialNodecsv = pandas.concat(frames)
+    # specialNodecsv.reset_index(drop=True,inplace=True)
+    # with open('norMinerAddr.txt', 'r') as f:  # 小写地址
+    #     norMinerAddr = literal_eval(f.read())
+    # with open('norExchangeAddr.txt', 'r') as f:
+    #     norExchangeAddr = literal_eval(f.read())
+    # with open('norTokenAddr.txt', 'r') as f:
+    #     norTokenAddr = literal_eval(f.read())
+    # for index, row in specialNodecsv.iterrows():
+    #     if row['Id'].lower() in norMinerAddr:
+    #         row['type'] = 'Miner'
+    #         specialNodecsv.iloc[index] = row
+    #     if row['Id'].lower() in norExchangeAddr:
+    #         row['type'] = 'Exchange'
+    #         specialNodecsv.iloc[index] = row
+    #     if row['Id'].lower() in norTokenAddr:
+    #         row['type'] = 'Token'
+    #         specialNodecsv.iloc[index] = row
+    # specialNodecsv.to_csv('specialNode0x83053.csv')
+
+    specialNode = pandas.read_csv('specialNode0x83053.csv')
+    ExchangeNodeList = []
+    ExchangeEdgeList = []
+    TokenNodeList = []
+    TokenEdgeList = []
+    ScamNodeList = []
+    ScamEdgeList = []
+    MinerNodeList = []
+    MinerEdgeList = []
+    UnknownNodeList = []
+    UnknownEdgeList = []
+
+    colorMap = []
+    for index,row in specialNode.iterrows():
+        if row['type'] == 'Exchange':
+            ExchangeNodeList.append(row['Id'])
+            colorMap.append('yellow')
+        if row['type'] == 'Token':
+            TokenNodeList.append(row['Id'])
+            colorMap.append('green')
+        if row['type'] == 'scam':
+            ScamNodeList.append(row['Id'])
+            colorMap.append('orange')
+        if row['type'] == 'Miner':
+            MinerNodeList.append(row['Id'])
+            colorMap.append('pink')
+        if row['type'] == 'unknown':
+            UnknownNodeList.append(row['Id'])
+            colorMap.append('red')
+
+    specialNodeList = list(specialNode['Id'])
+    G1 = nx.DiGraph()
+    G1.add_nodes_from(specialNodeList)
+    pos = nx.spring_layout(G1)
+    specialEdge = pandas.read_csv('specialEdge0x83053.csv')
+    edges = []
+    for index,row in specialEdge.iterrows():
+        mytuple = (row['Source'],row['Target'],row['Weight'])
+        edges.append(mytuple)
+        if row['Source'] in ExchangeNodeList:
+            ExchangeEdgeList.append(tuple(row['Source'],row['Target']))
+        if row['Source'] in TokenNodeList:
+            TokenEdgeList.append(tuple(row['Source'],row['Target']))
+        if row['Source'] in ScamNodeList:
+            ScamEdgeList.append(tuple(row['Source'],row['Target']))
+        if row['Source'] in MinerNodeList:
+            MinerEdgeList.append(tuple(row['Source'],row['Target']))
+        if row['Source'] in UnknownNodeList:
+            UnknownEdgeList.append(tuple(row['Source'],row['Target']))
+    G1.add_weighted_edges_from(edges)
+    plt.subplot(111)
+    nx.draw_networkx_nodes(G1,pos,nodelist=ExchangeNodeList,node_color='yellow',node_size=4)
+    nx.draw_networkx_nodes(G1,pos,nodelist=TokenNodeList,node_color='green',node_size=4)
+    nx.draw_networkx_nodes(G1,pos,nodelist=ScamNodeList,node_color='orange',node_size=4)
+    nx.draw_networkx_nodes(G1,pos,nodelist=MinerNodeList,node_color='pink',node_size=4)
+    nx.draw_networkx_nodes(G1,pos,nodelist=UnknownNodeList,node_color='red',node_size=4)
+    nx.draw_networkx_edges(G1,pos,edgelist=ExchangeEdgeList,width=0.1,edge_color='yellow')
+    nx.draw_networkx_edges(G1,pos,edgelist=TokenEdgeList,width=0.1,edge_color='green')
+    nx.draw_networkx_edges(G1,pos,edgelist=ScamEdgeList,width=0.1,edge_color='orange')
+    nx.draw_networkx_edges(G1,pos,edgelist=MinerEdgeList,width=0.1,edge_color='pink')
+    nx.draw_networkx_edges(G1,pos,edgelist=UnknownEdgeList,width=0.1,edge_color='red')
+    plt.savefig('fig11.jpg')
+    plt.show()
+
+
+
 
 def taxoNormalAddr():
     normalAddr = pandas.read_csv('ethereum_tagged_address.csv',encoding='ISO-8859-1')
@@ -7280,29 +7375,37 @@ def fig12():
     #48个community点数大于5 占比12%，通过在fig12中的scam拓展unknown节点获得新的节点和边，然后再次模块化得到新的community
     #397个community
 def fig12x():
-    mlnode = pandas.read_csv('mlnode.csv')
-    mledge = pandas.read_csv('mledge.csv')
-    scamNodeDegree = pandas.read_csv('scamNodeDegree.csv')
-    scamNodeDegreeList = list(scamNodeDegree['Id'])
-    scamNodeDegreeEdge = pandas.read_csv('scamNodeDegreeEdge.csv')
-    G1 = nx.DiGraph()
-    G1.add_nodes_from(scamNodeDegreeList)
-    edges = []
-    for index,row in scamNodeDegreeEdge.iterrows():
-        mytuple = (row['Source'],row['Target'],row['Weight'])
-        edges.append(mytuple)
-    G1.add_weighted_edges_from(edges)
-    num = 0
-    weakly_connected_components12 = []
-    for c in nx.weakly_connected_components(G1):
-        weakly_connected_components12.append(c)
-        num += 1
-    with open('weakly_connected_components12.txt','w') as f:
-        print(weakly_connected_components12,file=f)
+    # mlnode = pandas.read_csv('mlnode.csv')
+    # mledge = pandas.read_csv('mledge.csv')
+    # scamNodeDegree = pandas.read_csv('scamNodeDegree.csv')
+    # scamNodeDegreeList = list(scamNodeDegree['Id'])
+    # scamNodeDegreeEdge = pandas.read_csv('scamNodeDegreeEdge.csv')
+    # G1 = nx.DiGraph()
+    # G1.add_nodes_from(scamNodeDegreeList)
+    # edges = []
+    # for index,row in scamNodeDegreeEdge.iterrows():
+    #     mytuple = (row['Source'],row['Target'],row['Weight'])
+    #     edges.append(mytuple)
+    # G1.add_weighted_edges_from(edges)
+    # num = 0
+    # weakly_connected_components12 = []
+    # for c in nx.weakly_connected_components(G1):
+    #     weakly_connected_components12.append(c)
+    #     num += 1
+    # with open('weakly_connected_components12.txt','w') as f:
+    #     print(weakly_connected_components12,file=f)
     # print(num)
     # plt.subplot(111)
     # nx.draw(G1,node_size=10)
     # plt.show()
+    with open('weakly_connected_components12.txt','r') as f:
+        weakly_connected_components12 = literal_eval(f.read())
+    num = 0
+    for group in weakly_connected_components12:
+        if len(group) < 5:
+            num += 1
+    print(num)
+    #349 / 393 = 89%
 def fig13evo():
     #如何通过拓展得到community，和某个欺诈地址进行交易的可疑地址作为同个community
     addrlist = ['0x83053c32b7819f420dcfed2d218335fe430fe3b5',
@@ -7529,9 +7632,13 @@ def fig14():
     mledgescam14 = mledge14[(mledge14['Source'].notnull()) & (mledge14['Source'].isin(mlnodescamlist)) | (mledge14['Target'].notnull()) & (mledge14['Target'].isin(mlnodescamlist))]
     mlnodeSusp = list(set(list(mledgescam14['Source']) + list(mledgescam14['Target'])))
     print(len(mlnodeSusp))
-    #166513
-    #197687
-    #132129
+
+    #166513个节点
+    #197687边
+    #132129个可疑节点
+
+
+
 def fig15():
     scamNodeDegree = pandas.read_csv('scamNodeDegree.csv')
     mledge = pandas.read_csv('mledge.csv')
@@ -7694,8 +7801,7 @@ def fig16a():
     df = pandas.concat(frames)
     with open('weakly_connected_components15.txt','r') as f:#根据拓展一次后的scam group分组进行计算
         weakly_connected_components15 = literal_eval(f.read())
-    eth = 2460.268204521556
-
+    # eth = 2460.268204521556
     addr2profit = {}
     mledge = pandas.read_csv('mledge.csv')
     addrlist = list(mledge['Source']) + list(mledge['Target'])#得出所有需要计算利润的地址，然后计算每个地址的利润，再分给每个组
@@ -7720,10 +7826,10 @@ def fig16a():
     return
     group2profit = {}
     # profit2num = {}
-    with open('fig16addr2profit.txt', 'r') as f:
+    with open('fig16addr2profit2.txt', 'r') as f:
         addr2profit = literal_eval(f.read())
-    for addr,profit in addr2profit.items():
-        addr2profit[addr] = round(addr2profit[addr] / eth)
+    # for addr,profit in addr2profit.items():
+    #     addr2profit[addr] = round(addr2profit[addr] / eth)
     # for addr,profit in addr2profit.items():
     #     profit2num[profit] = profit2num.get(profit,0) + 1
     # print(profit2num)
@@ -7752,55 +7858,66 @@ def fig16a():
     line = ax.plot(x, percentage)
     ax.set_ylabel('CDF of Addresses')
     ax.set_xlabel('Profit(Eth)')
-    x_major_locator = MultipleLocator(5000)
-    ax.xaxis.set_major_locator(x_major_locator)
-    ax.set_xlim(1)
+    # x_major_locator = MultipleLocator(5000)
+    # ax.xaxis.set_major_locator(x_major_locator)
+    # ax.set_xlim(1)
+    plt.xscale('log')
     plt.savefig('fig16a.jpg')
     plt.show()
 def fig16b():
-    df1 = pandas.read_csv('ntx.csv')
-    df2 = pandas.read_csv('itx.csv')
-    frames = [df1, df2]
-    df = pandas.concat(frames)
-    mledge = pandas.read_csv('mledge.csv')
-    mlnode = pandas.read_csv('mlnode.csv')
-    addrlist = list(mledge['Source']) + list(mledge['Target'])
+    # df1 = pandas.read_csv('ntx.csv')
+    # df2 = pandas.read_csv('itx.csv')
+    # frames = [df1, df2]
+    # df = pandas.concat(frames)
+    # mledge = pandas.read_csv('mledge.csv')
+    # mlnode = pandas.read_csv('mlnode.csv')
+    # addrlist = list(mledge['Source']) + list(mledge['Target'])
     with open('weakly_connected_components15.txt','r') as f:#计算每个group的from地址数，排除同一个group互相转账的交易
         weakly_connected_components15 = literal_eval(f.read())
-    scamgroupAddr = []
-    addr2vitctim = {}
-    for group in weakly_connected_components15:
-        scamgroupAddr += list(group)
-    for addr in scamgroupAddr:
-        addr2vitctim[addr] = 0
-    for index, row in df.iterrows():
-        if isinstance(row['to'],str) and row['to'].lower() in scamgroupAddr and isinstance(row['from'],str) and row['from'].lower() not in scamgroupAddr:
-            try:
-                addr2vitctim[row['to']] += 1
-            except Exception:
-                print(row['to'])
-                traceback.print_exc()
-    with open('fig16addr2victim.txt', 'w') as f:
-        print(addr2vitctim,file=f)
-    group2victim = {}
-    for index,weakset in enumerate(weakly_connected_components15):
-        group2victim[index] = 0
-        for addr in weakset:
-            group2victim[index] += addr2vitctim[addr]
-    with open('fig16group2victim.txt', 'w') as f:
-        print(group2victim,file=f)
-    
-    with open('fig16addr2victim.txt', 'r') as f:
-        addr2vitctim = literal_eval(f.read())
+    # scamgroupAddr = []
+    # addr2vitctim = {}
+    # for group in weakly_connected_components15:
+    #     scamgroupAddr += list(group)
+    # for addr in scamgroupAddr:
+    #     addr2vitctim[addr] = []
+    # for index, row in df.iterrows():
+    #     if isinstance(row['to'],str) and row['to'].lower() in scamgroupAddr and isinstance(row['from'],str) and row['from'].lower() not in scamgroupAddr:
+    #         try:
+    #             addr2vitctim[row['to']].append(row['from'])
+    #         except Exception:
+    #             print(row['to'])
+    #             traceback.print_exc()
+    # with open('fig16addr2victim.txt', 'w') as f:
+    #     print(addr2vitctim,file=f)
+    # return
+
+    # with open('fig16addr2victim.txt', 'r') as f:
+    #     addr2vitctim = literal_eval(f.read())
+    # group2victim = {}
+    # for index,weakset in enumerate(weakly_connected_components15):
+    #     group2victim[index] = []
+    #     for addr in weakset:
+    #         if addr in addr2vitctim.keys():
+    #             group2victim[index] += addr2vitctim[addr]
+    #     group2victim[index] = list(set(group2victim[index]))
+    # with open('fig16group2victim.txt', 'w') as f:
+    #     print(group2victim,file=f)
+    # return
+
     with open('fig16group2victim.txt', 'r') as f:
         group2victim = literal_eval(f.read())
+    for index,victim in group2victim.items():
+        group2victim[index] = len(victim)
+    print(group2victim)
     victim2num = {}
-    for group,victim in group2victim.items():
+    for index,victim in group2victim.items():
         victim2num[victim] = victim2num.get(victim,0) + 1
+    print(victim2num)
     x = victim2num.keys()
     y = victim2num.values()
     zipped = zip(x, y)
     sort_zipped = sorted(zipped, key=lambda x: (x[0]))
+    print(sort_zipped)
     result = zip(*sort_zipped)
     x, y = [list(x) for x in result]
     fig, ax = plt.subplots()
@@ -7809,8 +7926,8 @@ def fig16b():
     line = ax.plot(x, percentage)
     ax.set_ylabel('CDF of Addresses')
     ax.set_xlabel('# of victim')
-    x_major_locator = MultipleLocator(500)
-    ax.xaxis.set_major_locator(x_major_locator)
+    # x_major_locator = MultipleLocator(1000)
+    # ax.xaxis.set_major_locator(x_major_locator)
     ax.set_xlim(1)
     plt.savefig('fig16b.jpg')
     plt.show()
@@ -8026,7 +8143,7 @@ if __name__ == '__main__':
     #     norAddrA3Outtxnum()
     # except Exception:
     #     traceback.print_exc()
-    fig16b()
+    fig11()
     # scamAvgIncomeOutcome()
     # norAddrA3LivingTime()
 #gcn gdc tagcn
