@@ -7266,23 +7266,24 @@ def fig11():
     specialNodeList = list(specialNode['Id'])
     G1 = nx.DiGraph()
     G1.add_nodes_from(specialNodeList)
-    pos = nx.spring_layout(G1)
     specialEdge = pandas.read_csv('specialEdge0x83053.csv')
     edges = []
     for index,row in specialEdge.iterrows():
         mytuple = (row['Source'],row['Target'],row['Weight'])
         edges.append(mytuple)
         if row['Source'] in ExchangeNodeList:
-            ExchangeEdgeList.append(tuple(row['Source'],row['Target']))
+            ExchangeEdgeList.append((row['Source'],row['Target'],))
         if row['Source'] in TokenNodeList:
-            TokenEdgeList.append(tuple(row['Source'],row['Target']))
+            TokenEdgeList.append((row['Source'],row['Target'],))
         if row['Source'] in ScamNodeList:
-            ScamEdgeList.append(tuple(row['Source'],row['Target']))
+            ScamEdgeList.append((row['Source'],row['Target'],))
         if row['Source'] in MinerNodeList:
-            MinerEdgeList.append(tuple(row['Source'],row['Target']))
+            MinerEdgeList.append((row['Source'],row['Target'],))
         if row['Source'] in UnknownNodeList:
-            UnknownEdgeList.append(tuple(row['Source'],row['Target']))
+            UnknownEdgeList.append((row['Source'],row['Target'],))
     G1.add_weighted_edges_from(edges)
+    pos = nx.circular_layout(G1)
+    print(UnknownNodeList)
     plt.subplot(111)
     nx.draw_networkx_nodes(G1,pos,nodelist=ExchangeNodeList,node_color='yellow',node_size=4)
     nx.draw_networkx_nodes(G1,pos,nodelist=TokenNodeList,node_color='green',node_size=4)
@@ -7618,20 +7619,57 @@ def fig13():
     plt.savefig('fig13.jpg')
     plt.show()
 def fig14():
-    mlnode = pandas.read_csv('mlnode.csv')
-    mledge = pandas.read_csv('mledge.csv')
-    print(len(mlnode))
-    print(len(mledge))
-    mlnode14 = mlnode[(mlnode['type']!='normal')]
-    mlnodelist = list(mlnode14['Id'])#排除正常节点后的节点
-    mlnodescam = mlnode14[(mlnode14['type']=='scam')]
-    mlnodescamlist = list(mlnodescam['Id'])#edge导入gephi，如果边的节点不在mlnode14中则会显示null类
-    mledge14 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(mlnodelist)) & (mledge['Target'].notnull()) & (mledge['Target'].isin(mlnodelist))]
-    mlnode14.to_csv('mlnodefig14.csv')
-    mledge14.to_csv('mledgefig14.csv')
-    mledgescam14 = mledge14[(mledge14['Source'].notnull()) & (mledge14['Source'].isin(mlnodescamlist)) | (mledge14['Target'].notnull()) & (mledge14['Target'].isin(mlnodescamlist))]
-    mlnodeSusp = list(set(list(mledgescam14['Source']) + list(mledgescam14['Target'])))
-    print(len(mlnodeSusp))
+    # mlnode = pandas.read_csv('mlnode.csv')
+    # mledge = pandas.read_csv('mledge.csv')
+    # print(len(mlnode))
+    # print(len(mledge))
+    # mlnode14 = mlnode[(mlnode['type']!='normal')]
+    # mlnodelist = list(mlnode14['Id'])#排除正常节点后的节点
+    # mlnodescam = mlnode14[(mlnode14['type']=='scam')]
+    # mlnodescamlist = list(mlnodescam['Id'])#edge导入gephi，如果边的节点不在mlnode14中则会显示null类
+    # mledge14 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(mlnodelist)) & (mledge['Target'].notnull()) & (mledge['Target'].isin(mlnodelist))]
+    # mlnode14.to_csv('mlnodefig14.csv')
+    # mledge14.to_csv('mledgefig14.csv')
+    # mledgescam14 = mledge14[(mledge14['Source'].notnull()) & (mledge14['Source'].isin(mlnodescamlist)) | (mledge14['Target'].notnull()) & (mledge14['Target'].isin(mlnodescamlist))]
+    # mlnodeSusp = list(set(list(mledgescam14['Source']) + list(mledgescam14['Target'])))#根据相邻有罪原则得到的新的欺诈节点
+    # print(len(mlnodeSusp))
+
+    mlnode14 = pandas.read_csv('mlnodefig14.csv')
+    mledge14 = pandas.read_csv('mledgefig14.csv')
+    G1 = nx.DiGraph()
+    ScamNodeList = []
+    ScamEdgeList = []
+    NormalNodeList = []
+    NormalEdgeList = []
+    colorMap = []
+    specialNodeList = list(mlnode14['Id'])
+    for index,row in mlnode14.iterrows():
+        if row['type'] == 'scam':
+            ScamNodeList.append(row['Id'])
+            colorMap.append('yellow')
+        if row['type'] == 'normal':
+            NormalNodeList.append(row['Id'])
+            colorMap.append('green')
+    edges = []
+    for index,row in mledge14.iterrows():
+        mytuple = (row['Source'],row['Target'],row['Weight'])
+        edges.append(mytuple)
+        if row['Source'] in ScamNodeList:
+            ScamEdgeList.append((row['Source'],row['Target'],))
+        if row['Source'] in NormalNodeList:
+            NormalEdgeList.append((row['Source'],row['Target'],))
+
+    G1.add_nodes_from(specialNodeList)
+    G1.add_weighted_edges_from(edges)
+    pos = nx.spring_layout(G1)
+    plt.subplot(111)
+    nx.draw_networkx_nodes(G1,pos,nodelist=ScamNodeList,node_color='yellow',node_size=4)
+    nx.draw_networkx_nodes(G1,pos,nodelist=NormalNodeList,node_color='pink',node_size=4)
+    nx.draw_networkx_edges(G1,pos,edgelist=ScamEdgeList,width=0.1,edge_color='yellow')
+    nx.draw_networkx_edges(G1,pos,edgelist=NormalEdgeList,width=0.1,edge_color='pink')
+    plt.savefig('fig14.jpg')
+    plt.show()
+
 
     #166513个节点
     #197687边
@@ -8143,7 +8181,7 @@ if __name__ == '__main__':
     #     norAddrA3Outtxnum()
     # except Exception:
     #     traceback.print_exc()
-    fig11()
+    fig14()
     # scamAvgIncomeOutcome()
     # norAddrA3LivingTime()
 #gcn gdc tagcn
