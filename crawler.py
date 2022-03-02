@@ -7329,13 +7329,13 @@ def fig11():
     plt.subplot(111)
     nx.draw_networkx_nodes(G1,pos,nodelist=ExchangeNodeList,node_color='yellow',node_size=4,label='Exchange')
     nx.draw_networkx_nodes(G1,pos,nodelist=TokenNodeList,node_color='green',node_size=4,label='Token')
-    nx.draw_networkx_nodes(G1,pos,nodelist=ScamNodeList,node_color='black',node_size=4,label='Scam')
+    nx.draw_networkx_nodes(G1,pos,nodelist=ScamNodeList,node_color='red',node_size=4,label='Scam')
     nx.draw_networkx_nodes(G1,pos,nodelist=MinerNodeList,node_color='pink',node_size=4,label='Miner')
     nx.draw_networkx_nodes(G1,pos,nodelist=UnknownNodeList,node_color='#FAF0E6',node_size=4,label='Unknown')#kind=10
 
     nx.draw_networkx_edges(G1,pos,edgelist=ExchangeEdgeList,width=0.1,edge_color='yellow',arrowsize=1,arrowstyle='->',arrows=False)
     nx.draw_networkx_edges(G1,pos,edgelist=TokenEdgeList,width=0.1,edge_color='green',arrowsize=1,arrowstyle='->',arrows=False)
-    nx.draw_networkx_edges(G1,pos,edgelist=ScamEdgeList,width=0.1,edge_color='black',arrowsize=1,arrowstyle='->',arrows=False)
+    nx.draw_networkx_edges(G1,pos,edgelist=ScamEdgeList,width=0.1,edge_color='red',arrowsize=1,arrowstyle='->',arrows=False)
     nx.draw_networkx_edges(G1,pos,edgelist=MinerEdgeList,width=0.1,edge_color='pink',arrowsize=1,arrowstyle='->',arrows=False)
     nx.draw_networkx_edges(G1,pos,edgelist=UnknownEdgeList,width=0.1,edge_color='#FAF0E6',arrowsize=1,arrowstyle='->',arrows=False)
 
@@ -7346,6 +7346,9 @@ def fig11():
     kind = 11
     mytitle = postfix + str(kind)
     plt.title(mytitle)
+    plt.legend()
+    plt.show()
+    # return
     plt.savefig('fig11.jpg')
     plt.show()
 def fixexcel():
@@ -7669,21 +7672,29 @@ def fig13():
     plt.savefig('fig13.jpg')
     plt.show()
 def fig14():
-    # mlnode = pandas.read_csv('mlnode.csv')
-    # mledge = pandas.read_csv('mledge.csv')
-    # print(len(mlnode))
-    # print(len(mledge))
-    # mlnode14 = mlnode[(mlnode['type']!='normal')]
-    # mlnodelist = list(mlnode14['Id'])#排除正常节点后的节点，包括欺诈节点和未知节点，要么欺诈要么未知
-    # mlnodescam = mlnode14[(mlnode14['type']=='scam')]
-    # mlnodescamlist = list(mlnodescam['Id'])#edge导入gephi，如果边的节点不在mlnode14中则会显示null类
-    # mledge14 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(mlnodelist)) & (mledge['Target'].notnull()) & (mledge['Target'].isin(mlnodelist))]
-    # mlnode14.to_csv('mlnodefig14.csv')#起点终点都是非正常节点
-    # mledge14.to_csv('mledgefig14.csv')
-    # mledgescam14 = mledge14[(mledge14['Source'].notnull()) & (mledge14['Source'].isin(mlnodescamlist)) | (mledge14['Target'].notnull()) & (mledge14['Target'].isin(mlnodescamlist))]
-    # mlnodeSusp = list(set(list(mledgescam14['Source']) + list(mledgescam14['Target'])))#根据相邻有罪原则得到的新的欺诈节点
-    # print(len(mlnodeSusp))
-
+    mlnode = pandas.read_csv('mlnode.csv')
+    mledge = pandas.read_csv('mledge.csv')
+    mledge2 = pandas.read_csv('mledge2.csv')
+    mlnode2 = pandas.read_csv('mlnode2.csv')
+    print(len(mlnode))
+    print(len(mledge))
+    mlnode141 = mlnode[(mlnode['type']!='normal')]
+    mlnode142 = mlnode2[(mlnode2['type']!='normal')]
+    frames = [mlnode141,mlnode142]
+    mlnode14 = pandas.concat[frames]
+    mlnodelist = list(mlnode14['Id'])#欺诈节点交易列表排除正常节点后的节点，包括欺诈节点和未知节点，要么欺诈要么未知
+    mlnodescam = mlnode14[(mlnode14['type']=='scam')]
+    mlnodescamlist = list(mlnodescam['Id'])#edge导入gephi，如果边的节点不在mlnode14中则会显示null类
+    mledge141 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(mlnodelist)) & (mledge['Target'].notnull()) & (mledge['Target'].isin(mlnodelist))]
+    mledge142 = mledge2[(mledge2['Source'].notnull()) & (mledge2['Source'].isin(mlnodelist)) & (mledge2['Target'].notnull()) & (mledge2['Target'].isin(mlnodelist))]
+    frames = [mledge141,mledge142]
+    mledge14 = pandas.concat(frames)
+    mlnode14.to_csv('mlnodefig14.csv')#起点终点都是非正常节点
+    mledge14.to_csv('mledgefig14.csv')
+    mledgescam14 = mledge14[(mledge14['Source'].notnull()) & (mledge14['Source'].isin(mlnodescamlist)) | (mledge14['Target'].notnull()) & (mledge14['Target'].isin(mlnodescamlist))]
+    mlnodeSusp = list(set(list(mledgescam14['Source']) + list(mledgescam14['Target'])))#根据相邻有罪原则得到的新的欺诈节点
+    print(len(mlnodeSusp))
+    return
     mlnode14 = pandas.read_csv('mlnodefig14.csv')
     mledge14 = pandas.read_csv('mledgefig14.csv')
     G1 = nx.DiGraph()
@@ -7704,19 +7715,20 @@ def fig14():
     for index,row in mledge14.iterrows():
         mytuple = (row['Source'],row['Target'],row['Weight'])
         edges.append(mytuple)
-        if row['Source'] in ScamNodeList:
+        if row['Source'] in ScamNodeList or row['Target'] in ScamNodeList:
             ScamEdgeList.append((row['Source'],row['Target'],))
-        if row['Source'] in UnknownNodeList:
+        if row['Source'] in UnknownNodeList or row['Target'] in UnknownNodeList:
             UnknownEdgeList.append((row['Source'],row['Target'],))
 
     G1.add_nodes_from(specialNodeList)
     G1.add_weighted_edges_from(edges)
     pos = nx.spring_layout(G1)
     plt.subplot(111)
-    nx.draw_networkx_nodes(G1,pos,nodelist=ScamNodeList,node_color='yellow',node_size=1)
-    nx.draw_networkx_nodes(G1,pos,nodelist=UnknownNodeList,node_color='pink',node_size=1)
-    nx.draw_networkx_edges(G1,pos,edgelist=ScamEdgeList,width=0.1,edge_color='yellow',arrowsize=1,arrowstyle='-')
-    nx.draw_networkx_edges(G1,pos,edgelist=UnknownEdgeList,width=0.1,edge_color='pink',arrowsize=1,arrowstyle='-')
+    nx.draw_networkx_nodes(G1,pos,nodelist=ScamNodeList,node_color='yellow',node_size=4,label='Scam')
+    nx.draw_networkx_nodes(G1,pos,nodelist=UnknownNodeList,node_color='pink',node_size=4,label='Unknown')
+    nx.draw_networkx_edges(G1,pos,edgelist=ScamEdgeList,width=0.1,edge_color='yellow',arrowsize=1,arrowstyle='-',arrows=False)
+    nx.draw_networkx_edges(G1,pos,edgelist=UnknownEdgeList,width=0.1,edge_color='pink',arrowsize=1,arrowstyle='-',arrows=False)
+    plt.legend()
     plt.savefig('fig14.jpg')
     plt.show()
 
@@ -8228,7 +8240,7 @@ if __name__ == '__main__':
     #     norAddrA3Outtxnum()
     # except Exception:
     #     traceback.print_exc()
-    fig11()
+    fig14()
     # scamAvgIncomeOutcome()
     # norAddrA3LivingTime()
 #gcn gdc tagcn
