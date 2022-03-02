@@ -7251,6 +7251,8 @@ def fig11():
     # specialEdge = pandas.read_csv('specialEdge0x83053.csv')
 
     postfix = '0x917a4'
+    # postfix = '0x7c900'#像叉子，没有被认可
+    # postfix = '0x05002'
     csvnode2 = 'specialNode2' + postfix + '.csv'
     csvedge2 = 'specialEdge2' + postfix + '.csv'
     specialNode = pandas.read_csv(csvnode2)
@@ -7305,38 +7307,49 @@ def fig11():
     weightlist = specialEdge['Weight']
     testlist = ['0x5a8c64ce7d652a671fab9de1e11a08a72bae4389','0x20a41844d89c646ec2bee518e4b2376a883f9ab9','0x83053c32b7819f420dcfed2d218335fe430fe3b5']
     testlist2 = [addr for addr in specialNodeList if addr not in testlist ]
-    pos = nx.spring_layout(G1,threshold=1e-4,iterations=50,scale=3,seed=1,k=0.005)#G1,threshold=1e-4,iterations=100,scale=3,seed=1,k=0.001
+    # pos = nx.spring_layout(G1,threshold=1e-4,iterations=50,scale=3,seed=1,k=0.005)#kind=1
+    # pos = nx.spring_layout(G1)#kind=2
     # pos = nx.spectral_layout(G1,weight=weightlist)
     # pos = nx.shell_layout(G1,center=(3,4))#不行，椭圆
     # pos = nx.kamada_kawai_layout(G1)
     # pos = nx.multipartite_layout(G1)
-    # pos = nx.fruchterman_reingold_layout(G1)
+    # pos = nx.fruchterman_reingold_layout(G1)#kind=3
+    pos = nx.fruchterman_reingold_layout(G1,k=0.001)#kind=4
+    pos = nx.fruchterman_reingold_layout(G1,k=0.0001)#kind=5
+    # pos = nx.fruchterman_reingold_layout(G1,scale=2)#kind=6，改点大小后kind=10
+    # pos = nx.fruchterman_reingold_layout(G1,k=0.00001)#kind=7
+    # pos = nx.fruchterman_reingold_layout(G1,k=0.0005)#kind=8
+    pos = nx.fruchterman_reingold_layout(G1,k=0.005)#kind=9，改点大小后kind=11
     # pos = nx.spiral_layout(G1)#年轮形
-    # pos = nx.planar_layout(G1)
+    # pos = nx.planar_layout(G1)#
     # pos = nx.bipartite_layout(G1,nodes=testlist2)#不行，三角形
     # pos = nx.random_layout(G1)
     # pos = nx.rescale_layout(G1)
     # print(ExchangeEdgeList)
     plt.subplot(111)
-    nx.draw_networkx_nodes(G1,pos,nodelist=ExchangeNodeList,node_color='yellow',node_size=1)
-    nx.draw_networkx_nodes(G1,pos,nodelist=TokenNodeList,node_color='green',node_size=1)
-    nx.draw_networkx_nodes(G1,pos,nodelist=ScamNodeList,node_color='orange',node_size=1)
-    nx.draw_networkx_nodes(G1,pos,nodelist=MinerNodeList,node_color='pink',node_size=1)
-    nx.draw_networkx_nodes(G1,pos,nodelist=UnknownNodeList,node_color='red',node_size=1)
+    nx.draw_networkx_nodes(G1,pos,nodelist=ExchangeNodeList,node_color='yellow',node_size=4,label='Exchange')
+    nx.draw_networkx_nodes(G1,pos,nodelist=TokenNodeList,node_color='green',node_size=4,label='Token')
+    nx.draw_networkx_nodes(G1,pos,nodelist=ScamNodeList,node_color='black',node_size=4,label='Scam')
+    nx.draw_networkx_nodes(G1,pos,nodelist=MinerNodeList,node_color='pink',node_size=4,label='Miner')
+    nx.draw_networkx_nodes(G1,pos,nodelist=UnknownNodeList,node_color='#FAF0E6',node_size=4,label='Unknown')#kind=10
 
-    nx.draw_networkx_edges(G1,pos,edgelist=ExchangeEdgeList,width=0.1,edge_color='yellow',arrowsize=10,arrowstyle='-')
-    nx.draw_networkx_edges(G1,pos,edgelist=TokenEdgeList,width=0.1,edge_color='green',arrowsize=10,arrowstyle='-')
-    nx.draw_networkx_edges(G1,pos,edgelist=ScamEdgeList,width=0.1,edge_color='orange',arrowsize=10,arrowstyle='-')
-    nx.draw_networkx_edges(G1,pos,edgelist=MinerEdgeList,width=0.1,edge_color='pink',arrowsize=10,arrowstyle='-')
-    nx.draw_networkx_edges(G1,pos,edgelist=UnknownEdgeList,width=0.1,edge_color='red',arrowsize=10,arrowstyle='-')
+    nx.draw_networkx_edges(G1,pos,edgelist=ExchangeEdgeList,width=0.1,edge_color='yellow',arrowsize=1,arrowstyle='->',arrows=False)
+    nx.draw_networkx_edges(G1,pos,edgelist=TokenEdgeList,width=0.1,edge_color='green',arrowsize=1,arrowstyle='->',arrows=False)
+    nx.draw_networkx_edges(G1,pos,edgelist=ScamEdgeList,width=0.1,edge_color='black',arrowsize=1,arrowstyle='->',arrows=False)
+    nx.draw_networkx_edges(G1,pos,edgelist=MinerEdgeList,width=0.1,edge_color='pink',arrowsize=1,arrowstyle='->',arrows=False)
+    nx.draw_networkx_edges(G1,pos,edgelist=UnknownEdgeList,width=0.1,edge_color='#FAF0E6',arrowsize=1,arrowstyle='->',arrows=False)
 
     # G = nx.path_graph(4)
     # shells = [[0], [1, 2, 3]]
     # pos = nx.shell_layout(G, shells)
     # nx.draw_networkx(G)
-    plt.title('spring_layout 0x83053 threshold=8e-4,iterations=100,scale=3,seed=1,k=0.002')
+    kind = 11
+    mytitle = postfix + str(kind)
+    plt.title(mytitle)
     plt.savefig('fig11.jpg')
     plt.show()
+def fixexcel():
+    data = pandas.read_csv('C:\\Users\\ljh\\Desktop\\node.csv')
 
 def taxoNormalAddr():
     normalAddr = pandas.read_csv('ethereum_tagged_address.csv',encoding='ISO-8859-1')
