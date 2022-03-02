@@ -7099,7 +7099,7 @@ def getpred():
     print(num)
 #11249
 def wrongfig11():
-    addr = '0x83053c32b7819f420dcfed2d218335fe430fe3b5'
+    # addr = '0x83053c32b7819f420dcfed2d218335fe430fe3b5'
     # addr = '0x21f74c6bbc1e3ab9f0205e12de3a9daa14351aed'
     # addr = '0x4fed1fc4144c223ae3c1553be203cdfcbd38c581'
     # addr = '0x4bf722014e54aeab05fcf1519e6e4c0c3f742e43'
@@ -7108,49 +7108,55 @@ def wrongfig11():
     # addr = '0x917a417d938b9f9e6ae7f9e5253fb6de410343e3'#节点太少
     # # addr = '0x7c9001c50ea57c1b2ec1e3e63cf04c297534bfc1'
     # addr = '0xba83e9ce38b10522e3d6061a12779b7526839eda'#第二次迭代节点太多
-    # addr = '0x050022eba4d55d242d9568794961df5596f968f2'
+    addr = '0x050022eba4d55d242d9568794961df5596f968f2'
     #选0x4fed1
+    postfix = '0x05002'
+    txtfile = 'specialNode' + postfix + '.txt'
+    csvnode1 = 'specialNode' + postfix + '.csv'
+    csvnode2 = 'specialNode2' + postfix + '.csv'
+    csvedge1 = 'specialEdge' + postfix + '.csv'
+    csvedge2 = 'specialEdge2' + postfix + '.csv'
     mledge = pandas.read_csv('mledge.csv')
     mlnode = pandas.read_csv('mlnode.csv')
     mledge2 = pandas.read_csv('mledge2.csv')
     mlnode2 = pandas.read_csv('mlnode2.csv')
 
-    specialNode = []
-    for index,row in mledge.iterrows():
-        if isinstance(row['Source'],str) and row['Source'] == addr:
-            specialNode.append(row['Target'])
-        if isinstance(row['Target'],str) and row['Target'] == addr:
-            specialNode.append(row['Source'])
-    for index,row in mledge2.iterrows():
-        if isinstance(row['Source'],str) and row['Source'] == addr:
-            specialNode.append(row['Target'])
-        if isinstance(row['Target'],str) and row['Target'] == addr:
-            specialNode.append(row['Source'])
-    with open('specialNode.txt','w') as f:
-        print(specialNode,file=f)
+    # specialNode = []
+    # for index,row in mledge.iterrows():
+    #     if isinstance(row['Source'],str) and row['Source'] == addr:
+    #         specialNode.append(row['Target'])
+    #     if isinstance(row['Target'],str) and row['Target'] == addr:
+    #         specialNode.append(row['Source'])
+    # for index,row in mledge2.iterrows():
+    #     if isinstance(row['Source'],str) and row['Source'] == addr:
+    #         specialNode.append(row['Target'])
+    #     if isinstance(row['Target'],str) and row['Target'] == addr:
+    #         specialNode.append(row['Source'])
+    # with open('specialNode.txt','w') as f:#将和addr有关联的点放到specialNode中，同时取对应的边，没有向外拓展一次，所以中心一直都是addr
+    #     print(specialNode,file=f)
+    # # # return
+    # #
+    # specialEdge1 = mledge[(mledge['Source'].notnull()) & (mledge['Source'] == addr) | (mledge['Target'].notnull()) & (mledge['Target'] == addr)]
+    # specialEdge2 = mledge2[(mledge2['Source'].notnull()) & (mledge2['Source'] == addr) | (mledge2['Target'].notnull()) & (mledge2['Target'] == addr)]
+    # frames = [specialEdge1,specialEdge2]
+    # specialEdge = pandas.concat(frames)
+    # specialEdge.to_csv('specialEdge.csv')
     # # return
-    #
-    specialEdge1 = mledge[(mledge['Source'].notnull()) & (mledge['Source'] == addr) | (mledge['Target'].notnull()) & (mledge['Target'] == addr)]
-    specialEdge2 = mledge2[(mledge2['Source'].notnull()) & (mledge2['Source'] == addr) | (mledge2['Target'].notnull()) & (mledge2['Target'] == addr)]
-    frames = [specialEdge1,specialEdge2]
-    specialEdge = pandas.concat(frames)
-    specialEdge.to_csv('specialEdge.csv')
-    # # return
-    with open('specialNode.txt','r') as f:
+    with open(txtfile,'r') as f:
         specialNode = literal_eval(f.read())
     specialNodecsv1 = mlnode[(mlnode['Id'].isin(specialNode))]#单节点的直接连接节点的全部信息
     specialNodecsv2 = mlnode2[(mlnode2['Id'].isin(specialNode))]
     frames = [specialNodecsv1,specialNodecsv2]
     specialNodecsv = pandas.concat(frames)
     specialNodecsv.reset_index(drop=True,inplace=True)
+    #
 
-    specialEdge1 = pandas.read_csv('specialEdge0x05002.csv')
+    specialEdge1 = pandas.read_csv(csvedge1)
     specialEdge2csv1 = mledge[(isinstance(mledge['Source'],str))  & (mledge['Source'].isin(specialNode)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(specialNode)) ]
     specialEdge2csv2 = mledge2[(isinstance(mledge2['Source'],str))  & (mledge2['Source'].isin(specialNode)) | (mledge2['Target'].notnull()) & (mledge2['Target'].isin(specialNode)) ]
     frames = [specialEdge1,specialEdge2csv1,specialEdge2csv2]
     specialEdge2 = pandas.concat(frames)
-    specialEdge2.to_csv('specialEdge2.csv')
-    # return
+    specialEdge2.to_csv(csvedge2)
     with open('norMinerAddr.txt','r') as f:#小写地址
         norMinerAddr = literal_eval(f.read())
     with open('norExchangeAddr.txt','r') as f:
@@ -7167,11 +7173,12 @@ def wrongfig11():
         if row['Id'].lower() in norTokenAddr:
             row['type'] = 'Token'
             specialNodecsv.iloc[index] = row
-    specialNodecsv.to_csv('specialNode.csv')
-    # return
-    #将所有的直接连接的节点添加为待添加边的节点，然后对其边进行统计
-    #再迭代一次
-    with open('specialNode.txt', 'r') as f:
+    specialNodecsv.to_csv(csvnode1)
+    # # return
+    # #将所有的直接连接的节点添加为待添加边的节点，然后对其边进行统计
+    # #再迭代一次
+
+    with open(txtfile, 'r') as f:
         specialNode = literal_eval(f.read())
     with open('norMinerAddr.txt','r') as f:#小写地址
         norMinerAddr = literal_eval(f.read())
@@ -7179,15 +7186,19 @@ def wrongfig11():
         norExchangeAddr = literal_eval(f.read())
     with open('norTokenAddr.txt', 'r') as f:
         norTokenAddr = literal_eval(f.read())
-    specialEdge2 = pandas.read_csv('specialEdge2.csv')
+
+    specialEdge2 = pandas.read_csv(csvedge2)
     specialNode2list1 = list(specialEdge2['Source'])
     specialNode2list2 = list(specialEdge2['Target'])
-    specialNode2 = list(set(specialNode2list1 + specialNode2list2 + specialNode))
+    specialNode2 = list(set(specialNode2list1 + specialNode2list2 + specialNode))#specialNode2才是用来画fig11的集合
+
     specialNode2csv1 = mlnode[(mlnode['Id'].isin(specialNode2))]
     specialNode2csv2 = mlnode2[(mlnode2['Id'].isin(specialNode2))]
     frames = [specialNode2csv1,specialNode2csv2]
     specialNode2csv = pandas.concat(frames)
-    specialNode2csv = pandas.read_csv('specialNode2.csv')
+    specialNode2csv.to_csv(csvnode2)
+
+    specialNode2csv = pandas.read_csv(csvnode2)
     specialNode2csv.reset_index(drop=True,inplace=True)
     for index,row in specialNode2csv.iterrows():
         if row['Id'].lower() in norMinerAddr:
@@ -7199,8 +7210,8 @@ def wrongfig11():
         if row['Id'].lower() in norTokenAddr:
             row['type'] = 'Token'
             specialNode2csv.iloc[index] = row
-    specialNode2csv.to_csv('specialNode2.csv')
-    with open('specialNode2.txt','w') as f:
+    specialNode2csv.to_csv(csvnode2)
+    with open(txtfile,'w') as f:
         print(specialNode2,file=f)
 
 def fig11():
@@ -7233,7 +7244,18 @@ def fig11():
     #         specialNodecsv.iloc[index] = row
     # specialNodecsv.to_csv('specialNode0x83053.csv')
 
-    specialNode = pandas.read_csv('specialNode0x83053.csv')
+    # specialNode = pandas.read_csv('specialNode0x4fed1.csv')
+    # specialEdge = pandas.read_csv('specialEdge0x4fed1.csv')#ba83e点太少
+    #
+    # specialNode = pandas.read_csv('specialNode0x83053.csv')
+    # specialEdge = pandas.read_csv('specialEdge0x83053.csv')
+
+    postfix = '0x917a4'
+    csvnode2 = 'specialNode2' + postfix + '.csv'
+    csvedge2 = 'specialEdge2' + postfix + '.csv'
+    specialNode = pandas.read_csv(csvnode2)
+    specialEdge = pandas.read_csv(csvedge2)
+
     ExchangeNodeList = []
     ExchangeEdgeList = []
     TokenNodeList = []
@@ -7244,7 +7266,6 @@ def fig11():
     MinerEdgeList = []
     UnknownNodeList = []
     UnknownEdgeList = []
-
     colorMap = []
     for index,row in specialNode.iterrows():
         if row['type'] == 'Exchange':
@@ -7266,40 +7287,56 @@ def fig11():
     specialNodeList = list(specialNode['Id'])
     G1 = nx.DiGraph()
     G1.add_nodes_from(specialNodeList)
-    specialEdge = pandas.read_csv('specialEdge0x83053.csv')
     edges = []
     for index,row in specialEdge.iterrows():
         mytuple = (row['Source'],row['Target'],row['Weight'])
         edges.append(mytuple)
-        if row['Source'] in ExchangeNodeList:
+        if row['Source'] in ExchangeNodeList or row['Target'] in ExchangeNodeList:
             ExchangeEdgeList.append((row['Source'],row['Target'],))
-        if row['Source'] in TokenNodeList:
+        if row['Source'] in TokenNodeList or row['Target'] in TokenNodeList:
             TokenEdgeList.append((row['Source'],row['Target'],))
-        if row['Source'] in ScamNodeList:
+        if row['Source'] in ScamNodeList or row['Target'] in ScamNodeList:
             ScamEdgeList.append((row['Source'],row['Target'],))
-        if row['Source'] in MinerNodeList:
+        if row['Source'] in MinerNodeList or row['Target'] in MinerNodeList:
             MinerEdgeList.append((row['Source'],row['Target'],))
-        if row['Source'] in UnknownNodeList:
+        if row['Source'] in UnknownNodeList or row['Target'] in UnknownNodeList:
             UnknownEdgeList.append((row['Source'],row['Target'],))
     G1.add_weighted_edges_from(edges)
-    pos = nx.circular_layout(G1)
-    print(UnknownNodeList)
+    weightlist = specialEdge['Weight']
+    testlist = ['0x5a8c64ce7d652a671fab9de1e11a08a72bae4389','0x20a41844d89c646ec2bee518e4b2376a883f9ab9','0x83053c32b7819f420dcfed2d218335fe430fe3b5']
+    testlist2 = [addr for addr in specialNodeList if addr not in testlist ]
+    pos = nx.spring_layout(G1,threshold=1e-4,iterations=50,scale=3,seed=1,k=0.005)#G1,threshold=1e-4,iterations=100,scale=3,seed=1,k=0.001
+    # pos = nx.spectral_layout(G1,weight=weightlist)
+    # pos = nx.shell_layout(G1,center=(3,4))#不行，椭圆
+    # pos = nx.kamada_kawai_layout(G1)
+    # pos = nx.multipartite_layout(G1)
+    # pos = nx.fruchterman_reingold_layout(G1)
+    # pos = nx.spiral_layout(G1)#年轮形
+    # pos = nx.planar_layout(G1)
+    # pos = nx.bipartite_layout(G1,nodes=testlist2)#不行，三角形
+    # pos = nx.random_layout(G1)
+    # pos = nx.rescale_layout(G1)
+    # print(ExchangeEdgeList)
     plt.subplot(111)
-    nx.draw_networkx_nodes(G1,pos,nodelist=ExchangeNodeList,node_color='yellow',node_size=4)
-    nx.draw_networkx_nodes(G1,pos,nodelist=TokenNodeList,node_color='green',node_size=4)
-    nx.draw_networkx_nodes(G1,pos,nodelist=ScamNodeList,node_color='orange',node_size=4)
-    nx.draw_networkx_nodes(G1,pos,nodelist=MinerNodeList,node_color='pink',node_size=4)
-    nx.draw_networkx_nodes(G1,pos,nodelist=UnknownNodeList,node_color='red',node_size=4)
-    nx.draw_networkx_edges(G1,pos,edgelist=ExchangeEdgeList,width=0.1,edge_color='yellow')
-    nx.draw_networkx_edges(G1,pos,edgelist=TokenEdgeList,width=0.1,edge_color='green')
-    nx.draw_networkx_edges(G1,pos,edgelist=ScamEdgeList,width=0.1,edge_color='orange')
-    nx.draw_networkx_edges(G1,pos,edgelist=MinerEdgeList,width=0.1,edge_color='pink')
-    nx.draw_networkx_edges(G1,pos,edgelist=UnknownEdgeList,width=0.1,edge_color='red')
+    nx.draw_networkx_nodes(G1,pos,nodelist=ExchangeNodeList,node_color='yellow',node_size=1)
+    nx.draw_networkx_nodes(G1,pos,nodelist=TokenNodeList,node_color='green',node_size=1)
+    nx.draw_networkx_nodes(G1,pos,nodelist=ScamNodeList,node_color='orange',node_size=1)
+    nx.draw_networkx_nodes(G1,pos,nodelist=MinerNodeList,node_color='pink',node_size=1)
+    nx.draw_networkx_nodes(G1,pos,nodelist=UnknownNodeList,node_color='red',node_size=1)
+
+    nx.draw_networkx_edges(G1,pos,edgelist=ExchangeEdgeList,width=0.1,edge_color='yellow',arrowsize=10,arrowstyle='-')
+    nx.draw_networkx_edges(G1,pos,edgelist=TokenEdgeList,width=0.1,edge_color='green',arrowsize=10,arrowstyle='-')
+    nx.draw_networkx_edges(G1,pos,edgelist=ScamEdgeList,width=0.1,edge_color='orange',arrowsize=10,arrowstyle='-')
+    nx.draw_networkx_edges(G1,pos,edgelist=MinerEdgeList,width=0.1,edge_color='pink',arrowsize=10,arrowstyle='-')
+    nx.draw_networkx_edges(G1,pos,edgelist=UnknownEdgeList,width=0.1,edge_color='red',arrowsize=10,arrowstyle='-')
+
+    # G = nx.path_graph(4)
+    # shells = [[0], [1, 2, 3]]
+    # pos = nx.shell_layout(G, shells)
+    # nx.draw_networkx(G)
+    plt.title('spring_layout 0x83053 threshold=8e-4,iterations=100,scale=3,seed=1,k=0.002')
     plt.savefig('fig11.jpg')
     plt.show()
-
-
-
 
 def taxoNormalAddr():
     normalAddr = pandas.read_csv('ethereum_tagged_address.csv',encoding='ISO-8859-1')
@@ -7624,11 +7661,11 @@ def fig14():
     # print(len(mlnode))
     # print(len(mledge))
     # mlnode14 = mlnode[(mlnode['type']!='normal')]
-    # mlnodelist = list(mlnode14['Id'])#排除正常节点后的节点
+    # mlnodelist = list(mlnode14['Id'])#排除正常节点后的节点，包括欺诈节点和未知节点，要么欺诈要么未知
     # mlnodescam = mlnode14[(mlnode14['type']=='scam')]
     # mlnodescamlist = list(mlnodescam['Id'])#edge导入gephi，如果边的节点不在mlnode14中则会显示null类
     # mledge14 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(mlnodelist)) & (mledge['Target'].notnull()) & (mledge['Target'].isin(mlnodelist))]
-    # mlnode14.to_csv('mlnodefig14.csv')
+    # mlnode14.to_csv('mlnodefig14.csv')#起点终点都是非正常节点
     # mledge14.to_csv('mledgefig14.csv')
     # mledgescam14 = mledge14[(mledge14['Source'].notnull()) & (mledge14['Source'].isin(mlnodescamlist)) | (mledge14['Target'].notnull()) & (mledge14['Target'].isin(mlnodescamlist))]
     # mlnodeSusp = list(set(list(mledgescam14['Source']) + list(mledgescam14['Target'])))#根据相邻有罪原则得到的新的欺诈节点
@@ -7639,43 +7676,40 @@ def fig14():
     G1 = nx.DiGraph()
     ScamNodeList = []
     ScamEdgeList = []
-    NormalNodeList = []
-    NormalEdgeList = []
+    UnknownNodeList = []
+    UnknownEdgeList = []
     colorMap = []
     specialNodeList = list(mlnode14['Id'])
     for index,row in mlnode14.iterrows():
         if row['type'] == 'scam':
             ScamNodeList.append(row['Id'])
             colorMap.append('yellow')
-        if row['type'] == 'normal':
-            NormalNodeList.append(row['Id'])
-            colorMap.append('green')
+        if row['type'] == 'unknown':
+            UnknownNodeList.append(row['Id'])
+            colorMap.append('pink')
     edges = []
     for index,row in mledge14.iterrows():
         mytuple = (row['Source'],row['Target'],row['Weight'])
         edges.append(mytuple)
         if row['Source'] in ScamNodeList:
             ScamEdgeList.append((row['Source'],row['Target'],))
-        if row['Source'] in NormalNodeList:
-            NormalEdgeList.append((row['Source'],row['Target'],))
+        if row['Source'] in UnknownNodeList:
+            UnknownEdgeList.append((row['Source'],row['Target'],))
 
     G1.add_nodes_from(specialNodeList)
     G1.add_weighted_edges_from(edges)
     pos = nx.spring_layout(G1)
     plt.subplot(111)
-    nx.draw_networkx_nodes(G1,pos,nodelist=ScamNodeList,node_color='yellow',node_size=4)
-    nx.draw_networkx_nodes(G1,pos,nodelist=NormalNodeList,node_color='pink',node_size=4)
-    nx.draw_networkx_edges(G1,pos,edgelist=ScamEdgeList,width=0.1,edge_color='yellow')
-    nx.draw_networkx_edges(G1,pos,edgelist=NormalEdgeList,width=0.1,edge_color='pink')
+    nx.draw_networkx_nodes(G1,pos,nodelist=ScamNodeList,node_color='yellow',node_size=1)
+    nx.draw_networkx_nodes(G1,pos,nodelist=UnknownNodeList,node_color='pink',node_size=1)
+    nx.draw_networkx_edges(G1,pos,edgelist=ScamEdgeList,width=0.1,edge_color='yellow',arrowsize=1,arrowstyle='-')
+    nx.draw_networkx_edges(G1,pos,edgelist=UnknownEdgeList,width=0.1,edge_color='pink',arrowsize=1,arrowstyle='-')
     plt.savefig('fig14.jpg')
     plt.show()
-
 
     #166513个节点
     #197687边
     #132129个可疑节点
-
-
 
 def fig15():
     scamNodeDegree = pandas.read_csv('scamNodeDegree.csv')
@@ -8181,7 +8215,7 @@ if __name__ == '__main__':
     #     norAddrA3Outtxnum()
     # except Exception:
     #     traceback.print_exc()
-    fig14()
+    fig11()
     # scamAvgIncomeOutcome()
     # norAddrA3LivingTime()
 #gcn gdc tagcn
