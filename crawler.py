@@ -733,6 +733,151 @@ def fig2():
     ax.xaxis.set_major_locator(x_major_locator)
     plt.savefig('fig2.jpg')
     plt.show()
+def tab1n():#不同种地址的各种交易数量，没有每个地址三种交易的数量
+    with open('typelist.txt', 'r') as f:
+        typelist = literal_eval(f.read())
+    with open('addr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    Malwarelist = typelist['Malware']
+    ICOlist = typelist['ICO']
+    TrustTradinglist = typelist['Trust-Trading']
+    Phishlist = typelist['Phish']
+    Hacklist = typelist['Hack']
+    notMalwarelist = [addr for addr in addrlist if addr not in Malwarelist]
+    notICOlist = [addr for addr in addrlist if addr not in ICOlist]
+    notTrustTradinglist = [addr for addr in addrlist if addr not in TrustTradinglist]
+    notPhishlist = [addr for addr in addrlist if addr not in Phishlist]
+    notHacklist = [addr for addr in addrlist if addr not in Hacklist]
+    df = pandas.read_csv('ntx.csv')
+    #统计每个地址的一般交易数量，根据每个地址的入度计算
+    typenum = {}
+    for type,addrlist in typelist.items():
+        typenum[type] = 0
+    for index, row in df.iterrows():
+        if row['to'] in Malwarelist and row['from'] not in notMalwarelist:
+            typenum['Malware'] += 1
+        if row['from'] in Malwarelist and row['to'] not in notMalwarelist:
+            typenum['Malware'] += 1
+
+        if row['to'] in ICOlist and row['from'] not in notICOlist:
+            typenum['ICO'] += 1
+        if row['from'] in ICOlist and row['to'] not in notICOlist:
+            typenum['ICO'] += 1
+
+        if row['to'] in TrustTradinglist and row['from'] not in notTrustTradinglist:
+            typenum['Trust-Trading'] += 1
+        if row['from'] in TrustTradinglist and row['to'] not in notTrustTradinglist:
+            typenum['Trust-Trading'] += 1
+
+        if row['to'] in Phishlist and row['from'] not in notPhishlist:
+            typenum['Phish'] += 1
+        if row['from'] in Phishlist and row['to'] not in notPhishlist:
+            typenum['Phish'] += 1
+
+        if row['to'] in Hacklist and row['from'] not in notHacklist:
+            typenum['Hack'] += 1
+        if row['from'] in Hacklist and row['to'] not in notHacklist:
+            typenum['Hack'] += 1
+
+    with open('tab1n.txt', 'w') as f:
+        print(typenum,file=f)
+
+def tab1i():
+    with open('typelist.txt', 'r') as f:
+        typelist = literal_eval(f.read())
+    with open('addr.txt', 'r', encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    Malwarelist = typelist['Malware']
+    ICOlist = typelist['ICO']
+    TrustTradinglist = typelist['Trust-Trading']
+    Phishlist = typelist['Phish']
+    Hacklist = typelist['Hack']
+    notMalwarelist = [addr for addr in addrlist if addr not in Malwarelist]
+    notICOlist = [addr for addr in addrlist if addr not in ICOlist]
+    notTrustTradinglist = [addr for addr in addrlist if addr not in TrustTradinglist]
+    notPhishlist = [addr for addr in addrlist if addr not in Phishlist]
+    notHacklist = [addr for addr in addrlist if addr not in Hacklist]
+    df = pandas.read_csv('itx.csv')
+    typenum = {}
+    for type, addrlist in typelist.items():
+        typenum[type] = 0
+    for index, row in df.iterrows():
+        if row['to'] in Malwarelist and row['from'] not in notMalwarelist:
+            typenum['Malware'] += 1
+        if row['from'] in Malwarelist and row['to'] not in notMalwarelist:
+            typenum['Malware'] += 1
+
+        if row['to'] in ICOlist and row['from'] not in notICOlist:
+            typenum['ICO'] += 1
+        if row['from'] in ICOlist and row['to'] not in notICOlist:
+            typenum['ICO'] += 1
+
+        if row['to'] in TrustTradinglist and row['from'] not in notTrustTradinglist:
+            typenum['Trust-Trading'] += 1
+        if row['from'] in TrustTradinglist and row['to'] not in notTrustTradinglist:
+            typenum['Trust-Trading'] += 1
+
+        if row['to'] in Phishlist and row['from'] not in notPhishlist:
+            typenum['Phish'] += 1
+        if row['from'] in Phishlist and row['to'] not in notPhishlist:
+            typenum['Phish'] += 1
+
+        if row['to'] in Hacklist and row['from'] not in notHacklist:
+            typenum['Hack'] += 1
+        if row['from'] in Hacklist and row['to'] not in notHacklist:
+            typenum['Hack'] += 1
+
+    with open('tab1i.txt', 'w') as f:
+        print(typenum, file=f)
+
+def tab1e():
+    with open('typelist.txt', 'r') as f:
+        typelist = literal_eval(f.read())
+    with open('addr.txt', 'r', encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    Malwarelist = typelist['Malware']
+    ICOlist = typelist['ICO']
+    TrustTradinglist = typelist['Trust-Trading']
+    Phishlist = typelist['Phish']
+    Hacklist = typelist['Hack']
+    notMalwarelist = [addr for addr in addrlist if addr not in Malwarelist]
+    notICOlist = [addr for addr in addrlist if addr not in ICOlist]
+    notTrustTradinglist = [addr for addr in addrlist if addr not in TrustTradinglist]
+    notPhishlist = [addr for addr in addrlist if addr not in Phishlist]
+    notHacklist = [addr for addr in addrlist if addr not in Hacklist]
+    df = pandas.read_csv('etx.csv')
+    typenum = {}
+    for type, addrlist in typelist.items():
+        typenum[type] = 0
+    for index, row in df.iterrows():
+        if row['to'] in Malwarelist and row['from'] not in notMalwarelist:
+            typenum['Malware'] += 1
+        if row['from'] in Malwarelist and row['to'] not in notMalwarelist:
+            typenum['Malware'] += 1
+
+        if row['to'] in ICOlist and row['from'] not in notICOlist:
+            typenum['ICO'] += 1
+        if row['from'] in ICOlist and row['to'] not in notICOlist:
+            typenum['ICO'] += 1
+
+        if row['to'] in TrustTradinglist and row['from'] not in notTrustTradinglist:
+            typenum['Trust-Trading'] += 1
+        if row['from'] in TrustTradinglist and row['to'] not in notTrustTradinglist:
+            typenum['Trust-Trading'] += 1
+
+        if row['to'] in Phishlist and row['from'] not in notPhishlist:
+            typenum['Phish'] += 1
+        if row['from'] in Phishlist and row['to'] not in notPhishlist:
+            typenum['Phish'] += 1
+
+        if row['to'] in Hacklist and row['from'] not in notHacklist:
+            typenum['Hack'] += 1
+        if row['from'] in Hacklist and row['to'] not in notHacklist:
+            typenum['Hack'] += 1
+
+    with open('tab1e.txt', 'w') as f:
+        print(typenum, file=f)
+
 
 def nfig3():
     #统计每个月的欺诈交易数量，取出每行的时间戳进行转换，判断时间戳的月份，月份的欺诈交易数量+1
@@ -8548,7 +8693,9 @@ if __name__ == '__main__':
     # scamProfitRank()
     # fig14()
     # fig12x()
-    myimg2pdf()
+    tab1n()
+    # tab1i()
+    # tab1e()
     # fig15a()
     # scamAvgIncomeOutcome()
     # norAddrA3LivingTime()
