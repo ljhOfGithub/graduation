@@ -877,7 +877,13 @@ def tab1e():
 
     with open('tab1e.txt', 'w') as f:
         print(typenum, file=f)
-
+def tab1noraddr():
+    df = pandas.read_csv('normalAddrntx2.csv')
+    print(len(df))
+    df = pandas.read_csv('normalAddritx2.csv')
+    print(len(df))
+    df = pandas.read_csv('normalAddretx2.csv')
+    print(len(df))
 
 def nfig3():
     #统计每个月的欺诈交易数量，取出每行的时间戳进行转换，判断时间戳的月份，月份的欺诈交易数量+1
@@ -8693,9 +8699,10 @@ if __name__ == '__main__':
     # scamProfitRank()
     # fig14()
     # fig12x()
-    tab1n()
+    # tab1n()
     # tab1i()
     # tab1e()
+    tab1noraddr()
     # fig15a()
     # scamAvgIncomeOutcome()
     # norAddrA3LivingTime()
