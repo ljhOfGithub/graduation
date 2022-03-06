@@ -24,7 +24,9 @@ from scipy import stats
 from statsmodels.distributions.empirical_distribution import ECDF
 import random
 import networkx as nx
-
+import matplotlib.image as mpimg
+import img2pdf
+import os
 def bloxyhack():
     pagenum = 177
     url2type = {}  # 将所有的链接和种类注解存入字典中再进行筛选
@@ -942,6 +944,161 @@ def fig4():
     plt.yscale('log')
     plt.savefig('fig4.jpg')
     plt.show()
+def fig43intxnum():#fig4.4.1
+    # with open('normal2athirdIntxnum.txt', 'r') as f:
+    #     normal2Intxnum = literal_eval(f.read())
+    # with open('scamInTx.txt','r') as f:
+    #     scamInTxnum = literal_eval(f.read())
+    # intx2nornum = {}
+    # intx2scamnum = {}
+    # for addr,txnum in normal2Intxnum.items():
+    #     intx2nornum[txnum] = intx2nornum.get(txnum,0) + 1
+    # for addr,txnum in scamInTxnum.items():
+    #     intx2scamnum[txnum] = intx2scamnum.get(txnum,0) + 1
+    # with open('intx2nornum.txt', 'w') as f:
+    #     print(intx2nornum,file=f)
+    # with open('intx2scamnum.txt', 'w') as f:
+    #     print(intx2scamnum,file=f)
+
+    with open('intx2nornum.txt', 'r') as f:
+        intx2nornum = literal_eval(f.read())
+    with open('intx2scamnum.txt', 'r') as f:
+        intx2scamnum = literal_eval(f.read())
+    x = ['num<10', '10≤num<20', '20≤num<50', '50≤num<200', '200≤num<500', '500≤num<1000',
+         '1000≤num<2000', 'num>2000']
+    y1 = [0, 0, 0, 0, 0, 0, 0, 0]
+    y2 = [0, 0, 0, 0, 0, 0, 0, 0]
+    index = np.arange(len(x))
+    width = 0.4
+    for intxnum,noraddrnum in intx2nornum.items():
+        if intxnum < 10:
+            y1[0] += intx2nornum[intxnum]
+        if 10 <= intxnum and intxnum < 20:
+            y1[1] += intx2nornum[intxnum]
+        if 20 <= intxnum and intxnum < 50:
+            y1[2] += intx2nornum[intxnum]
+        if 50 <= intxnum and intxnum < 200:
+            y1[3] += intx2nornum[intxnum]
+        if 200 <= intxnum and intxnum < 500:
+            y1[4] += intx2nornum[intxnum]
+        if 500 <= intxnum and intxnum < 1000:
+            y1[5] += intx2nornum[intxnum]
+        if 1000 <= intxnum and intxnum < 2000:
+            y1[6] += intx2nornum[intxnum]
+        if 2000 <= intxnum:
+            y1[7] += intx2nornum[intxnum]
+    for intxnum,noraddrnum in intx2scamnum.items():
+        if intxnum < 10:
+            y2[0] += intx2scamnum[intxnum]
+        if 10 <= intxnum and intxnum < 20:
+            y2[1] += intx2scamnum[intxnum]
+        if 20 <= intxnum and intxnum < 50:
+            y2[2] += intx2scamnum[intxnum]
+        if 50 <= intxnum and intxnum < 200:
+            y2[3] += intx2scamnum[intxnum]
+        if 200 <= intxnum and intxnum < 500:
+            y2[4] += intx2scamnum[intxnum]
+        if 500 <= intxnum and intxnum < 1000:
+            y2[5] += intx2scamnum[intxnum]
+        if 1000 <= intxnum and intxnum < 2000:
+            y2[6] += intx2scamnum[intxnum]
+        if 2000 <= intxnum:
+            y2[7] += intx2scamnum[intxnum]
+    plt.bar(x, y1, width, label="normal address in tx num")
+    plt.bar(index + width, y2, width, label="scam address in tx num")
+
+    for a, b in zip(x, y1):
+        plt.text(a, b + 0.05, '%.0f' % b, ha='center', va='bottom', fontsize=7)
+    x = index + width
+    for a, b in zip(x, y2):
+        plt.text(a, b + 0.05, '%.0f' % b, ha='center', va='bottom', fontsize=7)
+    x = index + width * 2
+
+    plt.xticks(rotation=30)
+    ax = plt.gca()
+    plt.yscale('log')
+    ax.set_xlabel('in txs of normal/scam address')
+    plt.legend(loc='best')
+    plt.savefig('fig43intx.jpg', bbox_inches='tight')
+    plt.show()
+def fig43outtxnum():
+    # with open('normal2athirdOuttxnum.txt', 'r') as f:
+    #     normal2Outtxnum = literal_eval(f.read())
+    # with open('scamOutTx.txt','r') as f:
+    #     scamOutTxnum = literal_eval(f.read())
+    # outtx2nornum = {}
+    # outtx2scamnum = {}
+    # for addr,txnum in normal2Outtxnum.items():
+    #     outtx2nornum[txnum] = outtx2nornum.get(txnum,0) + 1
+    # for addr,txnum in scamOutTxnum.items():
+    #     outtx2scamnum[txnum] = outtx2scamnum.get(txnum,0) + 1
+    # with open('outtx2nornum.txt', 'w') as f:
+    #     print(outtx2nornum,file=f)
+    # with open('outtx2scamnum.txt', 'w') as f:
+    #     print(outtx2scamnum,file=f)
+
+    with open('outtx2nornum.txt', 'r') as f:
+        outtx2nornum = literal_eval(f.read())
+    with open('outtx2scamnum.txt', 'r') as f:
+        outtx2scamnum = literal_eval(f.read())
+    x = ['num<10', '10≤num<20', '20≤num<50', '50≤num<200', '200≤num<500', '500≤num<1000',
+         '1000≤num<2000', 'num>2000']
+    y1 = [0, 0, 0, 0, 0, 0, 0, 0]
+    y2 = [0, 0, 0, 0, 0, 0, 0, 0]
+    index = np.arange(len(x))
+    width = 0.4
+    for intxnum,noraddrnum in outtx2nornum.items():
+        if intxnum < 10:
+            y1[0] += outtx2nornum[intxnum]
+        if 10 <= intxnum and intxnum < 20:
+            y1[1] += outtx2nornum[intxnum]
+        if 20 <= intxnum and intxnum < 50:
+            y1[2] += outtx2nornum[intxnum]
+        if 50 <= intxnum and intxnum < 200:
+            y1[3] += outtx2nornum[intxnum]
+        if 200 <= intxnum and intxnum < 500:
+            y1[4] += outtx2nornum[intxnum]
+        if 500 <= intxnum and intxnum < 1000:
+            y1[5] += outtx2nornum[intxnum]
+        if 1000 <= intxnum and intxnum < 2000:
+            y1[6] += outtx2nornum[intxnum]
+        if 2000 <= intxnum:
+            y1[7] += outtx2nornum[intxnum]
+    for intxnum,noraddrnum in outtx2scamnum.items():
+        if intxnum < 10:
+            y2[0] += outtx2scamnum[intxnum]
+        if 10 <= intxnum and intxnum < 20:
+            y2[1] += outtx2scamnum[intxnum]
+        if 20 <= intxnum and intxnum < 50:
+            y2[2] += outtx2scamnum[intxnum]
+        if 50 <= intxnum and intxnum < 200:
+            y2[3] += outtx2scamnum[intxnum]
+        if 200 <= intxnum and intxnum < 500:
+            y2[4] += outtx2scamnum[intxnum]
+        if 500 <= intxnum and intxnum < 1000:
+            y2[5] += outtx2scamnum[intxnum]
+        if 1000 <= intxnum and intxnum < 2000:
+            y2[6] += outtx2scamnum[intxnum]
+        if 2000 <= intxnum:
+            y2[7] += outtx2scamnum[intxnum]
+    plt.bar(x, y1, width, label="normal address out tx num")
+    plt.bar(index + width, y2, width, label="scam address out tx num")
+
+    for a, b in zip(x, y1):
+        plt.text(a, b + 0.05, '%.0f' % b, ha='center', va='bottom', fontsize=7)
+    x = index + width
+    for a, b in zip(x, y2):
+        plt.text(a, b + 0.05, '%.0f' % b, ha='center', va='bottom', fontsize=7)
+    x = index + width * 2
+
+    plt.xticks(rotation=30)
+    ax = plt.gca()
+    plt.yscale('log')
+    ax.set_xlabel('out txs of normal/scam address')
+    plt.legend(loc='best')
+    plt.savefig('fig43outtx.jpg', bbox_inches='tight')
+    plt.show()
+
 
 def nfig6():#欺诈地址一般交易的living小时 scamNtxliving
     with open('addr.txt','r',encoding='utf-8') as f:
@@ -1132,7 +1289,22 @@ def fig6():
     plt.yscale('log')
     plt.legend()
     plt.show()
-def fig7n():
+def scamProfitRank():
+    with open('scamNtxProfit.txt','r') as f:
+        scamNtxProfit = literal_eval(f.read())
+    with open('scamItxProfit.txt','r') as f:
+        scamItxProfit = literal_eval(f.read())
+    Profit2addr = {}
+    # print(scamNtxProfit)
+    zipped1 = zip(scamNtxProfit.keys(),scamNtxProfit.values())
+    scamNtxProfit = sorted(zipped1,key = lambda x:(x[1]))
+    zipped2 = zip(scamItxProfit.keys(),scamItxProfit.values())
+    scamItxProfit = sorted(zipped2,key = lambda x:(x[1]))
+    print(scamNtxProfit[-6:-1])
+    print(scamItxProfit[-6:-1])
+    #[('0x84f4bcc4e841afdfde7899662f8bbd7d6a71c112', 154030905.16457036), ('0x4d53dad4b3552710ac276fa7f7ba944554c1cace', 247690286.23993436), ('0x9409d7ea71294fc5561e5fdd47d4a9f5993948c5', 252262331.62993762), ('0x9a207194cbed9f229694fdf5a28caab59157920d', 275511997.60007125), ('0x3408edca2d47ddaa783a3563d991b8ddebcd973b', 275512040.07925004)]
+
+def fig7n():#pdf图
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
     df = pandas.read_csv('ntx.csv')
@@ -1201,7 +1373,6 @@ def fig7n():
         if prof / 1000 > 1500:
             prof2num['>1500k'] += 1
             print(addr)
-
     prof2num2 = {}
     for addr,prof in addr2prof.items():
         addr2prof[addr] = addr2prof[addr]
@@ -1221,7 +1392,7 @@ def fig7n():
     x_major_locator = MultipleLocator(5)
     ax = plt.gca()
     ax.xaxis.set_major_locator(x_major_locator)
-    plt.savefig('fig7n.jpg')
+    plt.savefig('fig7n.jpg',bbox_inches = 'tight')
     ax.set_xlabel('The Profit of Address($)')
     ax.set_ylabel('# of normal txs')
     plt.show()
@@ -1295,7 +1466,7 @@ def fig7nCdf():
     plt.savefig('fig7nCdf2.jpg')
     plt.show()
 
-def fig7i():
+def fig7i():#pdf图
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
     df = pandas.read_csv('itx.csv')
@@ -1395,7 +1566,7 @@ def fig7i():
     ax.xaxis.set_major_locator(x_major_locator)
     ax.set_ylabel('the PDF graph of internal txs')
     ax.set_xlabel('the profit of address($)')
-    plt.savefig('fig7i.jpg')
+    plt.savefig('fig7i.jpg',bbox_inches = 'tight')
     plt.show()
     with open('fig7i.txt','w') as f:
         print(prof2num,file=f)
@@ -3310,7 +3481,7 @@ def getnormaladdrEtxs10():
                 print(url)
                 print(result)
                 print(addr)
-def scamIncome():
+def scamIncome():#欺诈地址的平均收入
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
     df1 = pandas.read_csv('ntx.csv')
@@ -3349,7 +3520,7 @@ def scamOutcome():
                 traceback.print_exc()
     with open('scamOutcome.txt','w',encoding='utf-8') as f:
         print(addr2outcome,file=f)
-def scamTx():
+def scamTx():#欺诈地址in/out txnum
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
     df1 = pandas.read_csv('ntx.csv')
@@ -3380,15 +3551,15 @@ def scamTx():
     with open('scamOutTx.txt','w') as f:
         print(addr2Outtxnum,file=f)
 
-def scamIOTxAna():
-    with open('scamInTx.txt','r') as f:
-        scamInTx = literal_eval(f.read())
-    with open('scamOutTx.txt','r') as f:
-        scamOutTx = literal_eval(f.read())
-    scamInTx = sorted(scamInTx.items(),key = lambda x:(x[1]))
-    scamOutTx = sorted(scamOutTx.items(),key = lambda x:(x[1]))
-    print(scamInTx)
-    print(scamOutTx)
+# def scamIOTxAna():
+#     with open('scamInTx.txt','r') as f:
+#         scamInTx = literal_eval(f.read())
+#     with open('scamOutTx.txt','r') as f:
+#         scamOutTx = literal_eval(f.read())
+#     scamInTx = sorted(scamInTx.items(),key = lambda x:(x[1]))
+#     scamOutTx = sorted(scamOutTx.items(),key = lambda x:(x[1]))
+#     print(scamInTx)
+#     print(scamOutTx)
     # with open('scamInNtx.txt','r') as f:
     #     scamInNtx = literal_eval(f.read())
     # with open('scamOutNtx.txt','r') as f:
@@ -3403,7 +3574,7 @@ def scamIOTxAna():
     # scamOutItx = sorted(scamOutItx.items(),key = lambda x:(x[1]))
     # print(scamInItx)
     # print(scamOutItx)
-def scamTx2():
+def scamIOTxnum2():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
     df1 = pandas.read_csv('ntx.csv')
@@ -3429,11 +3600,11 @@ def scamTx2():
             except Exception:
                 print(row['from'])
                 traceback.print_exc()
-    with open('scamInTx2.txt','w') as f:
+    with open('scamInTx2.txt','w') as f:#没用到这个文件，没用
         print(addr2Intxnum,file=f)
     with open('scamOutTx2.txt','w') as f:
         print(addr2Outtxnum,file=f)
-def normalInNtx1():
+def normalInNtx1():#正常地址normal tx的in tx num
     with open('normalAddr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
     df = pandas.read_csv('normalAddrntx2.csv',usecols=[0,4,5]).iloc[0:3000000]
@@ -3524,7 +3695,7 @@ def normalInNtx5():
     with open('normalIncomeNtx5.txt','w',encoding='utf-8') as f:
         print(addr2income,file=f)
 #internal tx 不需要分段
-def normalInItx():
+def normalInItx():#正常地址internal tx的in tx num
     with open('normalAddr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
     df = pandas.read_csv('normalAddritx2.csv',usecols=[0,4,5])
@@ -3666,7 +3837,7 @@ def normalAvgOutEtx():
     with open('normalAvgOutEtx1.txt', 'w', encoding='utf-8') as f:
         print(addr2outcome, file=f)
 
-def mixScamAvg():
+def mixScamAvg():#算成欺诈地址总收入了
     with open('scamIncome.txt','r',encoding='utf-8') as f:
         addr2income = literal_eval(f.read())
     zipped1 = zip(addr2income.keys(), addr2income.values())
@@ -3761,7 +3932,7 @@ def normalAddrAvgIn():
     #打开存储有地址到交易数量的映射文件
     with open('txtypenum.txt','w') as f:
         addr2txnum = literal_eval(f.read())
-#欺诈地址的前1/3生命周期的时间戳
+#欺诈地址的前1/3生命周期的时间戳，2/3生命周期，整个生命周期
 #有的欺诈地址可能livingtime为0，因为不是所有欺诈地址都发出交易
 def scamAthirdLivingtime():
     with open('addr.txt', 'r', encoding='utf-8') as f:
@@ -3800,6 +3971,7 @@ def scamAthirdLivingtime():
         print(addr2living2,file=f)
     with open('scam2athirdLivingtime3.txt','w') as f:
         print(addr2living3,file=f)
+
 def scamAthirdIntime():
     with open('addr.txt', 'r', encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
@@ -3831,7 +4003,7 @@ def scamAthirdIntime():
     with open('scam2athirdIntime2.txt','w') as f:
         print(addr2living2,file=f)
 
-def scamAthirdOuttime():
+def scamAthirdOuttime():#欺诈地址1/3的生命周期，2/3生命周期，全部生命周期，错误，无论是in还是out的交易都放到一起计算生命周期
     with open('addr.txt', 'r', encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
     df1 = pandas.read_csv('ntx.csv')
@@ -3846,7 +4018,7 @@ def scamAthirdOuttime():
     for addr in addrlist:
         addr2day[addr] = []
     for index, row in df.iterrows():
-        if isinstance(row['to'],str) and row['to'] in addrlist:#统计每个地址的时间戳
+        if isinstance(row['from'],str) and row['from'] in addrlist:#统计每个地址的时间戳
             addr2day[row['from']].append(row['timeStamp'])
     for addr, time in addr2day.items():  # 将时间列表排序，计算时间差
         time.sort()
@@ -3857,7 +4029,6 @@ def scamAthirdOuttime():
             livingtime = end - start
             addr2living1[addr] = livingtime / 3 + start
             addr2living2[addr] = livingtime / 3 * 2 + start
-
     with open('scam2athirdOuttime1.txt', 'w') as f:
         print(addr2living1, file=f)
     with open('scam2athirdOuttime2.txt', 'w') as f:
@@ -3978,6 +4149,7 @@ def norAddrA3LivingTime():
         print(addr2living2,file=f)
     with open('normal2athirdtime3.txt','w') as f:
         print(addr2living3,file=f)
+#后面的生命周期计算错误
 def norAddrA3InNtxTime():
     with open('normalAddr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
@@ -4336,7 +4508,7 @@ def norAddrA3Intxnum():
                 addr2athirdtxnum2[row['to']] += 1
             if row['timeStamp'] > end2:
                 addr2athirdtxnum3[row['to']] += 1
-    with open('normal2athirdIntxnum1.txt','w') as f:
+    with open('normal2athirdIntxnum1.txt','w') as f:#正常地址前1/3生命周期的in tx num
         print(addr2athirdtxnum1,file=f)
     with open('normal2athirdIntxnum2.txt','w') as f:
         print(addr2athirdtxnum2,file=f)
@@ -5024,7 +5196,7 @@ def norAddr3IOTxnum():
         if addr in normal2athirdOutNtxnum3.keys():
             normal2athirdOuttxnum3[addr] += normal2athirdOutNtxnum3[addr]
             normal2athirdOuttxnum[addr] += normal2athirdOutNtxnum3[addr]
-    with open('normal2athirdIntxnum.txt', 'w') as f:
+    with open('normal2athirdIntxnum.txt', 'w') as f:#正常地址总的in tx num
         print(normal2athirdIntxnum, file=f)
     with open('normal2athirdIntxnum1.txt', 'w') as f:
         print(normal2athirdIntxnum1, file=f)
@@ -6396,7 +6568,7 @@ def mixfig6():
     plt.yscale('log')
     ax.set_xlabel('living time of scam address')
     plt.legend(loc='best')
-    plt.savefig('fig6.jpg')
+    plt.savefig('fig6.jpg',bbox_inches = 'tight')
     plt.show()
 
 def mixfig7():
@@ -6611,6 +6783,118 @@ def mixfig9Etx():
     plt.legend()
     plt.savefig('Etxfig9.jpg')
     plt.show()
+
+def mixfig9Livingtime():
+    # with open('scam2athirdLivingtime3.txt','r') as f:#都是时间戳的差
+    #     scamaddr2living3 = literal_eval(f.read())
+    # with open('normal2athirdtime3.txt','r') as f:
+    #     noraddr2living3 = literal_eval(f.read())
+    # for addr,timestamp in scamaddr2living3.items():
+    #     scamaddr2living3[addr] = timestamp / 86400
+    # for addr,timestamp in noraddr2living3.items():
+    #     noraddr2living3[addr] = timestamp / 86400#计算天数，进行cdf计算，先统计天数和地址数的关系
+    # scamday2addrnum = {}
+    # norday2addrnum = {}
+    # for addr,daynum in scamaddr2living3.items():
+    #     scamday2addrnum[daynum] = scamday2addrnum.get(daynum,0) + 1
+    # for addr,daynum in noraddr2living3.items():
+    #     norday2addrnum[daynum] = norday2addrnum.get(daynum,0) + 1
+    # with open('scamday2addrnum.txt','w') as f:
+    #     print(scamday2addrnum,file=f)
+    # with open('norday2addrnum.txt','w') as f:
+    #     print(norday2addrnum,file=f)
+
+    with open('scamday2addrnum.txt','r') as f:
+        scamday2addrnum = literal_eval(f.read())
+    with open('norday2addrnum.txt','r') as f:
+        norday2addrnum = literal_eval(f.read())
+
+    zipped = zip(scamday2addrnum.keys(), scamday2addrnum.values())
+    sort_zipped1 = sorted(zipped, key=lambda x: (x[0]))
+    result1 = zip(*sort_zipped1)
+    x1, y1 = [list(x) for x in result1]
+    cum = numpy.cumsum(y1)
+    percentage1 = cum / list(cum)[-1]
+
+    zipped = zip(norday2addrnum.keys(), norday2addrnum.values())
+    sort_zipped2 = sorted(zipped, key=lambda x: (x[0]))
+    result2 = zip(*sort_zipped2)
+    x2, y2 = [list(x) for x in result2]
+    cum = numpy.cumsum(y2)
+    percentage2 = cum / list(cum)[-1]
+    fig, ax = plt.subplots()
+    line1 = ax.plot(x1,percentage1,label='Living Time of Scam Addresses')
+    line2 = ax.plot(x2,percentage2,label='Living Time of Normal Addresses')
+
+    x_major_locator = MultipleLocator(250)
+    ax.xaxis.set_major_locator(x_major_locator)
+    ax.set_ylabel('CDF of Addresses')
+    ax.set_xlabel('the living time of address(day)')
+    ax.set_xlim(1)
+    plt.legend()
+    plt.savefig('fig9living.jpg')
+    plt.show()
+
+def mixfig9livcon():#livingtime的数量分布，应该可以画柱状图然后取log
+    with open('scamday2addrnum.txt','r') as f:
+        scamday2addrnum = literal_eval(f.read())
+    with open('norday2addrnum.txt','r') as f:
+        norday2addrnum = literal_eval(f.read())
+    # print(len(norday2addrnum))
+    x = ['time<1d','1d≤time<2d','2d≤time<3d','3d≤time<4d','4d≤time<7d','7d≤time<30d','30d≤time<60d','>60d']
+    y1 = [0,0,0,0,0,0,0,0]
+    y2 = [0,0,0,0,0,0,0,0]
+    index = np.arange(len(x))
+    for day,addrnum in scamday2addrnum.items():
+        if day < 1:
+            y1[0] += scamday2addrnum[day]
+        if day >= 1 and day < 2:
+            y1[1] += scamday2addrnum[day]
+        if day >= 2 and day < 3:
+            y1[2] += scamday2addrnum[day]
+        if day >= 3 and day < 4:
+            y1[3] += scamday2addrnum[day]
+        if day >= 4 and day < 7:
+            y1[4] += scamday2addrnum[day]
+        if day >= 7 and day < 30:
+            y1[5] += scamday2addrnum[day]
+        if day >= 30 and day < 60:
+            y1[6] += scamday2addrnum[day]
+        if day > 60:
+            y1[7] += scamday2addrnum[day]
+    for day,addrnum in norday2addrnum.items():
+        if day < 1:
+            y2[0] += norday2addrnum[day]
+        if day >= 1 and day < 2:
+            y2[1] += norday2addrnum[day]
+        if day >= 2 and day < 3:
+            y2[2] += norday2addrnum[day]
+        if day >= 3 and day < 4:
+            y2[3] += norday2addrnum[day]
+        if day >= 4 and day < 7:
+            y2[4] += norday2addrnum[day]
+        if day >= 7 and day < 30:
+            y2[5] += norday2addrnum[day]
+        if day >= 30 and day < 60:
+            y2[6] += norday2addrnum[day]
+        if day > 60:
+            y2[7] += norday2addrnum[day]
+    width = 0.4
+    plt.bar(x, y1, width, label="scam address")
+    plt.bar(index + width, y2, width, label="normal address")
+    for a, b in zip(x, y1):
+        plt.text(a, b + 0.05, '%.0f' % b, ha='center', va='bottom', fontsize=7)
+    x = index + width
+    for a, b in zip(x, y2):
+        plt.text(a, b + 0.05, '%.0f' % b, ha='center', va='bottom', fontsize=7)
+    plt.xticks(rotation=30)
+    ax = plt.gca()
+    plt.yscale('log')
+    ax.set_xlabel('living time(d) of scam/normal address')
+    plt.legend(loc='best')
+    plt.savefig('fig9livconc.jpg', bbox_inches='tight')
+    plt.show()
+
 def graph1():
     df = pandas.read_csv('exp_group_victim.csv')
     temp_list = df['componentnumber']
@@ -6627,6 +6911,7 @@ def graph1():
         number_list.append(v)
     df = pandas.DataFrame({'id': no_list, '#': number_list})
     df.to_csv(r'number of each group victim')
+
 def scamNtxMFG():
     with open('addr.txt', 'r') as f:
         addrlist = literal_eval(f.read())
@@ -6722,7 +7007,7 @@ def character13():
         scamAvgIncome = literal_eval(f.read())
     with open('scamAvgOutcome.txt', 'r', encoding='utf-8') as f:
         scamAvgOutcome = literal_eval(f.read())
-    with open('scamInTx.txt','r') as f:
+    with open('scamInTx.txt','r') as f:#总的in tx num，但是命名不一致
         scamInTx = literal_eval(f.read())
     with open('scamOutTx.txt','r') as f:
         scamOutTx = literal_eval(f.read())
@@ -6859,7 +7144,7 @@ def logReg():
     X13 = data["last1/3out"].to_list()
     X = numpy.array([X1,X2,X3,X4,X5,X6,X7,X8,X9,X10,X11,X12,X13]).T
     Y = data["type"].to_list()
-    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.3, random_state=1)
+    X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.25, random_state=1)
 
     print('LogisticRegression')
     logreg = LogisticRegression()
@@ -6891,7 +7176,7 @@ def logReg():
     print(classification_report(Y_test, Ypred))
     # print(mean_squared_error(Y_test, Ypred))
 
-    print('GaussianNB')
+    print('GaussianNB')#就是贝叶斯
     logreg = GaussianNB()
     logreg.fit(X_train, Y_train)
     Ypred = logreg.predict(X_test)
@@ -6912,12 +7197,15 @@ def logReg():
     print(classification_report(Y_test, Ypred))
     # print(mean_squared_error(Y_test, Ypred))
 
-    print('MLPClassifier')
+    print('MLPClassifier')#就是dnn
     logreg = MLPClassifier(verbose=True, max_iter=300)
     logreg.fit(X_train, Y_train)
     Ypred = logreg.predict(X_test)
     print(classification_report(Y_test, Ypred))
     # print(mean_squared_error(Y_test, Ypred))
+
+
+
 #使用相邻的节点也是欺诈节点规则判断
 def getscamNodeEdgeCSV():
     # with open('addr.txt','r',encoding='utf-8') as f:
@@ -7087,6 +7375,7 @@ def mixNodeEdgeCsv():
     # edgecsv = pandas.read_csv('edge.csv')
     # print(len(nodecsv))
     # print(len(edgecsv))
+#三次机器学习的训练样本数：
 #node:332191 332063 332124
 #edge:197687 197687 197689
 
@@ -7250,14 +7539,28 @@ def fig11():
     # specialNode = pandas.read_csv('specialNode0x83053.csv')
     # specialEdge = pandas.read_csv('specialEdge0x83053.csv')
 
-    postfix = '0x917a4'
-    # postfix = '0x7c900'#像叉子，没有被认可
+    # postfix = '0x917a4'
+    postfix = '0x7c900'#像叉子，没有被认可
     # postfix = '0x05002'
     csvnode2 = 'specialNode2' + postfix + '.csv'
     csvedge2 = 'specialEdge2' + postfix + '.csv'
     specialNode = pandas.read_csv(csvnode2)
     specialEdge = pandas.read_csv(csvedge2)
 
+    # fig11node = pandas.read_csv(r'C:\Users\ljh\Desktop\fig11node.csv')
+    # fig11edge = pandas.read_csv(r'C:\Users\ljh\Desktop\fig11edge.csv')
+
+    with open(r'C:\Users\ljh\Desktop\fig11node.csv','w',newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(['Id','type','indegree','outdegree','degree'])
+        for index,row in specialNode.iterrows():
+            writer.writerow([row['Id'],row['type'],row['indegree'],row['outdegree'],row['degree']])
+    with open(r'C:\Users\ljh\Desktop\fig11edge.csv','w',newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(['Source','Target','Weight'])
+        for index,row in specialEdge.iterrows():
+            writer.writerow([row['Source'],row['Target'],row['Weight']])
+    return
     ExchangeNodeList = []
     ExchangeEdgeList = []
     TokenNodeList = []
@@ -7347,12 +7650,14 @@ def fig11():
     mytitle = postfix + str(kind)
     plt.title(mytitle)
     plt.legend()
-    plt.show()
-    # return
     plt.savefig('fig11.jpg')
     plt.show()
-def fixexcel():
-    data = pandas.read_csv('C:\\Users\\ljh\\Desktop\\node.csv')
+def addlegend():
+    # data = pandas.read_csv('C:\\Users\\ljh\\Desktop\\node.csv')
+    I = mpimg.imread('C:\\Users\\ljh\\Desktop\\fig12.jpg')
+    plt.legend(('test','tt'),fontsize='100')
+    plt.imshow(I)
+    plt.show()
 
 def taxoNormalAddr():
     normalAddr = pandas.read_csv('ethereum_tagged_address.csv',encoding='ISO-8859-1')
@@ -7379,12 +7684,12 @@ def fig12():
     #     scamaddrlist = literal_eval(f.read())
     mlnode = mlnode[(mlnode['degree'] > 0) & (mlnode['type']=='scam')]
     degreeScamnode = list(mlnode['Id'])#只筛选度>0且互相连接的欺诈节点
-    mledge = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(degreeScamnode)) & (mledge['Target'].notnull()) & (mledge['Target'].isin(degreeScamnode))]
-    mledge.to_csv('scamNodeDegreeEdge.csv')
-    mledgeSource = list(mledge['Source'])
-    mledgeTarget = list(mledge['Target'])
-    mledgelist = mledgeSource + mledgeTarget
-    mlnode = mlnode[(mlnode['Id'].isin(mledgelist))]
+    mledge = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(degreeScamnode)) & (mledge['Target'].notnull()) & (mledge['Target'].isin(degreeScamnode))]#欺诈节点相互连接的边
+    mledge.to_csv('scamNodeDegreeEdge.csv')#欺诈边：两边都是欺诈节点的边
+    mledgeSource = list(mledge['Source'])#欺诈边的起点
+    mledgeTarget = list(mledge['Target'])#
+    mledgelist = mledgeSource + mledgeTarget#欺诈边节点的列表
+    mlnode = mlnode[(mlnode['Id'].isin(mledgelist))]#满足一定条件的欺诈节点
     mlnode.to_csv('scamNodeDegree.csv')#和没有迭代没区别
     #34.8+4.62+0.96+0.81+0.2=41.39 816个 0x83053c32b7819f420dcfed2d218335fe430fe3b5
     #2.03 40个
@@ -7429,6 +7734,29 @@ def fig12():
     #48个community点数大于5 占比12%，通过在fig12中的scam拓展unknown节点获得新的节点和边，然后再次模块化得到新的community
     #397个community
 def fig12x():
+    mlnode = pandas.read_csv('mlnode.csv')
+    mledge = pandas.read_csv('mledge.csv')
+    scamNodeDegree = pandas.read_csv('scamNodeDegree.csv')
+    scamNodeDegreeList = list(scamNodeDegree['Id'])
+    scamNodeDegreeEdge = pandas.read_csv('scamNodeDegreeEdge.csv')
+    G1 = nx.DiGraph()
+    G1.add_nodes_from(scamNodeDegreeList)
+    edges = []
+    for index,row in scamNodeDegreeEdge.iterrows():
+        mytuple = (row['Source'],row['Target'],row['Weight'])
+        edges.append(mytuple)
+    G1.add_weighted_edges_from(edges)
+    pos = nx.fruchterman_reingold_layout(G1)
+    nx.draw_networkx_edges(G1,pos,arrows=False)
+    # nx.draw_networkx(G1,pos)
+    nx.draw(G1, with_labels=True, font_weight='bold')
+    for c in nx.weakly_connected_components(G1):
+        nx.draw(c)
+    plt.show()
+
+
+
+def tab8():
     # mlnode = pandas.read_csv('mlnode.csv')
     # mledge = pandas.read_csv('mledge.csv')
     # scamNodeDegree = pandas.read_csv('scamNodeDegree.csv')
@@ -7452,14 +7780,38 @@ def fig12x():
     # plt.subplot(111)
     # nx.draw(G1,node_size=10)
     # plt.show()
+    with open('scamInTx.txt','r') as f:
+        scamInTx = literal_eval(f.read())
+    with open('scamOutTx.txt','r') as f:
+        scamOutTx = literal_eval(f.read())
     with open('weakly_connected_components12.txt','r') as f:
-        weakly_connected_components12 = literal_eval(f.read())
-    num = 0
-    for group in weakly_connected_components12:
-        if len(group) < 5:
-            num += 1
-    print(num)
+        weakly_connected_components12 = literal_eval(f.read())#集合的列表
+    index2len = {}
+    for index,group in enumerate(weakly_connected_components12):
+        index2len[index] = len(group)
+    zipped = zip(index2len.keys(),index2len.values())
+    index2len = sorted(zipped,key=lambda x:(x[1]))
+    print(index2len)
+
+    indexlist = [50,5,41,8,4]
+    for index in indexlist:
+        maxoutdegree = 0
+        maxaddr = ''
+        for addr in weakly_connected_components12[index]:
+            if addr in scamOutTx.keys() and scamOutTx[addr] > maxoutdegree:
+                maxoutdegree = scamOutTx[addr]
+                maxaddr = addr
+        print(maxaddr)
+        print(scamInTx[maxaddr])
+        print(scamOutTx[maxaddr])
+    #0x83053c32b7819f420dcfed2d218335fe430fe3b5,0x604da69d33a0df6414c30270434ba4e0e95d8cf6,0x3681828da105fc3c44e212f6c3dc51a0a5a6f5c6,
+    # 0xb3bf9e759c859a63176feaa2244517b2c9309edb，0xa09871aeadf4994ca12f5c0b6056bbd1d343c029
+    # if len(group) < 5:
+        #     num += 1
+    # print(num)
     #349 / 393 = 89%
+    #根据每个弱连通图的地址查找最大outdegree的节点，最多节点的五个组里挑最多出度的节点
+
 def fig13evo():
     #如何通过拓展得到community，和某个欺诈地址进行交易的可疑地址作为同个community
     addrlist = ['0x83053c32b7819f420dcfed2d218335fe430fe3b5',
@@ -7521,140 +7873,10 @@ def fig13evo():
     mledge = pandas.read_csv('mledge.csv')
     mlnode = pandas.read_csv('mlnode.csv')
     mledge0 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[0]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[0])]
-    mledge1 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[1]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[1])]
-    mledge2 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[2]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[2])]
-    mledge3 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[3]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[3])]
-    mledge4 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[4]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[4])]
-    mledge5 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[5]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[5])]
-    mledge6 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[6]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[6])]
-    mledge7 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[7]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[7])]
-    mledge8 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[8]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[8])]
-    mledge9 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[9]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[9])]
-    mledge10 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[10]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[10])]
-    mledge11 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[11]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[11])]
-    mledge12 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[12]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[12])]
-    mledge13 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[13]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[13])]
-    mledge14 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[14]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[14])]
-    mledge15 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[15]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[15])]
-    mledge16 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[16]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[16])]
-    mledge17 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[17]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[17])]
-    mledge18 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[18]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[18])]
-    mledge19 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[19]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[19])]
-    mledge20 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[20]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[20])]
-    mledge21 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[21]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[21])]
-    mledge22 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[22]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[22])]
-    mledge23 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[23]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[23])]
-    mledge24 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[24]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[24])]
-    mledge25 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[25]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[25])]
-    mledge26 = mledge[(mledge['Source'].notnull()) & (mledge['Source']==addrlist[26]) | (mledge['Target'].notnull()) & (mledge['Target']==addrlist[26])]
     list0 = list(mledge0['Source']) + list(mledge0['Target'])
-    list1 = list(mledge1['Source']) + list(mledge1['Target'])
-    list2 = list(mledge2['Source']) + list(mledge2['Target'])
-    list3 = list(mledge3['Source']) + list(mledge3['Target'])
-    list4 = list(mledge4['Source']) + list(mledge4['Target'])
-    list5 = list(mledge5['Source']) + list(mledge5['Target'])
-    list6 = list(mledge6['Source']) + list(mledge6['Target'])
-    list7 = list(mledge7['Source']) + list(mledge7['Target'])
-    list8 = list(mledge8['Source']) + list(mledge8['Target'])
-    list9 = list(mledge9['Source']) + list(mledge9['Target'])
-    list10 = list(mledge10['Source']) + list(mledge10['Target'])
-    list11 = list(mledge11['Source']) + list(mledge11['Target'])
-    list12 = list(mledge12['Source']) + list(mledge12['Target'])
-    list13 = list(mledge13['Source']) + list(mledge13['Target'])
-    list14 = list(mledge14['Source']) + list(mledge14['Target'])
-    list15 = list(mledge15['Source']) + list(mledge15['Target'])
-    list16 = list(mledge16['Source']) + list(mledge16['Target'])
-    list17 = list(mledge17['Source']) + list(mledge17['Target'])
-    list18 = list(mledge18['Source']) + list(mledge18['Target'])
-    list19 = list(mledge19['Source']) + list(mledge19['Target'])
-    list20 = list(mledge20['Source']) + list(mledge20['Target'])
-    list21 = list(mledge21['Source']) + list(mledge21['Target'])
-    list22 = list(mledge22['Source']) + list(mledge22['Target'])
-    list23 = list(mledge23['Source']) + list(mledge23['Target'])
-    list24 = list(mledge24['Source']) + list(mledge24['Target'])
-    list25 = list(mledge25['Source']) + list(mledge25['Target'])
-    list26 = list(mledge26['Source']) + list(mledge26['Target'])
     mledge0 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list0)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list0))]
-    mledge1 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list1)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list1))]
-    mledge2 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list2)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list2))]
-    mledge3 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list3)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list3))]
-    mledge4 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list4)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list4))]
-    mledge5 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list5)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list5))]
-    mledge6 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list6)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list6))]
-    mledge7 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list7)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list7))]
-    mledge8 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list8)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list8))]
-    mledge9 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list9)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list9))]
-    mledge10 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list10)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list10))]
-    mledge11 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list11)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list11))]
-    mledge12 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list12)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list12))]
-    mledge13 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list13)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list13))]
-    mledge14 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list14)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list14))]
-    mledge15 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list15)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list15))]
-    mledge16 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list16)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list16))]
-    mledge17 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list17)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list17))]
-    mledge18 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list18)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list18))]
-    mledge19 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list19)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list19))]
-    mledge20 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list20)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list20))]
-    mledge21 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list21)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list21))]
-    mledge22 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list22)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list22))]
-    mledge23 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list23)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list23))]
-    mledge24 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list24)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list24))]
-    mledge25 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list25)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list25))]
-    mledge26 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list26)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list26))]
     list0 = list(mledge0['Source']) + list(mledge0['Target'])
-    list1 = list(mledge1['Source']) + list(mledge1['Target'])
-    list2 = list(mledge2['Source']) + list(mledge2['Target'])
-    list3 = list(mledge3['Source']) + list(mledge3['Target'])
-    list4 = list(mledge4['Source']) + list(mledge4['Target'])
-    list5 = list(mledge5['Source']) + list(mledge5['Target'])
-    list6 = list(mledge6['Source']) + list(mledge6['Target'])
-    list7 = list(mledge7['Source']) + list(mledge7['Target'])
-    list8 = list(mledge8['Source']) + list(mledge8['Target'])
-    list9 = list(mledge9['Source']) + list(mledge9['Target'])
-    list10 = list(mledge10['Source']) + list(mledge10['Target'])
-    list11 = list(mledge11['Source']) + list(mledge11['Target'])
-    list12 = list(mledge12['Source']) + list(mledge12['Target'])
-    list13 = list(mledge13['Source']) + list(mledge13['Target'])
-    list14 = list(mledge14['Source']) + list(mledge14['Target'])
-    list15 = list(mledge15['Source']) + list(mledge15['Target'])
-    list16 = list(mledge16['Source']) + list(mledge16['Target'])
-    list17 = list(mledge17['Source']) + list(mledge17['Target'])
-    list18 = list(mledge18['Source']) + list(mledge18['Target'])
-    list19 = list(mledge19['Source']) + list(mledge19['Target'])
-    list20 = list(mledge20['Source']) + list(mledge20['Target'])
-    list21 = list(mledge21['Source']) + list(mledge21['Target'])
-    list22 = list(mledge22['Source']) + list(mledge22['Target'])
-    list23 = list(mledge23['Source']) + list(mledge23['Target'])
-    list24 = list(mledge24['Source']) + list(mledge24['Target'])
-    list25 = list(mledge25['Source']) + list(mledge25['Target'])
-    list26 = list(mledge26['Source']) + list(mledge26['Target'])
-    print(len(list0))
-    print(len(list1))
-    print(len(list2))
-    print(len(list3))
-    print(len(list4))
-    print(len(list5))
-    print(len(list6))
-    print(len(list7))
-    print(len(list8))
-    print(len(list9))
-    print(len(list10))
-    print(len(list11))
-    print(len(list12))
-    print(len(list13))
-    print(len(list14))
-    print(len(list15))
-    print(len(list16))
-    print(len(list17))
-    print(len(list18))
-    print(len(list19))
-    print(len(list20))
-    print(len(list21))
-    print(len(list22))
-    print(len(list23))
-    print(len(list24))
-    print(len(list25))
-    print(len(list26))
+
 def fig13():
     len1 = [29056,4688,3602,6884,4516,13908,4300,1228,5598,3344]
     len2 = [816,16,11,10,9,9,9,8,8,8]
@@ -7672,60 +7894,108 @@ def fig13():
     plt.savefig('fig13.jpg')
     plt.show()
 def fig14():
-    mlnode = pandas.read_csv('mlnode.csv')
-    mledge = pandas.read_csv('mledge.csv')
-    mledge2 = pandas.read_csv('mledge2.csv')
-    mlnode2 = pandas.read_csv('mlnode2.csv')
-    print(len(mlnode))
-    print(len(mledge))
-    mlnode141 = mlnode[(mlnode['type']!='normal')]
-    mlnode142 = mlnode2[(mlnode2['type']!='normal')]
-    frames = [mlnode141,mlnode142]
-    mlnode14 = pandas.concat[frames]
-    mlnodelist = list(mlnode14['Id'])#欺诈节点交易列表排除正常节点后的节点，包括欺诈节点和未知节点，要么欺诈要么未知
-    mlnodescam = mlnode14[(mlnode14['type']=='scam')]
-    mlnodescamlist = list(mlnodescam['Id'])#edge导入gephi，如果边的节点不在mlnode14中则会显示null类
-    mledge141 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(mlnodelist)) & (mledge['Target'].notnull()) & (mledge['Target'].isin(mlnodelist))]
-    mledge142 = mledge2[(mledge2['Source'].notnull()) & (mledge2['Source'].isin(mlnodelist)) & (mledge2['Target'].notnull()) & (mledge2['Target'].isin(mlnodelist))]
-    frames = [mledge141,mledge142]
-    mledge14 = pandas.concat(frames)
-    mlnode14.to_csv('mlnodefig14.csv')#起点终点都是非正常节点
-    mledge14.to_csv('mledgefig14.csv')
-    mledgescam14 = mledge14[(mledge14['Source'].notnull()) & (mledge14['Source'].isin(mlnodescamlist)) | (mledge14['Target'].notnull()) & (mledge14['Target'].isin(mlnodescamlist))]
-    mlnodeSusp = list(set(list(mledgescam14['Source']) + list(mledgescam14['Target'])))#根据相邻有罪原则得到的新的欺诈节点
-    print(len(mlnodeSusp))
-    return
+    # mlnode = pandas.read_csv('mlnode.csv')
+    # mledge = pandas.read_csv('mledge.csv')
+    # mledge2 = pandas.read_csv('mledge2.csv')
+    # mlnode2 = pandas.read_csv('mlnode2.csv')
+    # print(len(mlnode))
+    # print(len(mledge))
+    # mlnode14 = mlnode[(mlnode['type']!='normal')]
+    # # mlnode142 = mlnode2[(mlnode2['type']!='normal')]
+    # # frames = [mlnode14,mlnode142]
+    # # mlnode14 = pandas.concat[frames]
+    # mlnodelist = list(mlnode14['Id'])#欺诈节点交易列表排除正常节点后的节点，包括欺诈节点和未知节点，要么欺诈要么未知
+    # mlnodescam = mlnode14[(mlnode14['type']=='scam')]
+    # mlnodescamlist = list(mlnodescam['Id'])#edge导入gephi，如果边的节点不在mlnode14中则会显示null类
+    # mledge14 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(mlnodelist)) & (mledge['Target'].notnull()) & (mledge['Target'].isin(mlnodelist))]
+    # # mledge142 = mledge2[(mledge2['Source'].notnull()) & (mledge2['Source'].isin(mlnodelist)) & (mledge2['Target'].notnull()) & (mledge2['Target'].isin(mlnodelist))]
+    # # frames = [mledge14,mledge142]
+    # # mledge14 = pandas.concat(frames)
+    # mlnode14.to_csv('mlnodefig14.csv')#起点终点都是非正常节点
+    # mledge14.to_csv('mledgefig14.csv')
+    # mledgescam14 = mledge14[(mledge14['Source'].notnull()) & (mledge14['Source'].isin(mlnodescamlist)) | (mledge14['Target'].notnull()) & (mledge14['Target'].isin(mlnodescamlist))]
+    # mlnodeSusp = list(set(list(mledgescam14['Source']) + list(mledgescam14['Target'])))#根据相邻有罪原则得到的新的欺诈节点
+    # print(len(mlnodeSusp))
+    # return
+
+    # mlnode14 = pandas.read_csv('mlnodefig14.csv')
+    # mledge14 = pandas.read_csv('mledgefig14.csv')
+    # G1 = nx.DiGraph()
+    # ScamNodeList = []
+    # ScamEdgeList = []
+    # UnknownNodeList = []
+    # UnknownEdgeList = []
+    # colorMap = []
+    # specialNodeList = list(mlnode14['Id'])
+    # for index,row in mlnode14.iterrows():
+    #     if row['type'] == 'scam':
+    #         ScamNodeList.append(row['Id'])
+    #         colorMap.append('yellow')
+    #     if row['type'] == 'unknown':
+    #         UnknownNodeList.append(row['Id'])
+    #         colorMap.append('pink')
+    # edges = []
+    # for index,row in mledge14.iterrows():
+    #     mytuple = (row['Source'],row['Target'],row['Weight'])
+    #     edges.append(mytuple)
+    #     if row['Source'] in ScamNodeList or row['Target'] in ScamNodeList:
+    #         ScamEdgeList.append((row['Source'],row['Target'],))
+    #     if row['Source'] in UnknownNodeList or row['Target'] in UnknownNodeList:
+    #         UnknownEdgeList.append((row['Source'],row['Target'],))
+    #
+    # with open('mlnodefig14SpecialNode.txt','w') as f:
+    #     print(specialNodeList,file=f)
+    # with open('mlnodefig14Edges.txt','w') as f:
+    #     print(edges,file=f)
+    # with open('mlnodefig14ScamNode.txt','w') as f:
+    #     print(ScamNodeList,file=f)
+    # with open('mlnodefig14UnknownNode.txt','w') as f:
+    #     print(UnknownNodeList,file=f)
+    # with open('mlnodefig14ScamEdge.txt','w') as f:
+    #     print(ScamEdgeList,file=f)
+    # with open('mlnodefig14UnknownEdge.txt','w') as f:
+    #     print(UnknownEdgeList,file=f)
+    # return
+
+
     mlnode14 = pandas.read_csv('mlnodefig14.csv')
     mledge14 = pandas.read_csv('mledgefig14.csv')
-    G1 = nx.DiGraph()
-    ScamNodeList = []
-    ScamEdgeList = []
-    UnknownNodeList = []
-    UnknownEdgeList = []
-    colorMap = []
-    specialNodeList = list(mlnode14['Id'])
-    for index,row in mlnode14.iterrows():
-        if row['type'] == 'scam':
-            ScamNodeList.append(row['Id'])
-            colorMap.append('yellow')
-        if row['type'] == 'unknown':
-            UnknownNodeList.append(row['Id'])
-            colorMap.append('pink')
-    edges = []
-    for index,row in mledge14.iterrows():
-        mytuple = (row['Source'],row['Target'],row['Weight'])
-        edges.append(mytuple)
-        if row['Source'] in ScamNodeList or row['Target'] in ScamNodeList:
-            ScamEdgeList.append((row['Source'],row['Target'],))
-        if row['Source'] in UnknownNodeList or row['Target'] in UnknownNodeList:
-            UnknownEdgeList.append((row['Source'],row['Target'],))
 
+    with open(r'C:\Users\ljh\Desktop\fig14node.csv', 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(['Id', 'type', 'indegree', 'outdegree', 'degree'])
+        for index, row in mlnode14.iterrows():
+            writer.writerow([row['Id'], row['type'], row['indegree'], row['outdegree'], row['degree']])
+    with open(r'C:\Users\ljh\Desktop\fig14edge.csv', 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(['Source', 'Target', 'Weight'])
+        for index, row in mledge14.iterrows():
+            writer.writerow([row['Source'], row['Target'], row['Weight']])
+    return
+
+    with open('mlnodefig14SpecialNode.txt','r') as f:
+        specialNodeList = literal_eval(f.read())
+    with open('mlnodefig14Edges.txt','r') as f:
+        edges = literal_eval(f.read())
+    with open('mlnodefig14ScamNode.txt','r') as f:
+        ScamNodeList = literal_eval(f.read())
+    with open('mlnodefig14UnknownNode.txt','r') as f:
+        UnknownNodeList = literal_eval(f.read())
+    with open('mlnodefig14ScamEdge.txt','r') as f:
+        ScamEdgeList = literal_eval(f.read())
+    with open('mlnodefig14UnknownEdge.txt','r') as f:
+        UnknownEdgeList = literal_eval(f.read())
+
+    G1 = nx.DiGraph()
     G1.add_nodes_from(specialNodeList)
     G1.add_weighted_edges_from(edges)
-    pos = nx.spring_layout(G1)
+
+    # pos = nx.fruchterman_reingold_layout(G1,k=0.5)
+    pos = nx.spring_layout(G1)#kind=2
+
     plt.subplot(111)
-    nx.draw_networkx_nodes(G1,pos,nodelist=ScamNodeList,node_color='yellow',node_size=4,label='Scam')
-    nx.draw_networkx_nodes(G1,pos,nodelist=UnknownNodeList,node_color='pink',node_size=4,label='Unknown')
+    nx.draw_networkx_nodes(G1,pos,nodelist=ScamNodeList,node_color='yellow',node_size=1,label='Scam')
+    nx.draw_networkx_nodes(G1,pos,nodelist=UnknownNodeList,node_color='pink',node_size=1,label='Unknown')
     nx.draw_networkx_edges(G1,pos,edgelist=ScamEdgeList,width=0.1,edge_color='yellow',arrowsize=1,arrowstyle='-',arrows=False)
     nx.draw_networkx_edges(G1,pos,edgelist=UnknownEdgeList,width=0.1,edge_color='pink',arrowsize=1,arrowstyle='-',arrows=False)
     plt.legend()
@@ -7814,6 +8084,7 @@ def fig15a():
     zipped = zip(living2num.keys(), living2num.values())
     sort_zipped = sorted(zipped, key=lambda x: (x[0]))
     result = zip(*sort_zipped)
+    plt.figure(figsize=(6, 6.5))
     x, y = [list(x) for x in result]
     fig, ax = plt.subplots()
     cum = numpy.cumsum(y)
@@ -7826,6 +8097,7 @@ def fig15a():
     ax.set_xlim(1)
     plt.savefig('fig15a.jpg')
     plt.show()
+
 def fig15b():
     # mledge = pandas.read_csv('mledge.csv')
     # mlnode = pandas.read_csv('mlnode.csv')
@@ -7880,18 +8152,19 @@ def fig15b():
     sort_zipped = sorted(zipped, key=lambda x: (x[0]))
     result = zip(*sort_zipped)
     x, y = [list(x) for x in result]
+    plt.figure(figsize=(6, 6.5))
     fig, ax = plt.subplots()
     ax.set_ylabel('Number Of Scam Group')
     ax.set_xlabel('Appearance Date')
     plt.xticks(rotation=30)
     x_major_locator = MultipleLocator(3)
     ax.xaxis.set_major_locator(x_major_locator)
-    plt.savefig('fig15b.jpg')
     plt.plot(x,y)
+    plt.savefig('fig15b.jpg',bbox_inches='tight')
     plt.show()
     # with open('fig15b.txt','w') as f:
     #     print(mon2count,file=f)
-def fig16a():
+def fig16a():#正常地址的收入
     df1 = pandas.read_csv('ntx.csv')
     df2 = pandas.read_csv('itx.csv')
     frames = [df1, df2]
@@ -8028,6 +8301,36 @@ def fig16b():
     ax.set_xlim(1)
     plt.savefig('fig16b.jpg')
     plt.show()
+
+def myimg2pdf():
+    filedir = os.getcwd()
+    filelist = os.listdir(filedir)
+    # filename = 'fig6.jpg'
+    # fileprefix = filename[:-4]
+    # savedFile = filedir + r'\pdf' + '\\' + fileprefix + r'.pdf'
+    # with open(savedFile, 'wb') as f:
+    #     writeContent = img2pdf.convert(filename)
+    #     f.write(writeContent)
+    # print(savedFile)
+
+    # return
+    for filename in filelist:
+        if filename.endswith('.jpg'):
+            fileprefix = filename[:-4]
+            savedFile = filedir + r'\pdf' + '\\' + fileprefix + r'.pdf'
+            with open(savedFile,'wb') as f:
+                writeContent = img2pdf.convert(filename)
+                f.write(writeContent)
+            print(filename)
+            print(savedFile)
+        if filename.endswith('.png'):
+            print(filename)
+            fileprefix = filename[:-4]
+            savedFile = filedir + r'\pdf' + '\\' + fileprefix + r'.pdf'
+            with open(savedFile,'wb') as f:
+                writeContent = img2pdf.convert(filename)
+                f.write(writeContent)
+            print(savedFile)
 if __name__ == '__main__':
     # try:
     #     print("ntxs1")
@@ -8240,7 +8543,13 @@ if __name__ == '__main__':
     #     norAddrA3Outtxnum()
     # except Exception:
     #     traceback.print_exc()
-    fig14()
+    # mixfig9Livingtime()
+    # fig43outtxnum()
+    # scamProfitRank()
+    # fig14()
+    # fig12x()
+    myimg2pdf()
+    # fig15a()
     # scamAvgIncomeOutcome()
     # norAddrA3LivingTime()
 #gcn gdc tagcn
