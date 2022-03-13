@@ -1539,6 +1539,7 @@ def fig7n():#pdf图
         y.append(prof2num[prof])
     plt.bar(x,y,width=1)
     plt.xticks(rotation=30)
+    plt.figure(figsize=(6,6.5))
     plt.yscale('log')
     x_major_locator = MultipleLocator(5)
     ax = plt.gca()
@@ -1709,6 +1710,7 @@ def fig7i():#pdf图
     for prof in profaxis:
         x.append(prof)
         y.append(prof2num[prof])
+    plt.figure(figsize=(6,6.5))
     plt.bar(x,y,width=1)
     plt.xticks(rotation=30)
     plt.yscale('log')
@@ -1718,13 +1720,13 @@ def fig7i():#pdf图
     ax.set_ylabel('the PDF graph of internal txs')
     ax.set_xlabel('the profit of address($)')
     plt.savefig('fig7i.jpg',bbox_inches = 'tight')
-    plt.show()
-    with open('fig7i.txt','w') as f:
-        print(prof2num,file=f)
-    with open('fig7i2.txt','w') as f:
-        print(prof2num2,file=f)
-    with open('fig7i3.txt','w') as f:
-        print(addr2prof,file=f)
+    # plt.show()
+    # with open('fig7i.txt','w') as f:
+    #     print(prof2num,file=f)
+    # with open('fig7i2.txt','w') as f:
+    #     print(prof2num2,file=f)
+    # with open('fig7i3.txt','w') as f:
+    #     print(addr2prof,file=f)
 def fig7iCdf():
     with open('fig7i2.txt', 'r') as f:
         prof2num = literal_eval(f.read())
@@ -2101,33 +2103,33 @@ def efig9Outtx():
 #     plt.xscale('log')
 #     plt.show()
 def normalAddrtx2csv1():#一般交易的from，to，value列
-    df1 = pandas.read_csv('normalntx1.csv', low_memory=False, usecols=[1, 2, 6, 7, 8])#hash,from,to,value
-    df2 = pandas.read_csv('normalntx2.csv', low_memory=False, usecols=[1, 2, 6, 7, 8])
-    df3 = pandas.read_csv('normalntx3.csv', low_memory=False, usecols=[1, 2, 6, 7, 8])
-    df4 = pandas.read_csv('normalntx4.csv', low_memory=False, usecols=[1, 2, 6, 7, 8])
-    df5 = pandas.read_csv('normalntx5.csv', low_memory=False, usecols=[1, 2, 6, 7, 8])
-    df6 = pandas.read_csv('normalntx6.csv', low_memory=False, usecols=[1, 2, 6, 7, 8])
-    df7 = pandas.read_csv('normalntx7.csv', low_memory=False, usecols=[1, 2, 6, 7, 8])
-    df8 = pandas.read_csv('normalntx8.csv', low_memory=False, usecols=[1, 2, 6, 7, 8])
-    df9 = pandas.read_csv('normalntx9.csv', low_memory=False, usecols=[1, 2, 6, 7, 8])
-    df10 = pandas.read_csv('normalntx10.csv', low_memory=False, usecols=[1, 2, 6, 7, 8])
-    df11 = pandas.read_csv('normalntx11.csv', low_memory=False, usecols=[1, 2, 6, 7, 8])
-    df12 = pandas.read_csv('normalntx12.csv', low_memory=False, usecols=[1, 2, 6, 7, 8])
-    df13 = pandas.read_csv('normalntx13.csv', low_memory=False, usecols=[1, 2, 6, 7, 8])
+    df1 = pandas.read_csv('normalntx1.csv', low_memory=False, usecols=[1, 2, 6, 7, 8, 11, 14])#hash,from,to,value,contractAddress
+    df2 = pandas.read_csv('normalntx2.csv', low_memory=False, usecols=[1, 2, 6, 7, 8, 11, 14])
+    df3 = pandas.read_csv('normalntx3.csv', low_memory=False, usecols=[1, 2, 6, 7, 8, 11, 14])
+    df4 = pandas.read_csv('normalntx4.csv', low_memory=False, usecols=[1, 2, 6, 7, 8, 11, 14])
+    df5 = pandas.read_csv('normalntx5.csv', low_memory=False, usecols=[1, 2, 6, 7, 8, 11, 14])
+    df6 = pandas.read_csv('normalntx6.csv', low_memory=False, usecols=[1, 2, 6, 7, 8, 11, 14])
+    df7 = pandas.read_csv('normalntx7.csv', low_memory=False, usecols=[1, 2, 6, 7, 8, 11, 14])
+    df8 = pandas.read_csv('normalntx8.csv', low_memory=False, usecols=[1, 2, 6, 7, 8, 11, 14])
+    df9 = pandas.read_csv('normalntx9.csv', low_memory=False, usecols=[1, 2, 6, 7, 8, 11, 14])
+    df10 = pandas.read_csv('normalntx10.csv', low_memory=False, usecols=[1, 2, 6, 7, 8, 11, 14])
+    df11 = pandas.read_csv('normalntx11.csv', low_memory=False, usecols=[1, 2, 6, 7, 8, 11, 14])
+    df12 = pandas.read_csv('normalntx12.csv', low_memory=False, usecols=[1, 2, 6, 7, 8, 11, 14])
+    df13 = pandas.read_csv('normalntx13.csv', low_memory=False, usecols=[1, 2, 6, 7, 8, 11, 14])
     frames = [df1, df2, df3, df4, df5, df6, df7, df8, df9, df10, df11, df12, df13]
     df = pandas.concat(frames)
     df.to_csv('normalAddrntx.csv')
 def normalAddrtx2csv2():#内部交易的from，to，value列
-    df14 = pandas.read_csv('normalitx1.csv', low_memory=False, usecols=[1, 2, 3, 4, 5])#hash,from,to,value
-    df15 = pandas.read_csv('normalitx2.csv', low_memory=False, usecols=[1, 2, 3, 4, 5])
-    df16 = pandas.read_csv('normalitx3.csv', low_memory=False, usecols=[1, 2, 3, 4, 5])
-    df17 = pandas.read_csv('normalitx4.csv', low_memory=False, usecols=[1, 2, 3, 4, 5])
-    df18 = pandas.read_csv('normalitx5.csv', low_memory=False, usecols=[1, 2, 3, 4, 5])
-    df19 = pandas.read_csv('normalitx6.csv', low_memory=False, usecols=[1, 2, 3, 4, 5])
-    df20 = pandas.read_csv('normalitx7.csv', low_memory=False, usecols=[1, 2, 3, 4, 5])
-    df21 = pandas.read_csv('normalitx8.csv', low_memory=False, usecols=[1, 2, 3, 4, 5])
-    df22 = pandas.read_csv('normalitx9.csv', low_memory=False, usecols=[1, 2, 3, 4, 5])
-    df23 = pandas.read_csv('normalitx10.csv', low_memory=False, usecols=[1, 2, 3, 4, 5])
+    df14 = pandas.read_csv('normalitx1.csv', low_memory=False, usecols=[1, 2, 3, 4, 5, 6, 12])#hash,from,to,value
+    df15 = pandas.read_csv('normalitx2.csv', low_memory=False, usecols=[1, 2, 3, 4, 5, 6, 12])
+    df16 = pandas.read_csv('normalitx3.csv', low_memory=False, usecols=[1, 2, 3, 4, 5, 6, 12])
+    df17 = pandas.read_csv('normalitx4.csv', low_memory=False, usecols=[1, 2, 3, 4, 5, 6, 12])
+    df18 = pandas.read_csv('normalitx5.csv', low_memory=False, usecols=[1, 2, 3, 4, 5, 6, 12])
+    df19 = pandas.read_csv('normalitx6.csv', low_memory=False, usecols=[1, 2, 3, 4, 5, 6, 12])
+    df20 = pandas.read_csv('normalitx7.csv', low_memory=False, usecols=[1, 2, 3, 4, 5, 6, 12])
+    df21 = pandas.read_csv('normalitx8.csv', low_memory=False, usecols=[1, 2, 3, 4, 5, 6, 12])
+    df22 = pandas.read_csv('normalitx9.csv', low_memory=False, usecols=[1, 2, 3, 4, 5, 6, 12])
+    df23 = pandas.read_csv('normalitx10.csv', low_memory=False, usecols=[1, 2, 3, 4, 5, 6, 12])
     frames = [df14, df15, df16, df17, df18, df19, df20, df21, df22, df23]
     df = pandas.concat(frames)
     df.to_csv('normalAddritx.csv')
@@ -6061,7 +6063,7 @@ def etherscanAddrTax():
 # '0x14f37b574242d366558db61f3335289a5035c506', '0x06044b5359d8df7886366c22c61c7ecd29becac7',
 # '0xa62bdee2f277c2e2c0f46cba96879b263796ee1c', '0x05fb86775fd5c16290f1e838f5caaa7342bd9a63',
 # '0xf6fe061efa2a8e15936696baf5e8cba8c3f3485b', '0x5c430fa24f782cf8156ca97208c42127b17b0494', '0x1f2e2293efa2ebd9c09211569f3d7758f0463189']
-def txtax():
+def txtax():#交易分类
     with open('typelist.txt','r') as f:
         typelist = literal_eval(f.read())
     with open('addr.txt','r') as f:
@@ -6846,7 +6848,6 @@ def mixfig9Itx():
         txnum2addrnum3 = literal_eval(f.read())
     with open('norAddrIFig9Outtxs.txt','r',encoding='utf-8') as f:
         txnum2addrnum4 = literal_eval(f.read())
-
     zipped1 = zip(txnum2addrnum1.keys(), txnum2addrnum1.values())
     sort_zipped1 = sorted(zipped1, key=lambda x: (x[0]))
     result1 = zip(*sort_zipped1)
@@ -7031,6 +7032,7 @@ def mixfig9livcon():#livingtime的数量分布，应该可以画柱状图然后�
         if day > 60:
             y2[7] += norday2addrnum[day]
     width = 0.4
+    plt.figure(figsize=(6, 6.5))
     plt.bar(x, y1, width, label="scam address")
     plt.bar(index + width, y2, width, label="normal address")
     for a, b in zip(x, y1):
@@ -7097,7 +7099,6 @@ def scamNtxMFG():
     with open('scamNtxSolP.txt','w',encoding='utf-8') as f:
         print(solp,file=f)
     #独立点，和没有被识别为欺诈地址的其他地址进行交易
-
 def scamItxMFG():
     with open('addr.txt', 'r') as f:
         addrlist = literal_eval(f.read())
@@ -7132,6 +7133,113 @@ def scamItxMFG():
             solp.append(addr)
     with open('scamItxSolP.txt','w',encoding='utf-8') as f:
         print(solp,file=f)
+def scamccg():
+    df1 = pandas.read_csv('ntx.csv')
+    df2 = pandas.read_csv('itx.csv')
+    ccg = {}#key是创建者，value是被创建的合约
+    for index, row in df1.iterrows():
+        if not isinstance(row['to'],str):#如果to是null则表示创建一个地址为contract address的合约
+            ccg[row['from']] = row['contractAddress']
+    for index, row in df2.iterrows():
+        if not isinstance(row['to'],str):#如果to是null则表示创建一个地址为contract address的合约
+            ccg[row['from']] = row['contractAddress']
+    with open('scamccg.txt','w') as f:
+        print(ccg,file=f)
+
+def norccgn():#不能通过eoa得到ccg，无法得到创建者
+    df1 = pandas.read_csv('normalAddrntx2.csv')
+    ccg = {}
+    for index, row in df1.iterrows():
+        if not isinstance(row['to'],str):#如果to是null则表示创建一个地址为contract address的合约
+            ccg[row['from']] = row['contractAddress']
+    with open('normalccgn.txt','w') as f:
+        print(ccg,file=f)
+
+def norccgi():#不能通过eoa得到ccg，无法得到创建者
+    df1 = pandas.read_csv('normalAddritx2.csv')
+    ccg = {}
+    for index, row in df1.iterrows():
+        if not isinstance(row['to'],str):#如果to是null则表示创建一个地址为contract address的合约
+            ccg[row['from']] = row['contractAddress']
+    with open('normalccgi.txt','w') as f:
+        print(ccg,file=f)
+
+def eoaOrcontract1():
+    #获取所有的地址，是eoa则为1
+    with open('addr.txt','r') as f:
+        scamaddr = literal_eval(f.read())
+    addrlist = scamaddr
+    session = requests.Session()
+    addr2eoa = {}
+    # addrlist = ['0xBB9bc244D798123fDe783fCc1C72d3Bb8C189413']
+    for addr in addrlist:
+        addr2eoa[addr] = 0
+        url = "https://api.etherscan.io/api?module=contract&action=getabi&address="+ addr + "&apikey=" + apikey
+        message = literal_eval(session.get(url).text)['message']
+        if message == "NOTOK":
+            addr2eoa[addr] = 1
+        elif message == "OK":
+            addr2eoa[addr] = 0
+    with open('addr2eoa1.txt','w') as f:
+        print(addr2eoa,file=f)
+def eoaOrcontract11():
+    with open('addr2eoa1.txt','r') as f:
+        addr2eoa1 = literal_eval(f.read())
+    addrlist = list(addr2eoa1.keys())
+    with open('addr.txt','r') as f:
+        scamaddr = literal_eval(f.read())
+    addr2eoa = {}
+    print(len(addr2eoa1))
+    for addr in scamaddr:
+        addr2eoa[addr] = 0
+        if addr in addrlist:
+            addr2eoa[addr] = 1
+        print(addr2eoa[addr])
+    with open('addr2eoa11.txt', 'w') as f:
+        print(addr2eoa, file=f)
+def eoaOrcontract2():
+    #获取所有的地址，是eoa则为1
+    with open('normalAddr.txt','r') as f:
+        noraddr = literal_eval(f.read())
+    addrlist = noraddr
+    session = requests.Session()
+    addr2eoa = {}
+    for addr in addrlist:
+        addr2eoa[addr] = 0
+        url = "https://api.etherscan.io/api?module=contract&action=getabi&address="+ addr + "&apikey=" + apikey
+        message = literal_eval(session.get(url).text)['message']
+        if message == "NOTOK":
+            addr2eoa[addr] = 1
+        elif message == "OK":
+            addr2eoa[addr] = 0
+    with open('addr2eoa2.txt','w') as f:
+        print(addr2eoa,file=f)
+def scamcig():#统计调用对象是合约的次数，交易地址to是合约地址
+    df1 = pandas.read_csv('ntx.csv')
+    df2 = pandas.read_csv('itx.csv')
+    with open('addr2eoa1.txt','r') as f:
+        addr2eoa = literal_eval(f.read())
+    cig = {}
+    for index, row in df1.iterrows():
+        if isinstance(row['to'], str):
+            iseoa = addr2eoa[row['to']]#如果是eoa则不是调用，如果不是eoa则是合约地址可以调用，需要统计到cig
+            if iseoa == 0:
+                cig[(row['from'],row['to'])] = cig.get((row['from'],row['to']),0) + 1
+    with open('scamcig.txt','w') as f:
+        print(cig,file=f)
+    
+def norcign():
+    df1 = pandas.read_csv('normalAddrntx.csv')
+    with open('addr2eoa1.txt','r') as f:
+        addr2eoa = literal_eval(f.read())
+    cig = {}
+    for index, row in df1.iterrows():
+        if isinstance(row['to'], str):
+            iseoa = addr2eoa[row['to']]  # 如果是eoa则不是调用，如果不是eoa则是合约地址可以调用，需要统计到cig
+            if iseoa == 0:
+                cig[(row['from'], row['to'])] = cig.get((row['from'], row['to']), 0) + 1
+    with open('normalcig.txt', 'w') as f:
+        print(cig, file=f)
 
 #每个文件的含义
 # exp_add_profit.csv 地址和利润
@@ -8311,40 +8419,40 @@ def fig15b():
     x_major_locator = MultipleLocator(3)
     ax.xaxis.set_major_locator(x_major_locator)
     plt.plot(x,y)
-    plt.savefig('fig15b.jpg',bbox_inches='tight')
+    plt.savefig('fig15b.jpg',bbox_inches='tight',pad_inches=0.2)
     plt.show()
     # with open('fig15b.txt','w') as f:
     #     print(mon2count,file=f)
 def fig16a():#正常地址的收入
-    df1 = pandas.read_csv('ntx.csv')
-    df2 = pandas.read_csv('itx.csv')
-    frames = [df1, df2]
-    df = pandas.concat(frames)
+    # df1 = pandas.read_csv('ntx.csv')
+    # df2 = pandas.read_csv('itx.csv')
+    # frames = [df1, df2]
+    # df = pandas.concat(frames)
     with open('weakly_connected_components15.txt','r') as f:#根据拓展一次后的scam group分组进行计算
         weakly_connected_components15 = literal_eval(f.read())
-    # eth = 2460.268204521556
-    addr2profit = {}
-    mledge = pandas.read_csv('mledge.csv')
-    addrlist = list(mledge['Source']) + list(mledge['Target'])#得出所有需要计算利润的地址，然后计算每个地址的利润，再分给每个组
-    #将scamgroup扁平化得到所有的地址当作一个需要排除的列表，因为不同的group之间不会互相转账，同一个group的转账不能用于计算利润
-    # #每个group逐条地址进行计算，不能这样算，因为同一个group的可能重复计算
-    scamgroupAddr = []
-    for group in weakly_connected_components15:
-        scamgroupAddr += list(group)
-    for addr in scamgroupAddr:
-        addr2profit[addr] = 0
-    for index, row in df.iterrows():
-        if isinstance(row['to'],str) and row['to'].lower() in scamgroupAddr and isinstance(row['from'],str) and row['from'].lower() not in scamgroupAddr:
-            try:
-                if isinstance(row['value'],str):
-                    addr2profit[row['to']] += int(row['value']) / 1000000000000000000
-            except Exception:
-                print(row['value'])
-                print(row['to'])
-                traceback.print_exc()
-    with open('fig16addr2profit2.txt', 'w') as f:
-        print(addr2profit,file=f)
-    return
+    # # eth = 2460.268204521556
+    # addr2profit = {}
+    # mledge = pandas.read_csv('mledge.csv')
+    # addrlist = list(mledge['Source']) + list(mledge['Target'])#得出所有需要计算利润的地址，然后计算每个地址的利润，再分给每个组
+    # #将scamgroup扁平化得到所有的地址当作一个需要排除的列表，因为不同的group之间不会互相转账，同一个group的转账不能用于计算利润
+    # # #每个group逐条地址进行计算，不能这样算，因为同一个group的可能重复计算
+    # scamgroupAddr = []
+    # for group in weakly_connected_components15:
+    #     scamgroupAddr += list(group)
+    # for addr in scamgroupAddr:
+    #     addr2profit[addr] = 0
+    # for index, row in df.iterrows():
+    #     if isinstance(row['to'],str) and row['to'].lower() in scamgroupAddr and isinstance(row['from'],str) and row['from'].lower() not in scamgroupAddr:
+    #         try:
+    #             if isinstance(row['value'],str):
+    #                 addr2profit[row['to']] += int(row['value']) / 1000000000000000000
+    #         except Exception:
+    #             print(row['value'])
+    #             print(row['to'])
+    #             traceback.print_exc()
+    # with open('fig16addr2profit2.txt', 'w') as f:
+    #     print(addr2profit,file=f)
+    # return
     group2profit = {}
     # profit2num = {}
     with open('fig16addr2profit2.txt', 'r') as f:
@@ -8373,6 +8481,7 @@ def fig16a():#正常地址的收入
     sort_zipped = sorted(zipped, key=lambda x: (x[0]))
     result = zip(*sort_zipped)
     x, y = [list(x) for x in result]
+    plt.figure(figsize=(6, 6.5))
     fig, ax = plt.subplots()
     cum = numpy.cumsum(y)
     percentage = cum / list(cum)[-1]
@@ -8385,6 +8494,7 @@ def fig16a():#正常地址的收入
     plt.xscale('log')
     plt.savefig('fig16a.jpg')
     plt.show()
+
 def fig16b():
     # df1 = pandas.read_csv('ntx.csv')
     # df2 = pandas.read_csv('itx.csv')
@@ -8441,6 +8551,7 @@ def fig16b():
     print(sort_zipped)
     result = zip(*sort_zipped)
     x, y = [list(x) for x in result]
+    plt.figure(figsize=(6, 6.5))
     fig, ax = plt.subplots()
     cum = numpy.cumsum(y)
     percentage = cum / list(cum)[-1]
@@ -8702,13 +8813,16 @@ if __name__ == '__main__':
     # tab1n()
     # tab1i()
     # tab1e()
-    tab1noraddr()
+    # fig15b()
+    # mixfig9livcon()
+    # myimg2pdf()
+    # normalAddrtx2csv1()
+    # normalAddrtx2csv2()
+    norccgn()
+    # fig16b()
     # fig15a()
     # scamAvgIncomeOutcome()
     # norAddrA3LivingTime()
 #gcn gdc tagcn
 #收集整理大量数据时，尽量保存中间文件，即使由于机器性能原因或者ide设置原因等中断运行，也能避免效率的降低。
 #涉及网络爬虫的工作中可能会出现由于当时的网络原因出现问题，包括但不限于整个代码停止运行，某个url的网站爬取失败，为此需要增加异常处理，以便于事后补充未完成的url爬取工作
-
-
-
