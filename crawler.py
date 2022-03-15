@@ -27,6 +27,9 @@ import networkx as nx
 import matplotlib.image as mpimg
 import img2pdf
 import os
+import pandas as pd
+import scipy.sparse as sp
+
 def bloxyhack():
     pagenum = 177
     url2type = {}  # 将所有的链接和种类注解存入字典中再进行筛选
@@ -7217,30 +7220,88 @@ def eoaOrcontract2():
 def scamcig():#统计调用对象是合约的次数，交易地址to是合约地址
     df1 = pandas.read_csv('ntx.csv')
     df2 = pandas.read_csv('itx.csv')
+    with open('addr.txt','r') as f:
+        scamaddrlist = literal_eval(f.read())
     with open('addr2eoa1.txt','r') as f:
         addr2eoa = literal_eval(f.read())
-    cig = {}
+    cig = {}#是否应该区分欺诈地址和正常地址，如果区分则会漏掉一部分to地址是正常地址的交易
     for index, row in df1.iterrows():
-        if isinstance(row['to'], str):
+        if isinstance(row['to'], str) and row['to'] in scamaddrlist:#有可能交易接收方不是欺诈地址里面的合约地址或者eoa地址，所以要保证接收方是欺诈地址
             iseoa = addr2eoa[row['to']]#如果是eoa则不是调用，如果不是eoa则是合约地址可以调用，需要统计到cig
             if iseoa == 0:
                 cig[(row['from'],row['to'])] = cig.get((row['from'],row['to']),0) + 1
+
     with open('scamcig.txt','w') as f:
         print(cig,file=f)
-    
+
 def norcign():
-    df1 = pandas.read_csv('normalAddrntx.csv')
-    with open('addr2eoa1.txt','r') as f:
+    df1 = pandas.read_csv('normalAddrntx2.csv')
+    with open('addr2eoa2.txt','r') as f:
         addr2eoa = literal_eval(f.read())
-    cig = {}
+    cig = {}#交易接收方是合约地址，则将交易发送方和接收方的边的权重计算出来，如果某条边没有被提及则记为0权重，先初始化所有地址之间的交易权重为0
+    #应该是稀疏矩阵，还是说只存储权重非0的边
     for index, row in df1.iterrows():
-        if isinstance(row['to'], str):
-            iseoa = addr2eoa[row['to']]  # 如果是eoa则不是调用，如果不是eoa则是合约地址可以调用，需要统计到cig
+        if isinstance(row['to'], str) and addr2eoa[row['to']] == 0:#有可能接收方既不是合约地址也不是eoa
+            iseoa = addr2eoa[row['to']]  # 如果接收方是eoa则不是调用，如果不是eoa则是合约地址可以调用，需要统计到cig
             if iseoa == 0:
                 cig[(row['from'], row['to'])] = cig.get((row['from'], row['to']), 0) + 1
     with open('normalcig.txt', 'w') as f:
         print(cig, file=f)
 
+def norcigi():
+    df1 = pandas.read_csv('normalAddritx2.csv')
+    with open('addr2eoa2.txt','r') as f:
+        addr2eoa = literal_eval(f.read())
+    cig = {}  # 如果是eoa则不是调用，如果不是eoa则是合约地址可以调用，需要统计到cig
+    for index, row in df1.iterrows():
+        if isinstance(row['to'], str):
+            iseoa = addr2eoa[row['to']]
+            if iseoa == 0:
+                cig[(row['from'], row['to'])] = cig.get((row['from'], row['to']), 0) + 1
+    with open('normalcig.txt', 'w') as f:
+        print(cig, file=f)
+def mycig():
+    with open('addr2eoa1.txt','r') as f:
+        addr2eoa1 = literal_eval(f.read())
+    with open('addr2eoa2.txt','r') as f:
+        addr2eoa2 = literal_eval(f.read())
+    addr2eoa = addr2eoa1.update(addr2eoa2)
+    with open('addr.txt','r') as f:
+        scamaddrlist = literal_eval(f.read())
+    with open('normalAddr.txt','r') as f:#需要注意正常地址也是有限的数据集，所以仍要排除没有采集到的地址数据导致的异常
+        noraddrlist = literal_eval(f.read())
+    addrlist = scamaddrlist + noraddrlist
+    df1 = pandas.read_csv('ntx.csv')
+    df2 = pandas.read_csv('itx.csv')
+    df3 = pandas.read_csv('normalAddrntx2.csv')
+    df4 = pandas.read_csv('normalAddritx2.csv')
+    cig = {}
+    for index, row in df1.iterrows():
+        cig[(row['from'], row['to'])] = cig.get((row['from'], row['to']), 0)#初始化边
+        if isinstance(row['to'], str) and row['to'] in addrlist:
+            iseoa = addr2eoa1[row['to']]
+            if iseoa == 0:
+                cig[(row['from'], row['to'])] = cig.get((row['from'], row['to']), 0) + 1
+    for index, row in df2.iterrows():
+        cig[(row['from'], row['to'])] = cig.get((row['from'], row['to']), 0)#初始化边
+        if isinstance(row['to'], str) and row['to'] in addrlist:
+            iseoa = addr2eoa1[row['to']]
+            if iseoa == 0:
+                cig[(row['from'], row['to'])] = cig.get((row['from'], row['to']), 0) + 1
+    for index, row in df3.iterrows():
+        cig[(row['from'], row['to'])] = cig.get((row['from'], row['to']), 0)#初始化边
+        if isinstance(row['to'], str) and row['to'] in addrlist:
+            iseoa = addr2eoa1[row['to']]
+            if iseoa == 0:
+                cig[(row['from'], row['to'])] = cig.get((row['from'], row['to']), 0) + 1
+    for index, row in df4.iterrows():
+        cig[(row['from'], row['to'])] = cig.get((row['from'], row['to']), 0)#初始化边
+        if isinstance(row['to'], str) and row['to'] in addrlist:
+            iseoa = addr2eoa1[row['to']]
+            if iseoa == 0:
+                cig[(row['from'], row['to'])] = cig.get((row['from'], row['to']), 0) + 1
+    with open('cig.txt', 'w') as f:
+        print(cig, file=f)
 #每个文件的含义
 # exp_add_profit.csv 地址和利润
 # exp_group_id.csv 地址和聚类后的块号
@@ -7367,6 +7428,7 @@ def character13():
                                  nordict['avgOutcome'], nordict['intxs'],nordict['outtxs'], nordict['livingTime'], nordict['front1/3in'], nordict['middle1/3in'], nordict['last1/3in'],
                                  nordict['front1/3out'], nordict['middle1/3out'], nordict['last1/3out'], nordict['type']])
 
+
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn import datasets, linear_model
@@ -7385,7 +7447,7 @@ from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.neural_network import MLPClassifier
 
 
-def logReg():
+def logReg():#使用所有特征进行传统的机器学习
     data = pandas.read_csv('mlchar.csv')[["allIncome","allOutcome","avgIncome","avgOutcome","intxs","outtxs","livingTime","front1/3in","middle1/3in","last1/3in","front1/3out","middle1/3out","last1/3out","type"]]
     data = shuffle(data)
     X1 = data["allIncome"].to_list()
@@ -7465,13 +7527,13 @@ def logReg():
 
 
 
-#使用相邻的节点也是欺诈节点规则判断
+#使用相邻的节点也是欺诈节点规则判断，这个不能直接用于图神经网络
 def getscamNodeEdgeCSV():
     # with open('addr.txt','r',encoding='utf-8') as f:
     #     scamaddrlist = literal_eval(f.read())
     # with open('normalAddr.txt','r',encoding='utf-8') as f:
     #     noraddrlist = literal_eval(f.read())
-    # df1 = pandas.read_csv('ntx.csv')
+    # df1 = pandas.read_csv('ntx.csv')#收集所有欺诈地址有关的交易，也就是欺诈地址的一跳地址内的unknown地址作为待验证的数据集
     # df2 = pandas.read_csv('itx.csv')
     # frames = [df1,df2]
     # df = pandas.concat(frames)
@@ -7530,7 +7592,7 @@ def getscamNodeEdgeCSV():
             for toaddr,weight in toaddr2weight.items():
                 writer.writerow([fromaddr,toaddr,weight])
     return
-def getnorIOAddr():
+def getnorIOAddr():#正常地址的一跳节点
     df1 = pandas.read_csv('normalAddrntx2.csv')
     df2 = pandas.read_csv('normalAddritx2.csv')
     frames = [df1, df2]
@@ -7546,14 +7608,14 @@ def getnorIOAddr():
             addr2addr[row['from']].append(row['to'])
     # with open('normaladdr2addr.txt', 'w', encoding='utf-8') as f:
     #     print(addr2addr,file=f)
-    with open('normaladdr2addr.csv', 'w', encoding='utf-8', newline='') as f:
+    with open('normaladdr2addr.csv', 'w', encoding='utf-8', newline='') as f:#正常节点交易的一跳的所有地址
         writer = csv.writer(f)
         writer.writerow(['Source','Target'])
         for addr,addrlist in addr2addr.items():
             for addr2 in addrlist:
                 writer.writerow([addr,addr2])
 from collections import defaultdict
-def getnorNodeEdgeCSV():
+def getnorNodeEdgeCSV():#正常节点及其一跳节点
     addr2addr = pandas.read_csv('normaladdr2addr.csv')
     with open('addr.txt', 'r', encoding='utf-8') as f:
         scamaddrlist = literal_eval(f.read())
@@ -7561,7 +7623,7 @@ def getnorNodeEdgeCSV():
         noraddrlist = literal_eval(f.read())
     nodecsv = defaultdict(defaultdict)#
     edgecsv = defaultdict(defaultdict)
-    for index,row in addr2addr.iterrows():
+    for index,row in addr2addr.iterrows():#区分正常节点及其一跳节点的类型
         nodecsv[row['Source']]['outdegree'] = nodecsv[row['Source']].setdefault('outdegree',0) + 1
         if row['Source'] in scamaddrlist:
             nodecsv[row['Source']]['type'] = nodecsv[row['Source']].setdefault('type','scam')
@@ -7584,7 +7646,7 @@ def getnorNodeEdgeCSV():
         print(edgecsv, file=f)
     for addr, attr in nodecsv.items():
         nodecsv[addr]['degree'] = nodecsv[addr].get('indegree', 0) + nodecsv[addr].get('outdegree', 0)
-    with open('mlnode2.csv', 'w', encoding='utf-8', newline='') as f:
+    with open('mlnode2.csv', 'w', encoding='utf-8', newline='') as f:#正常节及其一跳节点区分类型后的csv
         writer = csv.writer(f)
         writer.writerow(['Id', 'type', 'indegree', 'outdegree', 'degree'])
         for addr, attr in nodecsv.items():
@@ -7595,33 +7657,34 @@ def getnorNodeEdgeCSV():
         for fromaddr, toaddr2weight in edgecsv.items():
             for toaddr, weight in toaddr2weight.items():
                 writer.writerow([fromaddr, toaddr, weight])
+
 def mixNodeEdgeCsv():
     normaladdr2addr = pandas.read_csv('normaladdr2addr.csv')
-    mlnode = pandas.read_csv('mlnode.csv')
-    mledge = pandas.read_csv('mledge.csv')
+    mlnode = pandas.read_csv('mlnode.csv')#欺诈节点及其一跳的节点
+    mledge = pandas.read_csv('mledge.csv')#欺诈节点及其一跳的交易
     mlnode2 = pandas.read_csv('mlnode2.csv')
     mledge2 = pandas.read_csv('mledge2.csv')
     print(len(mlnode))
     print(len(mlnode2))
     print(len(mlnode)+len(mlnode2))
-    newNorNode = mlnode2[(mlnode2['degree'] < 5)]
-    newNorNode = newNorNode.sample(len(mlnode),random_state=3)#随机挑选和欺诈node相同数量的正常node，但还要算和这些正常node相连的node，根据这些正常node的地址，找直接连接的node
-    newNodelist = list(newNorNode['Id'])#先随机选然后再找直接连接的，即需要迭代一次
+    newNorNode = mlnode2[(mlnode2['degree'] < 5)]#挑选度小于5的正常节点及其一跳节点
+    newNorNode = newNorNode.sample(len(mlnode),random_state=3)#随机挑选和欺诈node及其一跳节点相同数量的正常node及其一跳节点，但还要算和这些正常node相连的node，根据这些正常node的地址，找直接连接的node
+    newNodelist = list(newNorNode['Id'])#先随机选正常node及其一跳节点然后再找和其直接连接的，即需要迭代一次，二跳节点
     directNode = []
     for addr in newNodelist:
-        if addr in normaladdr2addr.keys():
+        if addr in normaladdr2addr.keys():#起点边
             directNode = directNode + normaladdr2addr[addr]#出的边
-    for addr,addrlist in normaladdr2addr.items():
-        for newaddr in newNodelist:
+    for addr,addrlist in normaladdr2addr.items():#正常节点一跳的地址
+        for newaddr in newNodelist:#随机的一跳的地址
             if newaddr in addrlist:
                 directNode.append(addr)#入的边
     newNodelist = newNodelist + directNode
-    newNorNode = mlnode2[(mlnode2['degree'] < 5) & mlnode2['Id'].isin(newNodelist)]
-    newNorEdge = mledge2[(mledge2['Source'].isin(newNodelist)) & (mledge2['Target'].isin(newNodelist))]
+    newNorNode = mlnode2[(mlnode2['degree'] < 5) & mlnode2['Id'].isin(newNodelist)]#度<5的正常节点及其一跳节点
+    newNorEdge = mledge2[(mledge2['Source'].isin(newNodelist)) & (mledge2['Target'].isin(newNodelist))]#从正常节点交易中筛选
     newNorNode.to_csv('mlnode5.csv')#中间node
     newNorEdge.to_csv('mledge5.csv')#中间edge
     frames1 = [mlnode,newNorNode]
-    frames2 = [mledge,newNorEdge]
+    frames2 = [mledge,newNorEdge]#没有算正常节点及其一跳的节点
     nodecsv = pandas.concat(frames1).drop_duplicates()
     edgecsv = pandas.concat(frames2).drop_duplicates()
     print(len(nodecsv))
@@ -7629,11 +7692,97 @@ def mixNodeEdgeCsv():
     nodecsv['Label'] = ""
     nodecsv['Interval'] = ""
     nodecsv.to_csv('node3.csv')
-    edgecsv.to_csv('edge3.csv')
+    edgecsv.to_csv('edge3.csv')#不应该用于图神经网络，只能用于欺诈集群
+
     # nodecsv = pandas.read_csv('node.csv')
     # edgecsv = pandas.read_csv('edge.csv')
     # print(len(nodecsv))
     # print(len(edgecsv))
+def unknownNode():#1：2的欺诈一跳节点和正常一跳节点,按照数量差不多是1700和3400，按照训练集，测试集，验证集的比例应该是3：1：1，发现不需要提取未知节点
+    mlnode = pandas.read_csv('mlnode.csv')  # 欺诈节点及其一跳的节点
+    mledge = pandas.read_csv('mledge.csv')  # 欺诈节点及其一跳的交易
+    mlnode2 = pandas.read_csv('mlnode2.csv') # 正常节点及其一跳的节点
+    mledge2 = pandas.read_csv('mledge2.csv') # 正常节点及其一跳的交易
+    mlnode3 = []# 未知节点一跳的节点
+    mledge3 = []# 未知节点一跳的交易
+    with open('mlnode3.csv', 'w', encoding='utf-8', newline='') as f:#欺诈节点的一跳未知节点
+        writer = csv.writer(f)
+        writer.writerow(['Id', 'type', 'indegree', 'outdegree', 'degree'])
+        for index,row in mlnode.iterrows():
+            if row['type'] == 'unknown':
+                writer.writerow([row['Id'],row['type'],row['indegree'],row['outdegree'],row['degree']])
+
+        for index,row in mlnode2.iterrows():#正常节点的一跳未知节点
+            if row['type'] == 'unknown':
+                writer.writerow([row['Id'],row['type'],row['indegree'],row['outdegree'],row['degree']])
+
+
+def graphData():#将随机抽出的节点的特征填到node.csv中，unknown节点的特征值没有则置为0，应该补充和欺诈节点以及正常节点相连的未知节点的特征
+    # mlnode = pandas.read_csv('mlnode.csv')#将每个节点的特征补充到正确的node.csv中
+    mledge = pandas.read_csv('mledge.csv')
+    # mlnode2 = pandas.read_csv('mlnode2.csv')
+    mledge2 = pandas.read_csv('mledge2.csv')#挑出所有已知节点
+    feature = pandas.read_csv('mlchar.csv')[["address","allIncome","allOutcome","avgIncome","avgOutcome","intxs","outtxs","livingTime","front1/3in","middle1/3in","last1/3in","front1/3out","middle1/3out","last1/3out","type"]]
+    addrlist = list(feature["address"])
+    for index,row in feature.iterrows():
+        if row['type'] == 1:
+            row['type'] = 'scam'
+            feature.iloc[index] = row
+        else:
+            row['type'] = 'normal'
+            feature.iloc[index] = row
+    feature.rename(columns={'address': 'Id'},inplace=True)
+    feature['degree'] = feature[['intxs', 'outtxs']].sum(axis=1)
+    feature.to_csv('node.csv')#里面没有未知节点
+    # mledge = mledge[(mledge['Source'].isin(addrlist)) & (mledge['Target'].isin(addrlist))]#选取两个节点都已知的边
+    # mledge2 = mledge2[(mledge2['Source'].isin(addrlist)) & (mledge2['Target'].isin(addrlist))]
+    # frames = [mledge,mledge2]
+    # finaledge = pandas.concat(frames)
+    # finaledge.to_csv('edge.csv')
+def adjmatrix():
+    edgecsv = pd.read_csv('edge.csv')#需要给每个节点一个编号，使用node.csv中的行号作为编号
+    nodecsv = pd.read_csv('node.csv')
+    nodenum = 17339
+    attrnum = 14
+    adjindex = np.arange(0,nodenum+1)
+    attrindex = np.arange(0,attrnum+1)
+    attrname = np.array(['allIncome','allOutcome','avgIncome','avgOutcome','intxs','outtxs','livingTime','front1/3in',
+                         'middle1/3in','last1/3in','front1/3out','middle1/3out','last1/3out','degree'])
+    addrlist = nodecsv['Id']
+    adjdict = dict(zip(addrlist,adjindex))
+    attrdict = dict(zip(attrname,attrindex))#属性名和属性索引的映射
+    adjmatrix = np.zeros([nodenum,nodenum])
+    attrmatrix = np.zeros([nodenum,attrnum])
+    labels = nodecsv['type']
+    nodecsv.loc[nodecsv['type'] == 'scam', 'type'] = 1
+    nodecsv.loc[nodecsv['type'] == 'normal', 'type'] = 0
+    for index,row in edgecsv.iterrows():
+        index1 = adjdict[row['Source']]
+        index2 = adjdict[row['Target']]
+        adjmatrix[index1][index2] = 1
+    class_names = np.array(['scam','normal'])
+    adj_shape = np.array([nodenum,nodenum])
+    attr_shape = np.array([nodenum,attrnum])
+    for index,row in nodecsv.iterrows():
+        rowindex = adjdict[row['Id']]
+        for attr in attrname:
+            colindex = attrdict[attr]
+            attrmatrix[rowindex][colindex] = row[attr]
+    adjcsr = sp.csr_matrix(adjmatrix)
+    attrcsr = sp.csr_matrix(attrmatrix)
+    print(adjcsr.indices)
+    adj_data = adjcsr.data
+    adj_indices = adjcsr.indices
+    adj_indptr = adjcsr.indptr
+    adj_shape = adjcsr.shape
+    attr_data = attrcsr.data
+    attr_indices = attrcsr.indices
+    attr_indptr = attrcsr.indptr
+    attr_shape = attrcsr.shape
+    np.savez('test.npz', adj_data = adjcsr.data,adj_indices = adjcsr.indices,adj_indptr = adjcsr.indptr,adj_shape=adj_shape,
+             attr_data = attrcsr.data,attr_indices = attrcsr.indices,attr_indptr = attrcsr.indptr,attr_shape = attrcsr.shape,
+             class_names=class_names,labels = labels)
+    # print(csr)
 #三次机器学习的训练样本数：
 #node:332191 332063 332124
 #edge:197687 197687 197689
@@ -7911,6 +8060,7 @@ def fig11():
     plt.legend()
     plt.savefig('fig11.jpg')
     plt.show()
+
 def addlegend():
     # data = pandas.read_csv('C:\\Users\\ljh\\Desktop\\node.csv')
     I = mpimg.imread('C:\\Users\\ljh\\Desktop\\fig12.jpg')
@@ -8593,6 +8743,45 @@ def myimg2pdf():
                 writeContent = img2pdf.convert(filename)
                 f.write(writeContent)
             print(savedFile)
+def getnpz():
+    cat_data = np.load('D:\\ether\\tmp\\computers.npz',allow_pickle=True)
+    # np.set_printoptions(threshold=np.inf)
+    for entry in cat_data.files:
+        print(entry)
+        print(cat_data[entry])
+        print(len(cat_data[entry]))
+        print('\n')
+        # file = 'test' + str(entry) + '.txt'
+        # with open(file,'w') as f:
+        #     print(cat_data[entry],file=f)
+    #13752个节点，767个属性，9种分类，长为N的节点标签y的向量，N*D的属性矩阵，N*N的邻接矩阵，N个节点，每个节点有D个属性,245778条边,13381个节点
+    #是否需要收集unknown节点的特征
+    #这么多节点构建邻接矩阵
+    #Amazon，coauthor数据集是被视为无向图
+def getrandom():
+    # with open('test.txt', 'r') as f:
+    #     mylist = literal_eval(f.read())
+    # newlist = []
+    # for index,alist in enumerate(mylist):
+    #     if len(alist) == 0:
+    #         print(index)
+    #     # newlist[index] = alist[0]
+    # with open('test2.txt', 'w') as f:
+    #     print(newlist,file=f)
+    # print(np.array(newlist))
+    # print(np.random.choice([]))
+    # b = np.load("test.npy",allow_pickle=True)
+    # b2 = b.tolist()
+    # try:
+    #     t = np.fromiter(map(np.random.choice, b), dtype=np.int32)
+    # except:
+    #     traceback.print_exc()
+    #     exstr = traceback.format_exc()
+    #     print(exstr)
+    with open('testadj2.txt', 'r') as f:
+        mylist = literal_eval(f.read())
+        print(len(mylist))
+
 if __name__ == '__main__':
     # try:
     #     print("ntxs1")
@@ -8818,7 +9007,7 @@ if __name__ == '__main__':
     # myimg2pdf()
     # normalAddrtx2csv1()
     # normalAddrtx2csv2()
-    norccgn()
+    adjmatrix()
     # fig16b()
     # fig15a()
     # scamAvgIncomeOutcome()
