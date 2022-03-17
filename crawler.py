@@ -7717,153 +7717,6 @@ def unknownNode():#1：2的欺诈一跳节点和正常一跳节点,按照数量�
                 writer.writerow([row['Id'],row['type'],row['indegree'],row['outdegree'],row['degree']])
 
 
-def graphData():#将随机抽出的节点的特征填到node.csv中，unknown节点的特征值没有则置为0，应该补充和欺诈节点以及正常节点相连的未知节点的特征
-    # mlnode = pandas.read_csv('mlnode.csv')#将每个节点的特征补充到正确的node.csv中
-    mledge = pandas.read_csv('mledge.csv')
-    # mlnode2 = pandas.read_csv('mlnode2.csv')
-    mledge2 = pandas.read_csv('mledge2.csv')#挑出所有已知节点
-    feature = pandas.read_csv('mlchar.csv')[["address","allIncome","allOutcome","avgIncome","avgOutcome","intxs","outtxs","livingTime","front1/3in","middle1/3in","last1/3in","front1/3out","middle1/3out","last1/3out","type"]]
-    addrlist = list(feature["address"])
-    for index,row in feature.iterrows():
-        if row['type'] == 1:
-            row['type'] = 'scam'
-            feature.iloc[index] = row
-        else:
-            row['type'] = 'normal'
-            feature.iloc[index] = row
-    feature.rename(columns={'address': 'Id'},inplace=True)
-    feature['degree'] = feature[['intxs', 'outtxs']].sum(axis=1)
-    feature.to_csv('node.csv')#里面没有未知节点
-    # mledge = mledge[(mledge['Source'].isin(addrlist)) & (mledge['Target'].isin(addrlist))]#选取两个节点都已知的边
-    # mledge2 = mledge2[(mledge2['Source'].isin(addrlist)) & (mledge2['Target'].isin(addrlist))]
-    # frames = [mledge,mledge2]
-    # finaledge = pandas.concat(frames)
-    # finaledge.to_csv('edge.csv')
-def dprmatrix():#将用于pyg的转换为用于dpr攻击的
-    edgecsv = pd.read_csv('edge.csv')#需要给每个节点一个编号，使用node.csv中的行号作为编号
-    nodecsv = pd.read_csv('node.csv')
-    nodenum = 17339
-    attrnum = 14
-    adjindex = np.arange(0,nodenum+1)
-    attrindex = np.arange(0,attrnum+1)
-    attrname = np.array(['allIncome','allOutcome','avgIncome','avgOutcome','intxs','outtxs','livingTime','front1/3in',
-                         'middle1/3in','last1/3in','front1/3out','middle1/3out','last1/3out','degree'])
-    addrlist = nodecsv['Id']
-    adjdict = dict(zip(addrlist,adjindex))
-    attrdict = dict(zip(attrname,attrindex))#属性名和属性索引的映射
-    adjmatrix = np.zeros([nodenum,nodenum])
-    attrmatrix = np.zeros([nodenum,attrnum])
-    nodecsv.loc[nodecsv['type'] == 'scam', 'type'] = np.float16(1)
-    nodecsv.loc[nodecsv['type'] == 'normal', 'type'] = np.float16(0)
-    for index,row in edgecsv.iterrows():
-        index1 = adjdict[row['Source']]
-        index2 = adjdict[row['Target']]
-        adjmatrix[index1][index2] = 1
-    class_names = np.array(['scam','normal'])
-    adj_shape = np.array([nodenum,nodenum])
-    attr_shape = np.array([nodenum,attrnum])
-    for index,row in nodecsv.iterrows():
-        rowindex = adjdict[row['Id']]
-        for attr in attrname:
-            colindex = attrdict[attr]
-            attrmatrix[rowindex][colindex] = row[attr]
-    adjcsr = sp.csr_matrix(adjmatrix)
-    attrcsr = sp.csr_matrix(attrmatrix)
-    adj_data = adjcsr.data
-    adj_indices = adjcsr.indices
-    adj_indptr = adjcsr.indptr
-    adj_shape = adjcsr.shape
-    attr_data = attrcsr.data
-    attr_indices = attrcsr.indices
-    attr_indptr = attrcsr.indptr
-    attr_shape = attrcsr.shape
-    format = 'csr'
-    labels = nodecsv['type']
-    labels = labels.astype(np.float32)
-
-    print(type(labels))
-    for label in labels:
-        print(type(label))
-    np.savez('test.npz', adj_data = adjcsr.data,adj_indices = adjcsr.indices,adj_indptr = adjcsr.indptr,adj_shape=adj_shape,
-             attr_data = attrcsr.data,attr_indices = attrcsr.indices,attr_indptr = attrcsr.indptr,attr_shape = attrcsr.shape,
-             class_names=class_names,labels = labels)#原始版本叫test.npz，选出一个最大连通子图component后的版本叫testc.npz
-    # np.savez('test_meta_adj_0.05.npz', data=adjcsr.data, indices=adjcsr.indices, indptr=adjcsr.indptr,
-    #          shape=adj_shape, attr_data=attrcsr.data, attr_indices=attrcsr.indices, attr_indptr=attrcsr.indptr, attr_shape=attrcsr.shape,
-    #          class_names=class_names, labels=labels, format=format)
-    np.savez('test_meta_adj_0.05.npz', data=adjcsr.data, indices=adjcsr.indices, indptr=adjcsr.indptr,
-             shape=adj_shape, attr_data=attrcsr.data, attr_indices=attrcsr.indices, attr_indptr=attrcsr.indptr,
-             attr_shape=attrcsr.shape, class_names=class_names, labels=labels, format=format)
-
-    # npz = np.load('test_meta_adj_0.05.npz')
-    # print(type(npz))
-    # print(npz['labels'][0])
-    # y = torch.from_numpy(npz['labels']).to(torch.float)
-    # print(y)
-    # print(csr)
-def dprmatrixc():#将用于pyg的转换为用于dpr攻击的
-    edgecsv = pd.read_csv('edgec.csv')#需要给每个节点一个编号，使用node.csv中的行号作为编号
-    nodecsv = pd.read_csv('nodec.csv')
-    nodenum = 16289
-    attrnum = 14
-    adjindex = np.arange(0,nodenum+1)
-    attrindex = np.arange(0,attrnum+1)
-    attrname = np.array(['allIncome','allOutcome','avgIncome','avgOutcome','intxs','outtxs','livingTime','front1/3in',
-                         'middle1/3in','last1/3in','front1/3out','middle1/3out','last1/3out','degree'])
-    addrlist = nodecsv['Id']
-    adjdict = dict(zip(addrlist,adjindex))
-    attrdict = dict(zip(attrname,attrindex))#属性名和属性索引的映射
-    adjmatrix = np.zeros([nodenum,nodenum])
-    attrmatrix = np.zeros([nodenum,attrnum])
-    nodecsv.loc[nodecsv['type'] == 'scam', 'type'] = np.float16(1)
-    nodecsv.loc[nodecsv['type'] == 'normal', 'type'] = np.float16(0)
-    for index,row in edgecsv.iterrows():
-        index1 = adjdict[row['Source']]
-        index2 = adjdict[row['Target']]
-        adjmatrix[index1][index2] = 1
-    class_names = np.array(['scam','normal'])
-    adj_shape = np.array([nodenum,nodenum])
-    attr_shape = np.array([nodenum,attrnum])
-    for index,row in nodecsv.iterrows():
-        rowindex = adjdict[row['Id']]
-        for attr in attrname:
-            colindex = attrdict[attr]
-            attrmatrix[rowindex][colindex] = row[attr]
-    adjcsr = sp.csr_matrix(adjmatrix)
-    attrcsr = sp.csr_matrix(attrmatrix)
-    adj_data = adjcsr.data
-    adj_indices = adjcsr.indices
-    adj_indptr = adjcsr.indptr
-    adj_shape = adjcsr.shape
-    attr_data = attrcsr.data
-    attr_indices = attrcsr.indices
-    attr_indptr = attrcsr.indptr
-    attr_shape = attrcsr.shape
-    format = 'csr'
-    labels = nodecsv['type']
-    labels = labels.astype('int32')
-    print(type(labels))
-    for label in labels:
-        print(type(label))
-    np.savez('testc.npz', adj_data = adjcsr.data,adj_indices = adjcsr.indices,adj_indptr = adjcsr.indptr,adj_shape=adj_shape,
-             attr_data = attrcsr.data,attr_indices = attrcsr.indices,attr_indptr = attrcsr.indptr,attr_shape = attrcsr.shape,
-             class_names=class_names,labels = labels)#原始版本叫test.npz，选出一个最大连通子图component后的版本叫testc.npz
-    # np.savez('test_meta_adj_0.05.npz', data=adjcsr.data, indices=adjcsr.indices, indptr=adjcsr.indptr,
-    #          shape=adj_shape, attr_data=attrcsr.data, attr_indices=attrcsr.indices, attr_indptr=attrcsr.indptr, attr_shape=attrcsr.shape,
-    #          class_names=class_names, labels=labels, format=format)
-    np.savez('testc_meta_adj_0.05.npz', data=adjcsr.data, indices=adjcsr.indices, indptr=adjcsr.indptr,
-             shape=adj_shape, attr_data=attrcsr.data, attr_indices=attrcsr.indices, attr_indptr=attrcsr.indptr,
-             attr_shape=attrcsr.shape, class_names=class_names, labels=labels, format=format)
-
-def dpr2pyg():#
-    dpradj = np.load('testadj.npz')
-    dprfeature = np.load('testfeature.npz')#将npz解压出转换为node.csv,edge.csv
-    nodenum = 17339
-    attrnum = 14
-    print(type(dpradj))
-    # np_to_csv = pd.DataFrame(data=dpradj)
-    # np_to_csv.to_csv('test.csv')
-    print(dpradj.files)
-
 
 #三次机器学习的训练样本数：
 #node:332191 332063 332124
@@ -8885,7 +8738,7 @@ def getComponentNode():
     adj, features, labels = load_npz(data_filename)#用仓库的源代码提取
     # adj = np.load('D:\\ether\\testa.npz',allow_pickle=True)
     # features = np.load('D:\\ether\\testf.npz',allow_pickle=True)
-    n_components = 1
+    n_components = 2
     _, component_indices = sp.csgraph.connected_components(adj)  # 使用sp的接口找稀疏矩阵的连通子图，获取子图索引，将有向图转换为无向图找弱连通子图
     component_sizes = np.bincount(component_indices)  # 计算连通子图个数
     components_to_keep = np.argsort(component_sizes)[::-1][:n_components]  # reverse order to sort descending 倒序
@@ -8893,7 +8746,6 @@ def getComponentNode():
         idx for (idx, component) in enumerate(component_indices) if component in components_to_keep]  # 选择最大连通子图的节点
     with open('componentNode.txt','w') as f:
         print(nodes_to_keep,file=f)
-
     # with open('test.txt', 'r') as f:
     #     mylist = literal_eval(f.read())
     # for index,alist in enumerate(mylist):
@@ -8910,23 +8762,88 @@ def getComponentNode():
     #     mylist = literal_eval(f.read())
     #     print(len(mylist))
 def getCompNodeCsv():#根据连通子图的节点，筛选node.csv中对应序号的行，选择最大的连通子图
-    with open('componentNode.txt','r') as f:
+    with open('componentNode.txt','r') as f:#记录旧序号，新索引和值的映射就是新索引和旧索引的映射
         nodes_to_keep = literal_eval(f.read())
     nodecsv = pd.read_csv('node.csv')
-    edgecsv = pd.read_csv('edge.csv')
+    edgecsv = pd.read_csv('edge.csv')#使用source target格式
     addrlist = nodecsv['Id']
     nodenum = 17339#是从原来的图中留下最大连通子图，非最大连通子图的信息不加载
     adjindex = np.arange(0, nodenum + 1)
-    index2adj = dict(zip(adjindex, addrlist))
+    index2adj = dict(zip(adjindex, addrlist))#旧索引和地址的映射
+    with open('oldindex2addr.txt','w') as f:
+        print(index2adj,file=f)
+    return
     addr_to_keep = [index2adj[index] for index in nodes_to_keep]
     CompNodeCsv = nodecsv[(nodecsv['Unnamed: 0'].isin(nodes_to_keep))]
     CompEdgeCsv = edgecsv[(edgecsv['Source']).isin(addr_to_keep) & (edgecsv['Target']).isin(addr_to_keep)]
     CompNodeCsv.to_csv('nodec.csv')
     CompEdgeCsv.to_csv('edgec.csv')
-def attackedEdge():
-    attackedAdj = sp.load_npz('testmDice.npz')
-    df = pd.DataFrame.sparse.from_spmatrix(attackedAdj)#16295*16295不需要还原回全部的节点，只需要最大连通图
-    df.to_csv('edgemD.csv')
+
+def attackedEdge():#将攻击后的邻接矩阵转换为地址source target类型的df
+    with open('oldindex2addr.txt','r') as f:
+        oldindex2addr = literal_eval(f.read())
+    with open('componentNode.txt','r') as f:
+        nodes_to_keep = literal_eval(f.read())#下标是新索引，值是旧索引
+    # edgecsv = pd.read_csv('edge.csv')
+    # source = edgecsv['Source']
+    # target = edgecsv['Target']
+    # weight = edgecsv['Weight']
+    # sttuple = zip(source,target)
+    # st2w = dict(zip(sttuple,weight))
+    # with open('edgeDict.txt','w') as f:
+    #     print(st2w,file=f)
+    with open('edgeDict.txt','r') as f:
+        st2w = literal_eval(f.read())
+    # return
+    csrmatrix = sp.load_npz('testmDice.npz')
+    csrmatrix = sp.load_npz('testmEmbed.npz')#改变攻击方法，修改这里和下面按照文件名写入的一行即可
+    csrmatrix = sp.load_npz('testmRandom.npz')
+    coomatrix = sp.coo_matrix(csrmatrix)#row，col是非零值的新索引
+    newrow = coomatrix.row#16295*16295不需要还原回全部的节点，只需要最大连通图
+    newcol = coomatrix.col
+    newindex = np.arange(len(nodes_to_keep))
+    newindex2oldindex = dict(zip(newindex,nodes_to_keep))
+    # df = pd.DataFrame.sparse.from_spmatrix(csrmatrix)
+    # print(len(df[0]))
+    # print(len(nodes_to_keep))
+    # csrmatrix = sp.load_npz('testmEmbed.npz')
+    # df = pd.DataFrame.sparse.from_spmatrix(csrmatrix)
+    # print(len(df[0]))
+    # csrmatrix = sp.load_npz('testmRandom.npz')
+    # df = pd.DataFrame.sparse.from_spmatrix(csrmatrix)
+    # print(len(df[0]))
+    # csrmatrix = sp.load_npz('testmEmbed2.npz')
+    # df = pd.DataFrame.sparse.from_spmatrix(csrmatrix)
+    # print(len(df[0]))
+    # return
+    # with open('edgemD.csv','w',newline='') as f:
+    # with open('edgemE.csv', 'w', newline='') as f:
+    with open('edgemR.csv', 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(['Source','Target','Weight'])#要还原回原来的weight，如果原来没有这条边则设置为1
+        for index in range(len(newrow)):
+            rowi = newrow[index]
+            coli = newcol[index]
+            sourceOldIndex = newindex2oldindex[rowi]
+            sourceAddr = oldindex2addr[sourceOldIndex]
+            targetOldIndex = newindex2oldindex[coli]
+            targetAddr = oldindex2addr[targetOldIndex]
+            if (sourceAddr,targetAddr) in st2w.keys():
+                weighti = st2w[(sourceAddr,targetAddr)]
+                # print((sourceAddr,targetAddr))
+                if weighti != 1:
+                    print((sourceAddr, targetAddr))
+            else:
+                weighti = 1
+                # print((sourceAddr,targetAddr))
+                # return
+            writer.writerow([sourceAddr,targetAddr,weighti])
+    # df.to_csv('edgemD.csv')
+    # print(type(df))
+    # print(df.dtypes)
+    # df = pd.read_csv('edge.csv')
+    # print(type(df))
+    # print(df.dtypes)
 
     # attackedAdj = sp.load_npz('testmEmbed.npz')
     # df = pd.DataFrame.sparse.from_spmatrix(attackedAdj)
@@ -8939,6 +8856,153 @@ def attackedEdge():
     # attackedAdj = sp.load_npz('testmRandom.npz')#testm表示modified
     # df = pd.DataFrame.sparse.from_spmatrix(attackedAdj)
     # df.to_csv('edgemR.csv')
+
+def graphData():#将随机抽出的节点的特征填到node.csv中，unknown节点的特征值没有则置为0，应该补充和欺诈节点以及正常节点相连的未知节点的特征
+    # mlnode = pandas.read_csv('mlnode.csv')#将每个节点的特征补充到正确的node.csv中
+    mledge = pandas.read_csv('mledge.csv')
+    # mlnode2 = pandas.read_csv('mlnode2.csv')
+    mledge2 = pandas.read_csv('mledge2.csv')#挑出所有已知节点
+    feature = pandas.read_csv('mlchar.csv')[["address","allIncome","allOutcome","avgIncome","avgOutcome","intxs","outtxs","livingTime","front1/3in","middle1/3in","last1/3in","front1/3out","middle1/3out","last1/3out","type"]]
+    addrlist = list(feature["address"])
+    for index,row in feature.iterrows():
+        if row['type'] == 1:
+            row['type'] = 'scam'
+            feature.iloc[index] = row
+        else:
+            row['type'] = 'normal'
+            feature.iloc[index] = row
+    feature.rename(columns={'address': 'Id'},inplace=True)
+    feature['degree'] = feature[['intxs', 'outtxs']].sum(axis=1)
+    feature.to_csv('node.csv')#里面没有未知节点
+    # mledge = mledge[(mledge['Source'].isin(addrlist)) & (mledge['Target'].isin(addrlist))]#选取两个节点都已知的边
+    # mledge2 = mledge2[(mledge2['Source'].isin(addrlist)) & (mledge2['Target'].isin(addrlist))]
+    # frames = [mledge,mledge2]
+    # finaledge = pandas.concat(frames)
+    # finaledge.to_csv('edge.csv')
+def dprmatrix():#将用于pyg的转换为用于dpr攻击的
+    edgecsv = pd.read_csv('edge.csv')#需要给每个节点一个编号，使用node.csv中的行号作为编号
+    nodecsv = pd.read_csv('node.csv')
+    nodenum = 17339
+    attrnum = 14
+    adjindex = np.arange(0,nodenum+1)
+    attrindex = np.arange(0,attrnum+1)
+    attrname = np.array(['allIncome','allOutcome','avgIncome','avgOutcome','intxs','outtxs','livingTime','front1/3in',
+                         'middle1/3in','last1/3in','front1/3out','middle1/3out','last1/3out','degree'])
+    addrlist = nodecsv['Id']
+    adjdict = dict(zip(addrlist,adjindex))
+    attrdict = dict(zip(attrname,attrindex))#属性名和属性索引的映射
+    adjmatrix = np.zeros([nodenum,nodenum])
+    attrmatrix = np.zeros([nodenum,attrnum])
+    nodecsv.loc[nodecsv['type'] == 'scam', 'type'] = np.float16(1)
+    nodecsv.loc[nodecsv['type'] == 'normal', 'type'] = np.float16(0)
+    for index,row in edgecsv.iterrows():
+        index1 = adjdict[row['Source']]
+        index2 = adjdict[row['Target']]
+        adjmatrix[index1][index2] = row['Weight']#转换为nodenum*nodenum大的邻接矩阵，有权矩阵
+    class_names = np.array(['scam','normal'])
+    adj_shape = np.array([nodenum,nodenum])
+    attr_shape = np.array([nodenum,attrnum])
+    for index,row in nodecsv.iterrows():
+        rowindex = adjdict[row['Id']]
+        for attr in attrname:
+            colindex = attrdict[attr]
+            attrmatrix[rowindex][colindex] = row[attr]
+    adjcsr = sp.csr_matrix(adjmatrix)
+    attrcsr = sp.csr_matrix(attrmatrix)
+    adj_data = adjcsr.data
+    adj_indices = adjcsr.indices
+    adj_indptr = adjcsr.indptr
+    adj_shape = adjcsr.shape
+    attr_data = attrcsr.data
+    attr_indices = attrcsr.indices
+    attr_indptr = attrcsr.indptr
+    attr_shape = attrcsr.shape
+    format = 'csr'
+    labels = nodecsv['type']
+    labels = labels.astype(np.float32)
+
+    # print(type(labels))
+    # for label in labels:
+    #     print(type(label))
+    np.savez('test.npz', adj_data = adjcsr.data,adj_indices = adjcsr.indices,adj_indptr = adjcsr.indptr,adj_shape=adj_shape,
+             attr_data = attrcsr.data,attr_indices = attrcsr.indices,attr_indptr = attrcsr.indptr,attr_shape = attrcsr.shape,
+             class_names=class_names,labels = labels)#原始版本叫test.npz，选出一个最大连通子图component后的版本叫testc.npz
+    # np.savez('test_meta_adj_0.05.npz', data=adjcsr.data, indices=adjcsr.indices, indptr=adjcsr.indptr,
+    #          shape=adj_shape, attr_data=attrcsr.data, attr_indices=attrcsr.indices, attr_indptr=attrcsr.indptr, attr_shape=attrcsr.shape,
+    #          class_names=class_names, labels=labels, format=format)
+    np.savez('test_meta_adj_0.05.npz', data=adjcsr.data, indices=adjcsr.indices, indptr=adjcsr.indptr,
+             shape=adj_shape, attr_data=attrcsr.data, attr_indices=attrcsr.indices, attr_indptr=attrcsr.indptr,
+             attr_shape=attrcsr.shape, class_names=class_names, labels=labels, format=format)
+
+    # npz = np.load('test_meta_adj_0.05.npz')
+    # print(type(npz))
+    # print(npz['labels'][0])
+    # y = torch.from_numpy(npz['labels']).to(torch.float)
+    # print(y)
+    # print(csr)
+def dprmatrixc():#将用于pyg的转换为用于dpr攻击的
+    edgecsv = pd.read_csv('edgec.csv')#需要给每个节点一个编号，使用node.csv中的行号作为编号
+    nodecsv = pd.read_csv('nodec.csv')
+    nodenum = 16289
+    attrnum = 14
+    adjindex = np.arange(0,nodenum+1)
+    attrindex = np.arange(0,attrnum+1)
+    attrname = np.array(['allIncome','allOutcome','avgIncome','avgOutcome','intxs','outtxs','livingTime','front1/3in',
+                         'middle1/3in','last1/3in','front1/3out','middle1/3out','last1/3out','degree'])
+    addrlist = nodecsv['Id']
+    adjdict = dict(zip(addrlist,adjindex))
+    attrdict = dict(zip(attrname,attrindex))#属性名和属性索引的映射
+    adjmatrix = np.zeros([nodenum,nodenum])
+    attrmatrix = np.zeros([nodenum,attrnum])
+    nodecsv.loc[nodecsv['type'] == 'scam', 'type'] = np.float16(1)
+    nodecsv.loc[nodecsv['type'] == 'normal', 'type'] = np.float16(0)
+    for index,row in edgecsv.iterrows():
+        index1 = adjdict[row['Source']]
+        index2 = adjdict[row['Target']]
+        adjmatrix[index1][index2] = row['Weight']
+    class_names = np.array(['scam','normal'])
+    adj_shape = np.array([nodenum,nodenum])
+    attr_shape = np.array([nodenum,attrnum])
+    for index,row in nodecsv.iterrows():
+        rowindex = adjdict[row['Id']]
+        for attr in attrname:
+            colindex = attrdict[attr]
+            attrmatrix[rowindex][colindex] = row[attr]
+    adjcsr = sp.csr_matrix(adjmatrix)
+    attrcsr = sp.csr_matrix(attrmatrix)
+    adj_data = adjcsr.data
+    adj_indices = adjcsr.indices
+    adj_indptr = adjcsr.indptr
+    adj_shape = adjcsr.shape
+    attr_data = attrcsr.data
+    attr_indices = attrcsr.indices
+    attr_indptr = attrcsr.indptr
+    attr_shape = attrcsr.shape
+    format = 'csr'
+    labels = nodecsv['type']
+    labels = labels.astype('int32')
+    print(type(labels))
+    # for label in labels:
+    #     print(type(label))
+    np.savez('testc.npz', adj_data = adjcsr.data,adj_indices = adjcsr.indices,adj_indptr = adjcsr.indptr,adj_shape=adj_shape,
+             attr_data = attrcsr.data,attr_indices = attrcsr.indices,attr_indptr = attrcsr.indptr,attr_shape = attrcsr.shape,
+             class_names=class_names,labels = labels)#原始版本叫test.npz，选出一个最大连通子图component后的版本叫testc.npz
+    # np.savez('test_meta_adj_0.05.npz', data=adjcsr.data, indices=adjcsr.indices, indptr=adjcsr.indptr,
+    #          shape=adj_shape, attr_data=attrcsr.data, attr_indices=attrcsr.indices, attr_indptr=attrcsr.indptr, attr_shape=attrcsr.shape,
+    #          class_names=class_names, labels=labels, format=format)
+    np.savez('testc_meta_adj_0.05.npz', data=adjcsr.data, indices=adjcsr.indices, indptr=adjcsr.indptr,
+             shape=adj_shape, attr_data=attrcsr.data, attr_indices=attrcsr.indices, attr_indptr=attrcsr.indptr,
+             attr_shape=attrcsr.shape, class_names=class_names, labels=labels, format=format)
+
+def dpr2pyg():#
+    dpradj = np.load('testadj.npz')
+    dprfeature = np.load('testfeature.npz')#将npz解压出转换为node.csv,edge.csv
+    nodenum = 17339
+    attrnum = 14
+    print(type(dpradj))
+    # np_to_csv = pd.DataFrame(data=dpradj)
+    # np_to_csv.to_csv('test.csv')
+    print(dpradj.files)
 
 if __name__ == '__main__':
     # try:
@@ -9168,6 +9232,7 @@ if __name__ == '__main__':
     # getComponentNode()
     # getCompNodeCsv()
     attackedEdge()
+    # dprmatrixc()
     # getnpz()
     # fig16b()
     # fig15a()
