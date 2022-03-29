@@ -658,9 +658,9 @@ def getEtxs4():
                 print(url)
                 print(result)
                 print(addr)
-# https://api.etherscan.io/api?module=account&action=tokentx&address=0x0f3257e9513f4812bf015efc5022f16bfef0cfa8&page=1&offset=100&startblock=0&endblock=27025780&sort=asc&apikey=YourApiKeyToken
-# https://api.etherscan.io/api?module=account&action=txlist&address=0xd0b0d5a8c0b40b7272115a23a2d5e36ad190f13c&startblock=0&endblock=99999999&page=1&offset=10000&sort=asc&apikey=YourApiKeyToken
-# https://api.etherscan.io/api?module=account&action=txlistinternal&address=0xe81ad9c0b999222bfe4060ef36b9fef995bad9f9&startblock=0&endblock=99999999&page=1&offset=10000&sort=asc&apikey=ZF9TQA39PFPPUD7VCDK2Q9ZVD2M72N2HGZ
+# 代币：https://api.etherscan.io/api?module=account&action=tokentx&address=0x0f3257e9513f4812bf015efc5022f16bfef0cfa8&page=1&offset=100&startblock=0&endblock=27025780&sort=asc&apikey=YourApiKeyToken
+# 一般：https://api.etherscan.io/api?module=account&action=txlist&address=0xd0b0d5a8c0b40b7272115a23a2d5e36ad190f13c&startblock=0&endblock=99999999&page=1&offset=10000&sort=asc&apikey=YourApiKeyToken
+# 内部：https://api.etherscan.io/api?module=account&action=txlistinternal&address=0xe81ad9c0b999222bfe4060ef36b9fef995bad9f9&startblock=0&endblock=99999999&page=1&offset=10000&sort=asc&apikey=ZF9TQA39PFPPUD7VCDK2Q9ZVD2M72N2HGZ
 #fig2:每个地址首次欺诈交易的时间
 #fig3：每个月不同种交易的欺诈交易的数量
 #fig5：2019年最多欺诈交易的地址，取出来分析交易数量
@@ -1044,10 +1044,10 @@ def scamIOcome21():
 def fig4():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    df1 = pandas.read_csv('ntx1.csv')
-    df2 = pandas.read_csv('ntx2.csv')
-    df3 = pandas.read_csv('ntx3.csv')
-    df4 = pandas.read_csv('ntx4.csv')
+    # df1 = pandas.read_csv('ntx1.csv')
+    # df2 = pandas.read_csv('ntx2.csv')
+    # df3 = pandas.read_csv('ntx3.csv')
+    # df4 = pandas.read_csv('ntx4.csv')
     # df5 = pandas.read_csv('itx1.csv')
     # df6 = pandas.read_csv('itx2.csv')
     # df7 = pandas.read_csv('itx3.csv')
@@ -1060,24 +1060,52 @@ def fig4():
     # df14 = pandas.read_csv('bitx1.csv')
     # df15 = pandas.read_csv('betx1.csv')
     # frames = [df1,df2,df3,df4,df5,df6,df7,df8,df9,df10,df11,df12,df13,df14,df15]
-    frames = [df1,df2,df3,df4]
-    df = pandas.concat(frames)
-    df = df.drop_duplicates()#去重
-    df['timeStamp'] = df['timeStamp'].map(lambda x:datetime.datetime.fromtimestamp(x).strftime("%Y-%m-%d"))
-    df = df.sort_values('timeStamp')
-    pandas.set_option('display.max_columns', 40)  # 打印最大列数
+    # frames = [df1,df2,df3,df4]
+    # df = pandas.concat(frames)
+    df = pandas.read_csv('ntx.csv')
+    # df = df.drop_duplicates()#去重
+    # df['timeStamp'] = df['timeStamp'].map(lambda x:datetime.datetime.fromtimestamp(x).strftime("%Y-%m-%d"))
+    # df = df.sort_values('timeStamp')
+    # pandas.set_option('display.max_columns', 40)  # 打印最大列数
     #月份2地址2交易数量，不同地址作为同x不同y的点
     #地址2月份还是月份2地址都可以，地址2月份2交易数量方便
     #先排序时间再统计交易数量
-    day2addr2num = {}
-    for index, row in df.iterrows():
-        if isinstance(row['to'],str) and row['to'] in addrlist:
-            day2addr2num[row['timeStamp']] = {}
-    for index, row in df.iterrows():
-        if isinstance(row['to'],str) and row['to'] in addrlist:
-            day2addr2num[row['timeStamp']][row['to']] = day2addr2num[row['timeStamp']].get(row['to'],0) + 1
-    with open('fig4.txt','w',encoding='utf-8') as f:
-        print(day2addr2num,file=f)
+    #一分钟内的交易数量，取每天的最大值
+    # day2addr2num = {}
+    # for index, row in df.iterrows():
+    #     if isinstance(row['to'],str) and row['to'] in addrlist:
+    #         day2addr2num[row['timeStamp']] = {}
+    # for index, row in df.iterrows():
+    #     if isinstance(row['to'],str) and row['to'] in addrlist:
+    #         day2addr2num[row['timeStamp']][row['to']] = day2addr2num[row['timeStamp']].get(row['to'],0) + 1
+    # with open('fig4.txt','w',encoding='utf-8') as f:
+    #     print(day2addr2num,file=f)
+    day2num = {}
+    with open('fig4.txt','r',encoding='utf-8') as f:
+        day2addr2num = literal_eval(f.read())
+    for day,addr2num in day2addr2num.items():
+        numlist = list(addr2num.values())
+        maxnum = max(numlist)
+        day2num[day] = maxnum
+    # print(day2num)
+    x = []
+    y = []
+    for day,num in day2num.items():
+        x.append(day)
+        y.append(num)
+    plt.figure(figsize=(6,5))
+    plt.scatter(x, y, s=1)
+    plt.xticks(rotation=30)
+    x_major_locator = MultipleLocator(90)
+    ax = plt.gca()
+    ax.set_ylabel('# of transactions')
+    ax.set_xlabel('Date')
+    ax.set_ylim(1)
+    ax.xaxis.set_major_locator(x_major_locator)
+    plt.yscale('log')
+    plt.savefig('fig4.jpg',bbox_inches = 'tight')
+    plt.show()
+    return
     # with open('fig4.txt','r',encoding='utf-8') as f:
     #     day2addr2num = literal_eval(f.read())
     #将月份和交易数量存入x轴和y轴
@@ -1456,7 +1484,11 @@ def scamProfitRank():
     scamItxProfit = sorted(zipped2,key = lambda x:(x[1]))
     print(scamNtxProfit[-6:-1])
     print(scamItxProfit[-6:-1])
-    #[('0x84f4bcc4e841afdfde7899662f8bbd7d6a71c112', 154030905.16457036), ('0x4d53dad4b3552710ac276fa7f7ba944554c1cace', 247690286.23993436), ('0x9409d7ea71294fc5561e5fdd47d4a9f5993948c5', 252262331.62993762), ('0x9a207194cbed9f229694fdf5a28caab59157920d', 275511997.60007125), ('0x3408edca2d47ddaa783a3563d991b8ddebcd973b', 275512040.07925004)]
+    #[('0x84f4bcc4e841afdfde7899662f8bbd7d6a71c112', 154030905.16457036),
+    # ('0x4d53dad4b3552710ac276fa7f7ba944554c1cace', 247690286.23993436),和最后一个有关系
+    # ('0x9409d7ea71294fc5561e5fdd47d4a9f5993948c5', 252262331.62993762),和下面一个的有关系
+    # ('0x9a207194cbed9f229694fdf5a28caab59157920d', 275511997.60007125),
+    # ('0x3408edca2d47ddaa783a3563d991b8ddebcd973b', 275512040.07925004)]
 
 def fig7n():#pdf图
     with open('addr.txt','r',encoding='utf-8') as f:
@@ -1473,91 +1505,94 @@ def fig7n():#pdf图
     # for name, dic in res.items():
     #     rates[name] = usd / dic['value']
     # eth = rates['eth']  # 一个以太币的价格
-    eth = 2460.268204521556#欺诈地址之间互相转账不能计算
-    for index, row in df.iterrows():
-        if isinstance(row['to'],str) and row['to'].lower() in addrlist and row['from'].lower() not in addrlist:
-            addr2prof[row['to']] = 0
-    for index, row in df.iterrows():
-        if isinstance(row['to'],str) and row['to'].lower() in addrlist and row['from'].lower() not in addrlist:
-            try:
-                if isinstance(row['value'],str):
-                    addr2prof[row['to']] += int(row['value']) / 1000000000000000000 * eth
-            except Exception:
-                print(row['value'])
-    # print(addr2prof)
-    # with open('scamNtxProfit.txt','w') as f:
-    #     print(addr2prof,file=f)
-    # print(addr2prof['0x8909cc8d294544ca2c956550edbcb59ce4f2a9ad'])
-    # return
-    prof2num = {}
+    # eth = 2460.268204521556#欺诈地址之间互相转账不能计算
+    # for index, row in df.iterrows():
+    #     if isinstance(row['to'],str) and row['to'].lower() in addrlist and row['from'].lower() not in addrlist:
+    #         addr2prof[row['to']] = 0
+    # for index, row in df.iterrows():
+    #     if isinstance(row['to'],str) and row['to'].lower() in addrlist and row['from'].lower() not in addrlist:
+    #         try:
+    #             if isinstance(row['value'],str):
+    #                 addr2prof[row['to']] += int(row['value']) / 1000000000000000000 * eth
+    #         except Exception:
+    #             print(row['value'])
+    # # print(addr2prof)
+    # # with open('scamNtxProfit.txt','w') as f:
+    # #     print(addr2prof,file=f)
+    # # print(addr2prof['0x8909cc8d294544ca2c956550edbcb59ce4f2a9ad'])
+    # # return
+    # prof2num = {}
     profaxis = ['0-100k','100k-200k','200k-300k','300k-400k','400k-500k','500k-600k','600k-700k','700k-800k','800k-900k','900k-1000k','1000k-1100k','1100k-1200k','1200k-1300k','1300k-1400k','1400k-1500k','>1500k']
-    for prof in profaxis:
-        prof2num[prof] = 0
-    for addr,prof in addr2prof.items():
-        if prof / 1000 <= 100:
-            prof2num['0-100k'] += 1
-        if prof / 1000 > 100 and prof / 1000 <= 200:
-            prof2num['100k-200k'] += 1
-        if prof / 1000 > 200 and prof / 1000 <= 300:
-            prof2num['200k-300k'] += 1
-        if prof / 1000 > 300 and prof / 1000 <= 400:
-            prof2num['300k-400k'] += 1
-        if prof / 1000 > 400 and prof / 1000 <= 500:
-            prof2num['400k-500k'] += 1
-        if prof / 1000 > 500 and prof / 1000 <= 600:
-            prof2num['500k-600k'] += 1
-        if prof / 1000 > 600 and prof / 1000 <= 700:
-            prof2num['600k-700k'] += 1
-        if prof / 1000 > 700 and prof / 1000 <= 800:
-            prof2num['700k-800k'] += 1
-        if prof / 1000 > 800 and prof / 1000 <= 900:
-            prof2num['800k-900k'] += 1
-        if prof / 1000 > 900 and prof / 1000 <= 1000:
-            prof2num['900k-1000k'] += 1
-        if prof / 1000 > 1000 and prof / 1000 <= 1100:
-            prof2num['1000k-1100k'] += 1
-        if prof / 1000 > 1100 and prof / 1000 <= 1200:
-            prof2num['1100k-1200k'] += 1
-        if prof / 1000 > 1200 and prof / 1000 <= 1300:
-            prof2num['1200k-1300k'] += 1
-        if prof / 1000 > 1300 and prof / 1000 < 1400:
-            prof2num['1300k-1400k'] += 1
-        if prof / 1000 > 1400 and prof / 1000 < 1500:
-            prof2num['1400k-1500k'] += 1
-        if prof / 1000 > 1500:
-            prof2num['>1500k'] += 1
-            print(addr)
-    prof2num2 = {}
-    for addr,prof in addr2prof.items():
-        addr2prof[addr] = addr2prof[addr]
-    for addr,prof in addr2prof.items():
-        prof2num2[prof] = prof2num2.get(prof,0) + 1
+    # for prof in profaxis:
+    #     prof2num[prof] = 0
+    # for addr,prof in addr2prof.items():
+    #     if prof / 1000 <= 100:
+    #         prof2num['0-100k'] += 1
+    #     if prof / 1000 > 100 and prof / 1000 <= 200:
+    #         prof2num['100k-200k'] += 1
+    #     if prof / 1000 > 200 and prof / 1000 <= 300:
+    #         prof2num['200k-300k'] += 1
+    #     if prof / 1000 > 300 and prof / 1000 <= 400:
+    #         prof2num['300k-400k'] += 1
+    #     if prof / 1000 > 400 and prof / 1000 <= 500:
+    #         prof2num['400k-500k'] += 1
+    #     if prof / 1000 > 500 and prof / 1000 <= 600:
+    #         prof2num['500k-600k'] += 1
+    #     if prof / 1000 > 600 and prof / 1000 <= 700:
+    #         prof2num['600k-700k'] += 1
+    #     if prof / 1000 > 700 and prof / 1000 <= 800:
+    #         prof2num['700k-800k'] += 1
+    #     if prof / 1000 > 800 and prof / 1000 <= 900:
+    #         prof2num['800k-900k'] += 1
+    #     if prof / 1000 > 900 and prof / 1000 <= 1000:
+    #         prof2num['900k-1000k'] += 1
+    #     if prof / 1000 > 1000 and prof / 1000 <= 1100:
+    #         prof2num['1000k-1100k'] += 1
+    #     if prof / 1000 > 1100 and prof / 1000 <= 1200:
+    #         prof2num['1100k-1200k'] += 1
+    #     if prof / 1000 > 1200 and prof / 1000 <= 1300:
+    #         prof2num['1200k-1300k'] += 1
+    #     if prof / 1000 > 1300 and prof / 1000 < 1400:
+    #         prof2num['1300k-1400k'] += 1
+    #     if prof / 1000 > 1400 and prof / 1000 < 1500:
+    #         prof2num['1400k-1500k'] += 1
+    #     if prof / 1000 > 1500:
+    #         prof2num['>1500k'] += 1
+    #         print(addr)
+    # prof2num2 = {}
+    # for addr,prof in addr2prof.items():
+    #     addr2prof[addr] = addr2prof[addr]
+    # for addr,prof in addr2prof.items():
+    #     prof2num2[prof] = prof2num2.get(prof,0) + 1
+
     x = []
     y = []
-    # with open('fig7n.txt','r') as f:
-    #     prof2num = literal_eval(f.read())
-    fig, ax = plt.subplots()
+    with open('fig7n.txt','r') as f:
+        prof2num = literal_eval(f.read())
+    print(3257/sum(prof2num.values()))
+    return
+    # fig, ax = plt.subplots()
     for prof in profaxis:
         x.append(prof)
         y.append(prof2num[prof])
+    plt.figure(figsize=(6.5,4.85))
     plt.bar(x,y,width=1)
     plt.xticks(rotation=30)
-    plt.figure(figsize=(6,6.5))
     plt.yscale('log')
     x_major_locator = MultipleLocator(5)
     ax = plt.gca()
     ax.xaxis.set_major_locator(x_major_locator)
-    plt.savefig('fig7n.jpg',bbox_inches = 'tight')
     ax.set_xlabel('The Profit of Address($)')
-    ax.set_ylabel('# of normal txs')
+    ax.set_ylabel('the PDF graph of normal txs')
+    plt.savefig('fig7n.jpg',bbox_inches = 'tight')
     plt.show()
 
-    with open('fig7n.txt','w') as f:
-        print(prof2num,file=f)
-    with open('fig7n2.txt','w') as f:
-        print(prof2num2,file=f)
-    with open('fig7n3.txt','w') as f:
-        print(addr2prof,file=f)
+    # with open('fig7n.txt','w') as f:
+    #     print(prof2num,file=f)
+    # with open('fig7n2.txt','w') as f:
+    #     print(prof2num2,file=f)
+    # with open('fig7n3.txt','w') as f:
+    #     print(addr2prof,file=f)
 def fig7nCdf():
     # with open('fig7n.txt','r') as f:
     #     prof2num = literal_eval(f.read())
@@ -2705,17 +2740,22 @@ def getnormaladdr2():
         time.sleep(20)
         w.get('https://cn.etherscan.com/accounts/label/exchange?subcatid=undefined&size=10000&start=0&col=1&order=asc')
 def getnormaladdrNtxs1():
-    # with open('etherscanLabeledExchange1.txt','r',encoding='utf-8') as f:
-    #     list1 = literal_eval(f.read())
-    # with open('etherscanLabeledExchange2.txt','r',encoding='utf-8') as f:
-    #     list2 = literal_eval(f.read())
-    # with open('Peckshield.txt','r',encoding='utf-8') as f:
-    #     list3 = literal_eval(f.read())
-    # mylist = list(set(list1 + list2 + list3))
+    with open('etherscanLabeledExchange1.txt','r',encoding='utf-8') as f:
+        list1 = literal_eval(f.read())
+    print(len(list1))
+    with open('etherscanLabeledExchange2.txt','r',encoding='utf-8') as f:
+        list2 = literal_eval(f.read())
+    print(len(list2))
+    with open('Peckshield.txt','r',encoding='utf-8') as f:
+        list3 = literal_eval(f.read())
+    print(len(list3))
+    mylist = list(set(list1 + list2 + list3))
     # with open('normalAddr.txt','w',encoding='utf-8') as f:
     #     print(mylist,file=f)
     with open('normalAddr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
+    print(len(addrlist))
+    return
     addrlist = addrlist[0:1500]
     session = requests.Session()
     with open('normalntx1.csv','w',encoding='utf-8',newline='') as f:
@@ -5995,11 +6035,19 @@ def etherscanAddrTax():
         list8 = literal_eval(f.read())
         list8 = [addr.lower() for addr in list8]
         list8 = list(set(list8))
+        print(len(list8))
+    return
     with open('bloxyAddr.txt', 'r') as f:#在bloxy中的所有地址
         list9 = literal_eval(f.read())
         list9 = [addr.lower() for addr in list9]
         list9 = list(set(list9))#在bloxy的所有地址
+        mylen = len(list9)
+        print(mylen)
+    # return
     #已经分好类的地址：在bloxy中的所有地址；未分好类的地址：在scan中而不在bloxy中的地址
+    scanlist = list(set(list1 + list2 + list3 + list4 + list5 + list6 + list7))#scan中的地址数
+    print(len(scanlist))
+    return
     scanlist = list(set(list1 + list2 + list3 + list4 + list5 + list6 + list7 + list8))#scan中的地址数
     print(len(scanlist))#6429
     hacklist = list(set(list1 + list2 + list3 + list4 + list6 + list7 + list8))#etherscan去重后的hack类地址列表
@@ -6071,6 +6119,8 @@ def txtax():#交易分类
         typelist = literal_eval(f.read())
     with open('addr.txt','r') as f:
         scamaddr = literal_eval(f.read())
+    print(len(scamaddr))
+    return
     txtypenum = {}
     addrtxnum = {}#记录每个种类的各个地址的各种交易数量
     for addr in scamaddr:
@@ -7136,7 +7186,7 @@ def scamItxMFG():
             solp.append(addr)
     with open('scamItxSolP.txt','w',encoding='utf-8') as f:
         print(solp,file=f)
-def scamccg():
+def scamccg():#合约创建图，data必须是0
     df1 = pandas.read_csv('ntx.csv')
     df2 = pandas.read_csv('itx.csv')
     ccg = {}#key是创建者，value是被创建的合约
@@ -7167,14 +7217,13 @@ def norccgi():#不能通过eoa得到ccg，无法得到创建者
     with open('normalccgi.txt','w') as f:
         print(ccg,file=f)
 
-def eoaOrcontract1():
+def eoaOrcontractScam():#欺诈节点是eoa还是合约
     #获取所有的地址，是eoa则为1
     with open('addr.txt','r') as f:
         scamaddr = literal_eval(f.read())
     addrlist = scamaddr
     session = requests.Session()
     addr2eoa = {}
-    # addrlist = ['0xBB9bc244D798123fDe783fCc1C72d3Bb8C189413']
     for addr in addrlist:
         addr2eoa[addr] = 0
         url = "https://api.etherscan.io/api?module=contract&action=getabi&address="+ addr + "&apikey=" + apikey
@@ -7185,22 +7234,21 @@ def eoaOrcontract1():
             addr2eoa[addr] = 0
     with open('addr2eoa1.txt','w') as f:
         print(addr2eoa,file=f)
-def eoaOrcontract11():
-    with open('addr2eoa1.txt','r') as f:
-        addr2eoa1 = literal_eval(f.read())
-    addrlist = list(addr2eoa1.keys())
-    with open('addr.txt','r') as f:
-        scamaddr = literal_eval(f.read())
-    addr2eoa = {}
-    print(len(addr2eoa1))
-    for addr in scamaddr:
-        addr2eoa[addr] = 0
-        if addr in addrlist:
-            addr2eoa[addr] = 1
-        print(addr2eoa[addr])
-    with open('addr2eoa11.txt', 'w') as f:
-        print(addr2eoa, file=f)
-def eoaOrcontract2():
+# def eoaOrcontractNormal1():
+#     with open('addr2eoa1.txt','r') as f:
+#         addr2eoa1 = literal_eval(f.read())
+#     addrlist = list(addr2eoa1.keys())
+#     with open('addr.txt','r') as f:
+#         scamaddr = literal_eval(f.read())
+#     addr2eoa = {}
+#     for addr in scamaddr:
+#         addr2eoa[addr] = 0
+#         if addr in addrlist:
+#             addr2eoa[addr] = 1
+#         print(addr2eoa[addr])
+#     with open('addr2eoa11.txt', 'w') as f:
+#         print(addr2eoa, file=f)
+def eoaOrcontract2():#正常节点是eoa还是合约
     #获取所有的地址，是eoa则为1
     with open('normalAddr.txt','r') as f:
         noraddr = literal_eval(f.read())
@@ -7354,7 +7402,7 @@ def character13():
         normalAvgIncome = literal_eval(f.read())
     with open('normalAvgOutcome.txt','r') as f:
         normalAvgOutcome = literal_eval(f.read())
-    with open('normal2athirdIntxnum.txt','r') as f:
+    with open('normal2athirdIntxnum.txt','r') as f:#其实是intx num
         normal2athirdIntxnum = literal_eval(f.read())
     with open('normal2athirdOuttxnum.txt','r') as f:
         normal2athirdOuttxnum = literal_eval(f.read())
@@ -7574,13 +7622,13 @@ def getscamNodeEdgeCSV():
     # with open('mledge.txt','w',encoding='utf-8',newline='') as f:
     #     print(edgecsv,file=f)
 
-    with open('mlnode.txt', 'r', encoding='utf-8') as f:
+    with open('mlnode.txt', 'r', encoding='utf-8') as f:#统计欺诈节点相关交易涉及的所有节点的信息，命名有问题，不是用于机器学习的数据，用于scam group的数据
         nodecsv = literal_eval(f.read())
-    with open('mledge.txt', 'r', encoding='utf-8') as f:
+    with open('mledge.txt', 'r', encoding='utf-8') as f:#统计欺诈节点相关交易涉及的所有交易边的权重
         edgecsv = literal_eval(f.read())
     for addr,attr in nodecsv.items():
         nodecsv[addr]['degree'] = nodecsv[addr].get('indegree',0) + nodecsv[addr].get('outdegree',0)
-    with open('mlnode.csv','w',encoding='utf-8',newline='') as f:
+    with open('mlnode.csv','w',encoding='utf-8',newline='') as f:#
         writer = csv.writer(f)
         writer.writerow(['Id','type','indegree','outdegree','degree'])
         for addr,attr in nodecsv.items():
@@ -8026,15 +8074,18 @@ def fig12():
     mlnode = pandas.read_csv('mlnode.csv')
     # with open('addr.txt', 'r', encoding='utf-8') as f:
     #     scamaddrlist = literal_eval(f.read())
-    mlnode = mlnode[(mlnode['degree'] > 0) & (mlnode['type']=='scam')]
+    mlnode = mlnode[(mlnode['degree'] > 0) & (mlnode['type']=='scam')]#
     degreeScamnode = list(mlnode['Id'])#只筛选度>0且互相连接的欺诈节点
     mledge = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(degreeScamnode)) & (mledge['Target'].notnull()) & (mledge['Target'].isin(degreeScamnode))]#欺诈节点相互连接的边
-    mledge.to_csv('scamNodeDegreeEdge.csv')#欺诈边：两边都是欺诈节点的边
+    # mledge.to_csv('scamNodeDegreeEdge.csv')#欺诈边：两边都是欺诈节点的边
     mledgeSource = list(mledge['Source'])#欺诈边的起点
     mledgeTarget = list(mledge['Target'])#
     mledgelist = mledgeSource + mledgeTarget#欺诈边节点的列表
     mlnode = mlnode[(mlnode['Id'].isin(mledgelist))]#满足一定条件的欺诈节点
-    mlnode.to_csv('scamNodeDegree.csv')#和没有迭代没区别
+    # mlnode.to_csv('scamNodeDegree.csv')#和没有迭代没区别
+    print(mlnode.shape[0])
+    print(mledge.shape[0])
+
     #34.8+4.62+0.96+0.81+0.2=41.39 816个 0x83053c32b7819f420dcfed2d218335fe430fe3b5
     #2.03 40个
     #1.78 35个
@@ -8160,7 +8211,6 @@ def fig13evo():
     #如何通过拓展得到community，和某个欺诈地址进行交易的可疑地址作为同个community
     addrlist = ['0x83053c32b7819f420dcfed2d218335fe430fe3b5',
                 '0x0111a93692b5ccff5c4b006d88d82664f76dfd21',
-                '0x0111a93692b5ccff5c4b006d88d82664f76dfd21',
                 '0xb1898895a2ac9ef09afeda89ee559427b7142f2e',
                 '0x7f183cce61efcabb8d2eb1340f2a94c5eb1bf8e5',
                 '0x408fac2d2d3d3ac4e356aa188119f5624fd8c9f6',
@@ -8187,7 +8237,6 @@ def fig13evo():
                 '0xbbdef8b12babd3ab6018566bc17ec3aa302b8348',
                 ]
     # 29056
-    # 766
     # 766
     # 76
     # 906
@@ -8401,8 +8450,8 @@ def fig15a():
     #     fig15addr2timestamp[addr] = []
     # for index, row in df.iterrows():
     #     if isinstance(row['to'], str) and row['to'] in addrlist:
-    #         fig15addr2timestamp[row['to']].append(row['timeStamp'])
-    # with open('fig15addr2timestamp.txt', 'w', encoding='utf-8') as f:
+    #         fig15addr2timestamp[row['to']].append(row['timeStamp'])#没有对时间戳排序又错了
+    # with open('fig15addr2timestamp.txt', 'w', encoding='utf-8') as f:#从地址的living time到欺诈group的living time
     #     print(fig15addr2timestamp,file=f)
 
     # fig15addr2livinghours = {}
@@ -8462,7 +8511,7 @@ def fig15b():
     #     print(addr2time,file=f)
     with open('fig15addr2time.txt', 'r', encoding='utf-8') as f:
         addr2time = literal_eval(f.read())
-    with open('fig15addr2mon.txt', 'r', encoding='utf-8') as f:
+    with open('fig15addr2mon.txt', 'r', encoding='utf-8') as f:#还可以用于gephi的做法
         addr2mon = literal_eval(f.read())
     # for addr, time in addr2time.items():
     #     time.sort()
@@ -8508,7 +8557,7 @@ def fig15b():
     plt.show()
     # with open('fig15b.txt','w') as f:
     #     print(mon2count,file=f)
-def fig16a():#正常地址的收入
+def nxfig16a():#正常地址的收入
     # df1 = pandas.read_csv('ntx.csv')
     # df2 = pandas.read_csv('itx.csv')
     # frames = [df1, df2]
@@ -8535,13 +8584,15 @@ def fig16a():#正常地址的收入
     #             print(row['value'])
     #             print(row['to'])
     #             traceback.print_exc()
-    # with open('fig16addr2profit2.txt', 'w') as f:
+    # with open('fig16addr2profit2.txt', 'w') as f:#得到抓取的正常地址和异常地址的以太币利润
     #     print(addr2profit,file=f)
     # return
     group2profit = {}
     # profit2num = {}
     with open('fig16addr2profit2.txt', 'r') as f:
         addr2profit = literal_eval(f.read())
+    # with open('unknownAddrProfit.txt','r') as f:
+    #     addr2profit2 = literal_eval(f.read())
     # for addr,profit in addr2profit.items():
     #     addr2profit[addr] = round(addr2profit[addr] / eth)
     # for addr,profit in addr2profit.items():
@@ -8580,7 +8631,7 @@ def fig16a():#正常地址的收入
     plt.savefig('fig16a.jpg')
     plt.show()
 
-def fig16b():
+def nxfig16b():
     # df1 = pandas.read_csv('ntx.csv')
     # df2 = pandas.read_csv('itx.csv')
     # frames = [df1, df2]
@@ -8647,6 +8698,116 @@ def fig16b():
     ax.set_xlim(1)
     plt.savefig('fig16b.jpg')
     plt.show()
+def xlsx2csv():
+    dataxls = pd.read_excel('fig12.xlsx')
+    dataxls.to_csv('fig12.csv')
+def gephifig12():
+    # df = pd.read_csv('fig12.csv')
+    # groupdict = {}
+    # groupnum = 397
+    # for i in range(0,groupnum):
+    #     groupdict[i] = []
+    # for index,row in df.iterrows():
+    #     group = row['class']
+    #     groupdict[group].append(row['Id'])
+    # with open('gephiGroup.txt','w') as f:
+    #     print(groupdict,file=f)
+    with open('gephiGroup.txt','r') as f:
+        groupdict = literal_eval(f.read())
+def gephifig15a():#根据gephi的分组统计living time和用nx统计的living time一样
+    df1 = pandas.read_csv('ntx.csv')
+    df2 = pandas.read_csv('itx.csv')
+    frames = [df1, df2]
+    df = pandas.concat(frames)
+    #不能转换为月份，要计算living hours
+    df = df.sort_values('timeStamp')
+    # mledge = pandas.read_csv('mledge.csv')
+    # mlnode = pandas.read_csv('mlnode.csv')
+    # addrlist = list(mledge['Source']) + list(mledge['Target'])#欺诈地址相连的所有地址，如果需要精确到unknown节点可以再从mlnode中筛选
+    # fig15addr2timestamp = {}
+    # for addr in addrlist:
+    #     fig15addr2timestamp[addr] = []
+    # for index, row in df.iterrows():
+    #     if isinstance(row['to'], str) and row['to'] in addrlist:#
+    #         fig15addr2timestamp[row['to']].append(row['timeStamp'])#已经排序了时间戳
+    # with open('fig15addr2timestamp.txt', 'w', encoding='utf-8') as f:#从地址的living time到欺诈group的living time
+    #     print(fig15addr2timestamp,file=f)
+    #
+    # fig15addr2livinghours = {}
+    # for addr, time in fig15addr2timestamp.items():
+    #     if len(time) > 0:
+    #         start = datetime.datetime.fromtimestamp(time[0])
+    #         end = datetime.datetime.fromtimestamp(time[-1])
+    #         fig15addr2livinghours[addr] = (end - start).days * 24 + (end - start).seconds / 3600#计算欺诈交易涉及的每个地址的living hours
+    # #上面算的是欺诈节点或者正常节点的living time，这里还有未知节点的需要计算
+    # with open('fig15addr2livinghours.txt','w') as f:
+    #     print(fig15addr2livinghours,file=f)
+
+    with open('fig15addr2timestamp.txt', 'r', encoding='utf-8') as f:
+        fig15addr2timestamp = literal_eval(f.read())
+    with open('fig15addr2livinghours.txt', 'r', encoding='utf-8') as f:#原来用nx的分组统计的living time还可以用
+        fig15addr2livinghours = literal_eval(f.read())
+    addr2day = {}
+    for addr, living in fig15addr2livinghours.items():
+        addr2day[addr] = living / 24
+    living2num = {}
+    for addr, living in addr2day.items():
+        living2num[living] = living2num.get(living, 0) + 1
+    print(len(fig15addr2livinghours))
+    zipped = zip(living2num.keys(), living2num.values())
+    sort_zipped = sorted(zipped, key=lambda x: (x[0]))
+    result = zip(*sort_zipped)
+    plt.figure(figsize=(6, 6.5))
+    x, y = [list(x) for x in result]
+    fig, ax = plt.subplots()
+    cum = numpy.cumsum(y)
+    percentage = cum / list(cum)[-1]
+    line = ax.plot(x, percentage)
+    x_major_locator = MultipleLocator(200)
+    ax.xaxis.set_major_locator(x_major_locator)
+    ax.set_ylabel('CDF of Addresses')
+    ax.set_xlabel('the living time of address')
+    ax.set_xlim(1)
+    plt.savefig('fig15a.jpg')
+    plt.show()
+def gephifig16a():
+    with open('fig16addr2profit2.txt', 'r') as f:
+        addr2profit = literal_eval(f.read())
+    with open('gephiGroup.txt','r') as f:
+        groupdict = literal_eval(f.read())
+    group2profit = {}
+    for index,group in groupdict.items():
+        group2profit[index] = 0
+    for index,group in groupdict.items():
+        # group2profit[index] = 0
+        for addr in group:
+            group2profit[index] += addr2profit[addr]
+            print(addr2profit[addr])
+    # print(group2profit)
+    profit2num = {}
+    for group, profit in group2profit.items():
+        profit2num[profit] = profit2num.get(profit, 0) + 1
+    # print(profit2num)
+    return
+    x = profit2num.keys()
+    y = profit2num.values()
+    zipped = zip(x, y)
+    sort_zipped = sorted(zipped, key=lambda x: (x[0]))
+    result = zip(*sort_zipped)
+    x, y = [list(x) for x in result]
+    plt.figure(figsize=(6, 6.5))
+    fig, ax = plt.subplots()
+    cum = numpy.cumsum(y)
+    percentage = cum / list(cum)[-1]
+    line = ax.plot(x, percentage)
+    ax.set_ylabel('CDF of Addresses')
+    ax.set_xlabel('Profit(Eth)')
+    # x_major_locator = MultipleLocator(5000)
+    # ax.xaxis.set_major_locator(x_major_locator)
+    # ax.set_xlim(1)
+    plt.xscale('log')
+    plt.savefig('gephifig16a.jpg')
+    plt.show()
 def myimg2pdf():
     filedir = os.getcwd()
     filelist = os.listdir(filedir)
@@ -8659,7 +8820,7 @@ def myimg2pdf():
     # print(savedFile)
     # return
     for filename in filelist:
-        if filename.endswith('.jpg'):
+        if filename.endswith('fig14legend.jpg'):
             fileprefix = filename[:-4]
             savedFile = filedir + r'\pdf' + '\\' + fileprefix + r'.pdf'
             with open(savedFile,'wb') as f:
@@ -8667,14 +8828,14 @@ def myimg2pdf():
                 f.write(writeContent)
             print(filename)
             print(savedFile)
-        if filename.endswith('.png'):
-            print(filename)
-            fileprefix = filename[:-4]
-            savedFile = filedir + r'\pdf' + '\\' + fileprefix + r'.pdf'
-            with open(savedFile,'wb') as f:
-                writeContent = img2pdf.convert(filename)
-                f.write(writeContent)
-            print(savedFile)
+        # if filename.endswith('.png'):
+        #     print(filename)
+        #     fileprefix = filename[:-4]
+        #     savedFile = filedir + r'\pdf' + '\\' + fileprefix + r'.pdf'
+        #     with open(savedFile,'wb') as f:
+        #         writeContent = img2pdf.convert(filename)
+        #         f.write(writeContent)
+        #     print(savedFile)
 def getnpz():
     features = np.load('D:\\ether\\testf.npz',allow_pickle=True)
     labels = np.load('D:\\ether\\testlabels.npy',allow_pickle=True)
@@ -8907,9 +9068,18 @@ def dprmatrix():#将用于pyg的转换为用于dpr攻击的
         for attr in attrname:
             colindex = attrdict[attr]
             attrmatrix[rowindex][colindex] = row[attr]
-    adjcsr = sp.csr_matrix(adjmatrix)
+    adjcsr = sp.csr_matrix(adjmatrix)#压缩为稀疏矩阵，怀疑np.load会导致解压的npz文件的data全为0
+    with np.load('test.npz') as loader:
+        adj = sp.csr_matrix((loader['adj_data'], loader['adj_indices'],
+                             loader['adj_indptr']), shape=loader['adj_shape'])
+    print(adj.data)
+    return
     attrcsr = sp.csr_matrix(attrmatrix)
     adj_data = adjcsr.data
+    np.set_printoptions(threshold=np.inf)
+    print(adj_data)
+
+    return
     adj_indices = adjcsr.indices
     adj_indptr = adjcsr.indptr
     adj_shape = adjcsr.shape
@@ -8993,7 +9163,72 @@ def dprmatrixc():#将用于pyg的转换为用于dpr攻击的
     np.savez('testc_meta_adj_0.05.npz', data=adjcsr.data, indices=adjcsr.indices, indptr=adjcsr.indptr,
              shape=adj_shape, attr_data=attrcsr.data, attr_indices=attrcsr.indices, attr_indptr=attrcsr.indptr,
              attr_shape=attrcsr.shape, class_names=class_names, labels=labels, format=format)
+def mymax():
+    maxlist = []
+    with open('scam2athirdLivingtime3.txt', 'r') as f:
+        scamLivingtime = literal_eval(f.read())
+    scamLivingtimeL = scamLivingtime.values()
+    scamLivingtimeA,scamLivingtimeI = max(scamLivingtimeL),min(scamLivingtimeL)
+    with open('scamIncome.txt','r',encoding='utf-8') as f:
+        scamIncome = literal_eval(f.read())
+    scamIncomeL = scamLivingtime.values()
+    scamIncomeA, scamIncomeI = max(scamIncomeL), min(scamIncomeL)
+    with open('scamOutcome.txt','r',encoding='utf-8') as f:
+        scamOutcome = literal_eval(f.read())
+    scamOutcomeL = scamOutcome.values()
+    scamOutcomeA, scamOutcomeI = max(scamOutcomeL), min(scamOutcomeL)
+    with open('scamInTx.txt','r') as f:#总的in tx num，但是命名不一致
+        scamInTx = literal_eval(f.read())
+    scamInTxL = scamOutcome.values()#L表示list，A表示max，I表示min
+    scamInTxA, scamInTxI = max(scamInTxL), min(scamInTxL)
+    with open('scamOutTx.txt','r') as f:
+        scamOutTx = literal_eval(f.read())
+    scamOutTxL = scamOutTx.values()
+    scamOutTxA, scamOutTxI = max(scamOutTxL),min(scamOutTxL)
 
+    with open('normal2athirdtime3.txt', 'r') as f:
+        norLivingtime = literal_eval(f.read())
+    norLivingtimeL = norLivingtime.values()
+    norLivingtimeA,norLivingtimeI = max(norLivingtimeL),min(norLivingtimeL)
+    with open('normalIncome.txt','r') as f:
+        normalIncome = literal_eval(f.read())
+    normalIncomeL = normalIncome.values()
+    normalIncomeA,normalIncomeI = max(normalIncomeL),min(normalIncomeL)
+    with open('normalOutcome.txt','r') as f:
+        normalOutcome = literal_eval(f.read())
+    normalOutcomeL = normalOutcome.values()
+    normalOutcomeA, normalOutcomeI = max(normalOutcomeL), min(normalOutcomeL)
+    with open('normal2athirdIntxnum.txt','r') as f:#其实是intx num
+        normal2athirdIntxnum = literal_eval(f.read())
+    normal2athirdIntxnumL = normal2athirdIntxnum.values()
+    normal2athirdIntxnumA, normal2athirdIntxnumI = max(normal2athirdIntxnumL), min(normal2athirdIntxnumL)
+    with open('normal2athirdOuttxnum.txt','r') as f:
+        normal2athirdOuttxnum = literal_eval(f.read())
+    normal2athirdOuttxnumL = normal2athirdOuttxnum.values()
+    normal2athirdOuttxnumA, normal2athirdOuttxnumI = max(normal2athirdOuttxnumL), min(normal2athirdOuttxnumL)
+    maxlist.append(scamLivingtimeA)
+    maxlist.append(scamLivingtimeI)
+    maxlist.append(scamIncomeA)
+    maxlist.append(scamIncomeI)
+    maxlist.append(scamOutcomeA)
+    maxlist.append(scamOutcomeI)
+    maxlist.append(scamInTxA)
+    maxlist.append(scamInTxI)
+    maxlist.append(scamOutTxA)
+    maxlist.append(scamOutTxI)
+
+    maxlist.append(norLivingtimeA)
+    maxlist.append(norLivingtimeI)
+    maxlist.append(normalIncomeA)
+    maxlist.append(normalIncomeI)
+    maxlist.append(normalOutcomeA)
+    maxlist.append(normalOutcomeI)
+    maxlist.append(normal2athirdIntxnumA)
+    maxlist.append(normal2athirdIntxnumI)
+    maxlist.append(normal2athirdOuttxnumA)
+    maxlist.append(normal2athirdOuttxnumI)
+    with open('maxlist.txt','w') as f:
+        print(maxlist,file=f)
 def dpr2pyg():#
     dpradj = np.load('testadj.npz')
     dprfeature = np.load('testfeature.npz')#将npz解压出转换为node.csv,edge.csv
@@ -9003,6 +9238,240 @@ def dpr2pyg():#
     # np_to_csv = pd.DataFrame(data=dpradj)
     # np_to_csv.to_csv('test.csv')
     print(dpradj.files)
+def scamvictim():
+    with open('addr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    print(len(addrlist))
+    return
+    df1 = pandas.read_csv('ntx.csv')
+    df2 = pandas.read_csv('itx.csv')
+    frames = [df1,df2]
+    df = pandas.concat(frames)
+    num = 0
+    for index, row in df.iterrows():
+        if isinstance(row['to'], str) and row['to'] in addrlist:
+            num += 1
+    print(num)#198407
+def addressnum():
+    with open('addr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist2 = literal_eval(f.read())
+    df1 = pandas.read_csv('ntx.csv')
+    df2 = pandas.read_csv('itx.csv')
+    frames = [df1, df2]
+    print(df1.shape[0]+df2.shape[0])
+    # df = pandas.concat(frames)
+    # fromAddr = []
+    # toAddr = []
+    # for index, row in df.iterrows():
+    #     if isinstance(row['from'],str):
+    #         fromAddr.append((row['from']))
+    #     if isinstance(row['to'],str):
+    #         toAddr.append(row['to'])
+    # fromAddr = list(set(fromAddr))
+    # toAddr = list(set(toAddr))
+    # print(len(fromAddr))#136064
+    # print(len(toAddr))#40438
+    # fromAddr = []
+    # toAddr = []
+    df1 = pandas.read_csv('normalAddrntx.csv')
+    df2 = pandas.read_csv('normalAddritx.csv')
+    print(df1.shape[0]+df2.shape[0])
+    return
+    frames = [df1, df2]
+    df = pandas.concat(frames)
+    for index, row in df1.iterrows():
+        if isinstance(row['from'],str):
+            fromAddr.append((row['from']))
+        if isinstance(row['to'],str):
+            toAddr.append(row['to'])
+    for index, row in df2.iterrows():
+        if isinstance(row['from'],str):
+            fromAddr.append((row['from']))
+        if isinstance(row['to'],str):
+            toAddr.append(row['to'])
+    fromAddr = list(set(fromAddr))#2541127
+    toAddr = list(set(toAddr))#954942
+    print(len(fromAddr))
+    print(len(toAddr))
+def util():#计算参数的占比
+    with open('scamAvgIncome.txt', 'r', encoding='utf-8') as f:
+        scamAvgIncome = literal_eval(f.read())
+    with open('scamAvgOutcome.txt', 'r', encoding='utf-8') as f:
+        scamAvgOutcome = literal_eval(f.read())
+    with open('addr.txt', 'r', encoding='utf-8') as f:
+        scamaddrlist = literal_eval(f.read())
+    num1 = 0
+    for addr, avgoutcome in scamAvgOutcome.items():
+        if avgoutcome > 1:
+            num1 += 1
+    print(num1/len(scamaddrlist))
+
+    with open('scamInTx.txt','r') as f:#总的in tx num，但是命名不一致
+        scamInTx = literal_eval(f.read())
+    with open('scamOutTx.txt','r') as f:
+        scamOutTx = literal_eval(f.read())
+    with open('addr.txt', 'r', encoding='utf-8') as f:
+        scamaddrlist = literal_eval(f.read())
+    # num1 = 0
+    # for addr,intxnum in scamInTx.items():
+    #     if intxnum > 100:
+    #         num1 += 1
+    # print(num1/len(scamaddrlist))
+
+
+    with open('normalAvgIncome.txt','r') as f:
+        normalAvgIncome = literal_eval(f.read())
+    # num1 = 0
+    # for addr,avgincome in normalAvgIncome.items():
+    #     if avgincome > 1:
+    #         num1 += 1
+    # print(num1/len(scamaddrlist))
+    with open('normalAvgOutcome.txt','r') as f:
+        normalAvgOutcome = literal_eval(f.read())
+    # num1 = 0
+    # for addr, avgoutcome in normalAvgOutcome.items():
+    #     if avgoutcome > 1:
+    #         num1 += 1
+    # print(num1 / len(scamaddrlist))
+    with open('normal2athirdIntxnum.txt','r') as f:#其实是intx num
+        normal2athirdIntxnum = literal_eval(f.read())
+    with open('normal2athirdOuttxnum.txt','r') as f:
+        normal2athirdOuttxnum = literal_eval(f.read())
+    # num1 = 0
+    # for addr,intxnum in normal2athirdIntxnum.items():
+    #     if intxnum > 100:
+    #         num1 += 1
+    # print(num1/len(scamaddrlist))
+
+def fig12expansion():
+    df1 = pandas.read_csv('ntx.csv')
+    df2 = pandas.read_csv('itx.csv')
+    # addrlist = ['0x969244f550a683e6e3425c7cb87aa6afe5fda253','0x51af777899f0e81fbb69836e9255cc5bab7a5842','0x4bf722014e54aeab05fcf1519e6e4c0c3f742e43',
+    #             '0x1fd41f2da3fcd5e61c4a6b70d387e480b6c38dba','0x83053c32b7819f420dcfed2d218335fe430fe3b5']
+    classlist = [51,193,81,65,37]
+    exp = {}
+    for c in classlist:
+        exp[c] = []
+        filename = 'fig12-' + str(c) + '.csv'
+        df = pd.read_csv(filename)
+        addrlist = list(df['Id'])
+        for addr in addrlist:
+            for index, row in df1.iterrows():
+                if isinstance(row['from'], str) and row['from'] == addr and isinstance(row['to'], str):
+                    exp[c].append(row['to'])
+                if isinstance(row['to'], str) and row['to'] == addr and isinstance(row['from'], str):
+                    exp[c].append(row['from'])
+            for index, row in df2.iterrows():
+                if isinstance(row['from'], str) and row['from'] == addr and isinstance(row['to'], str):
+                    exp[c].append(row['to'])
+                if isinstance(row['to'], str) and row['to'] == addr and isinstance(row['from'], str):
+                    exp[c].append(row['from'])
+    with open('fig12exp.txt','w') as f:
+        print(exp,file=f)
+    for c in classlist:
+        print(c)
+        # exp[addr] = list(set(exp[addr]))
+        print(len(exp[c]))
+def fig12expansion2():
+    df1 = pandas.read_csv('ntx.csv')
+    df2 = pandas.read_csv('itx.csv')
+    # addrlist = ['0x969244f550a683e6e3425c7cb87aa6afe5fda253','0x51af777899f0e81fbb69836e9255cc5bab7a5842','0x4bf722014e54aeab05fcf1519e6e4c0c3f742e43',
+    #             '0x1fd41f2da3fcd5e61c4a6b70d387e480b6c38dba','0x83053c32b7819f420dcfed2d218335fe430fe3b5']
+    classlist = np.arange(397)
+    df3 = pandas.read_csv('fig12.csv')
+    # print(classlist)
+    # return
+    exp = {}
+    for c in classlist:
+        exp[c] = []
+        # filename = 'fig12-' + str(c) + '.csv'
+        # df = pd.read_csv(filename)
+        # addrlist = list(df['Id'])
+        addrlist = df3[df3['class'] == str(c)]#搜索每一类的地址
+        for addr in addrlist:#
+            for index, row in df1.iterrows():
+                if isinstance(row['from'], str) and row['from'] == addr and isinstance(row['to'], str):#找出每一类地址的一跳地址
+                    exp[c].append(row['to'])
+                if isinstance(row['to'], str) and row['to'] == addr and isinstance(row['from'], str):
+                    exp[c].append(row['from'])
+            for index, row in df2.iterrows():
+                if isinstance(row['from'], str) and row['from'] == addr and isinstance(row['to'], str):
+                    exp[c].append(row['to'])
+                if isinstance(row['to'], str) and row['to'] == addr and isinstance(row['from'], str):
+                    exp[c].append(row['from'])
+    with open('fig12exp2.txt','w') as f:
+        print(exp,file=f)
+    for c in classlist:
+        print(c)
+        # exp[addr] = list(set(exp[addr]))
+        print(len(exp[c]))
+#利润超过100eth的组的数量
+#利润最高的组和它的利润，该组的平均利润
+#所有组的受害者
+#所有组最多受害者的组和受害者数量
+def unknownNodeNtx():#未知地址已经被爬取的交易，但是这些交易只是和欺诈地址有关的交易
+    # mlnodelist = pandas.read_csv('mlnode.csv')['Id']
+    # with open('addr.txt', 'r', encoding='utf-8') as f:
+    #     scamaddrlist = literal_eval(f.read())
+    # with open('normalAddr.txt','r',encoding='utf-8') as f:
+    #     noraddrlist = literal_eval(f.read())
+    # unknownNodelist = [addr for addr in mlnodelist if addr not in scamaddrlist and addr not in noraddrlist]
+    # with open('unknownAddr.txt','w') as f:
+    #     print(unknownNodelist,file=f)
+    with open('unknownAddr.txt','r') as f:
+        unknownNodelist = literal_eval(f.read())
+    print(len(unknownNodelist))
+    return
+    session = requests.Session()
+    with open('unknownNtx.csv', 'w', encoding='utf-8', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(["blockNumber", "timeStamp", "hash", "nonce", "blockHash", "transactionIndex",
+                         "from", "to", "value", "gas", "gasPrice", "isError", "txreceipt_status", "input",
+                         "contractAddress", "cumulativeGasUsed", "gasUsed", "confirmations"])
+        for addr in unknownNodelist:
+            url = "https://api.etherscan.io/api?module=account&action=txlist&address=" + addr + "&startblock=0&endblock=99999999&page=1&offset=10000&sort=asc&apikey=" + apikey
+            results = literal_eval(session.get(url).text)['result']
+            try:
+                if len(results):
+                    for result in results:
+                        writer.writerow([result['blockNumber'], result['timeStamp'], result['hash'], result['nonce'],
+                                         result['blockHash'],
+                                         result['transactionIndex'], result['from'], result['to'], result['value'],
+                                         result['gas'], result['gasPrice'],
+                                         result['isError'], result['txreceipt_status'], result['input'],
+                                         result['contractAddress'], result['cumulativeGasUsed'],
+                                         result['gasUsed'], result['confirmations']])
+            except Exception:
+                print(Exception)
+                print(url)
+                print(result)
+                print(addr)
+def es2csv():
+    #读取整个文件夹的文件，不需要使用endswith
+    filedir = r'D:\all_addr_txs'
+    filelist = os.listdir(filedir)
+    # filelist = [filelist[0]]
+    #是一个dict，交易哈希，value是起点终点转账数额，时间戳，内部交易
+    toaddr2value = {}#根据to地址得到地址对应的转账数目，不需要记录交易哈希
+    toaddr2victim = defaultdict(list)#统计未知地址的交易对象数量
+    for filename in filelist:
+        filename = filedir + '\\' + filename
+        with open(filename, 'r') as f:
+            try:
+                data = json.load(f)
+                for txhash,mylist in data.items():#转账数额是列表第三个
+                    # toaddr2value[mylist[1]] = toaddr2value.get(mylist[1],0) + int(mylist[2]) / 1000000000000000000
+                    toaddr2value[mylist[1]] = toaddr2value.get(mylist[1],0) + int(mylist[2]) / 1000000000000000000
+                    toaddr2victim[mylist[1]].append(mylist[0])
+            except Exception:
+                traceback.print_exc()
+
+    with open('unknownAddrProfit.txt','w') as f:#还需要知道和未知地址交易的地址，用于计算未知地址被判断为欺诈地址后的受害者数量
+        print(toaddr2value,file=f)
+    with open('unknownAddrVictim.txt', 'w') as f:
+        print(toaddr2value,file=f)
 
 if __name__ == '__main__':
     # try:
@@ -9226,12 +9695,22 @@ if __name__ == '__main__':
     # tab1e()
     # fig15b()
     # mixfig9livcon()
+    # dprmatrix()
+    # fig4()
+    # fig7n()
+    # util()
+    # fig12expansion()
+    # unknownNodeNtx()
+    # unknownNodeNtx()
+    es2csv()
+    # fig12expansion2()
     # myimg2pdf()
     # normalAddrtx2csv1()
     # normalAddrtx2csv2()
     # getComponentNode()
     # getCompNodeCsv()
-    attackedEdge()
+    # attackedEdge()
+    # fig7n()
     # dprmatrixc()
     # getnpz()
     # fig16b()
@@ -9240,4 +9719,4 @@ if __name__ == '__main__':
     # norAddrA3LivingTime()
 #gcn gdc tagcn
 #收集整理大量数据时，尽量保存中间文件，即使由于机器性能原因或者ide设置原因等中断运行，也能避免效率的降低。
-#涉及网络爬虫的工作中可能会出现由于当时的网络原因出现问题，包括但不限于整个代码停止运行，某个url的网站爬取失败，为此需要增加异常处理，以便于事后补充未完成的url爬取工作
+#涉及网络爬虫的工作中可能会出现由于当时的网络原因出现问题，包括但不限于整个代码停止运行
