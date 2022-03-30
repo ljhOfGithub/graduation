@@ -1035,13 +1035,12 @@ def scamIOcome21():
                 profit21[addr] = scamIncome21[addr]
         if addr in scamIncome.keys():
             scamOutcome21[addr] = scamOutcome[addr]
-
     with open('scamIncome21.txt','w') as f:
         print(scamIncome21,file=f)
     with open('scamOutcome21.txt','w') as f:
         print(scamOutcome21,file=f)
 #fig4：所有地址每个月欺诈交易的数量，根据txhash统计，存储to地址和txhash的列表的字典，然后去重，统计所有种类的交易
-def fig4():
+def fig4():#每天的交易数量取最大值
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
     # df1 = pandas.read_csv('ntx1.csv')
@@ -8557,7 +8556,7 @@ def fig15b():
     plt.show()
     # with open('fig15b.txt','w') as f:
     #     print(mon2count,file=f)
-def nxfig16a():#正常地址的收入
+def nxfig16a():#不是正常地址的收入，是欺诈地址的收入
     # df1 = pandas.read_csv('ntx.csv')
     # df2 = pandas.read_csv('itx.csv')
     # frames = [df1, df2]
@@ -8770,10 +8769,15 @@ def gephifig15a():#根据gephi的分组统计living time和用nx统计的living 
     ax.set_xlim(1)
     plt.savefig('fig15a.jpg')
     plt.show()
+
 def gephifig16a():
     with open('fig16addr2profit2.txt', 'r') as f:
         addr2profit = literal_eval(f.read())
-    with open('gephiGroup.txt','r') as f:
+    with open('unknownAddrProfit.txt', 'r') as f:
+        unknownAddrProfit = literal_eval(f.read())
+    # with open('gephiGroup.txt','r') as f:
+    #     groupdict = literal_eval(f.read())
+    with open('fig12exp2FromTo.txt','r') as f:
         groupdict = literal_eval(f.read())
     group2profit = {}
     for index,group in groupdict.items():
@@ -8781,14 +8785,18 @@ def gephifig16a():
     for index,group in groupdict.items():
         # group2profit[index] = 0
         for addr in group:
-            group2profit[index] += addr2profit[addr]
+            if addr in unknownAddrProfit.keys():
+                group2profit[index] += unknownAddrProfit[addr]
+            elif addr in addr2profit.keys():
+                group2profit[index] += addr2profit[addr]
             print(addr2profit[addr])
-    # print(group2profit)
+    with open('gephiGroup2profit.txt','w') as f:
+        print(group2profit,file=f)
     profit2num = {}
     for group, profit in group2profit.items():
         profit2num[profit] = profit2num.get(profit, 0) + 1
     # print(profit2num)
-    return
+    # return
     x = profit2num.keys()
     y = profit2num.values()
     zipped = zip(x, y)
@@ -8801,12 +8809,123 @@ def gephifig16a():
     percentage = cum / list(cum)[-1]
     line = ax.plot(x, percentage)
     ax.set_ylabel('CDF of Addresses')
-    ax.set_xlabel('Profit(Eth)')
+    ax.set_xlabel(' The profit distribution of scam group')
     # x_major_locator = MultipleLocator(5000)
     # ax.xaxis.set_major_locator(x_major_locator)
     # ax.set_xlim(1)
     plt.xscale('log')
     plt.savefig('gephifig16a.jpg')
+    plt.show()
+def fig16aData():
+    with open('gephiGroup2profit.txt','r') as f:
+        gephiGroup2profit = literal_eval(f.read())
+    num = 0
+    for index,profit in gephiGroup2profit.items():
+        if profit > 100:
+            num += 1
+    print(num)
+    print(num/397)
+def scamUnknownVictim():
+    df1 = pandas.read_csv('ntxFromTo.csv')
+    df2 = pandas.read_csv('itxFromTo.csv')
+    # with open('unknownAddrVictim.txt','r') as f:
+    #     unknownAddrVictim = literal_eval(f.read())
+    scamaddr2victim = defaultdict(list)
+    scamaddr2addr = defaultdict(list)
+    scamVictimNum = defaultdict(int)
+    unknownAddrVictimNum = defaultdict(int)
+    # for index, row in df1.iterrows():
+    #     if isinstance(row['from'], str) and isinstance(row['to'], str):
+    #         scamaddr2victim[row['to']].append(row['from'])
+    # for index, row in df2.iterrows():
+    #     if isinstance(row['from'], str) and isinstance(row['to'], str):
+    #         scamaddr2victim[row['to']].append(row['from'])
+    with open('scamaddr2addr.csv','w',newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(['from','to','value'])#转为用csv统计欺诈地址的交易对象
+        for index, row in df1.iterrows():
+            if isinstance(row['from'], str) and isinstance(row['to'], str):
+                writer.writerow([row['from'],row['to']])
+        for index, row in df2.iterrows():
+            if isinstance(row['from'], str) and isinstance(row['to'], str):
+                writer.writerow([row['from'], row['to']])
+    scamaddr2victim = dict(scamaddr2victim)
+    scamaddr2addr = dict(scamaddr2addr)
+    unknownAddrVictimNum = dict(unknownAddrVictimNum)
+    for addr,mylist in scamaddr2victim.items():
+        scamVictimNum[addr] = len(scamaddr2victim[addr])
+    # for addr,mylist in unknownAddrVictim.items():
+    #     unknownAddrVictimNum[addr] = len(unknownAddrVictim[addr])
+    # with open('scamvictim.txt','w') as f:
+    #     print(scamaddr2victim,file=f)
+    #
+    # with open('scamVictimNum.txt','w') as f:
+    #     print(scamVictimNum,file=f)
+    # with open('unknownAddrVictimNum.txt','w') as f:
+    #     print(unknownAddrVictimNum,file=f)
+
+def beforeGroupProfit():#在拓展之前的组的利润
+    with open('gephiGroup.txt','r') as f:
+        groupdict = literal_eval(f.read())
+    with open('fig16addr2profit2.txt', 'r') as f:
+        addr2profit = literal_eval(f.read())
+    # group2profit = defaultdict(int)
+    group2profit = {}
+    for index,group in groupdict.items():
+        group2profit[index] = 0
+    for index,group in groupdict.items():
+        for addr in group:
+            group2profit[index] += addr2profit[addr]
+            if addr2profit[addr] > 0:
+                print(addr2profit[addr])
+    mylist = list(group2profit.values())
+    print(max(mylist))
+    with open('beforeGroupProfit.txt','w') as f:
+        print(group2profit,file=f)
+def gephifig16b():
+    with open('scamVictimNum.txt', 'r') as f:
+        scamVictimNum = literal_eval(f.read())
+    with open('unknownAddrVictim.txt', 'r') as f:
+        unknownAddrVictim = literal_eval(f.read())
+
+    with open('fig12exp2FromTo.txt','r') as f:
+        groupdict = literal_eval(f.read())
+    group2victim = {}
+    for index,group in groupdict.items():
+        group2victim[index] = 0
+    for index,group in groupdict.items():
+        # group2profit[index] = 0
+        for addr in group:
+            if addr in scamVictimNum.keys():
+                group2victim[index] += unknownAddrVictim[addr]
+            elif addr in unknownAddrVictim.keys():
+                group2victim[index] += scamVictimNum[addr]
+            group2victim[index] += group2victim[addr]
+            # print(group2victim[addr])
+    # print(group2profit)
+    profit2num = {}
+    for group, profit in group2victim.items():
+        profit2num[profit] = profit2num.get(profit, 0) + 1
+    # print(profit2num)
+    # return
+    x = profit2num.keys()
+    y = profit2num.values()
+    zipped = zip(x, y)
+    sort_zipped = sorted(zipped, key=lambda x: (x[0]))
+    result = zip(*sort_zipped)
+    x, y = [list(x) for x in result]
+    plt.figure(figsize=(6, 6.5))
+    fig, ax = plt.subplots()
+    cum = numpy.cumsum(y)
+    percentage = cum / list(cum)[-1]
+    line = ax.plot(x, percentage)
+    ax.set_ylabel('CDF of Addresses')
+    ax.set_xlabel(' The victim distribution of scam group')
+    # x_major_locator = MultipleLocator(5000)
+    # ax.xaxis.set_major_locator(x_major_locator)
+    # ax.set_xlim(1)
+    plt.xscale('log')
+    plt.savefig('gephifig16b.jpg')
     plt.show()
 def myimg2pdf():
     filedir = os.getcwd()
@@ -9374,6 +9493,15 @@ def fig12expansion():
         print(c)
         # exp[addr] = list(set(exp[addr]))
         print(len(exp[c]))
+def txsimplify():
+    df1 = pandas.read_csv('ntx.csv')
+    df2 = pandas.read_csv('itx.csv')
+    #只取from和to
+    df1 = df1[['from','to']]
+    df2 = df2[['from','to']]
+    # print(df1)
+    df1.to_csv('ntxFromTo.csv')
+    df2.to_csv('itxFromTo.csv')
 def fig12expansion2():
     df1 = pandas.read_csv('ntx.csv')
     df2 = pandas.read_csv('itx.csv')
@@ -9407,6 +9535,96 @@ def fig12expansion2():
         print(c)
         # exp[addr] = list(set(exp[addr]))
         print(len(exp[c]))
+def fig12expansion2FromTo():#根据已有的gephi分类，通过欺诈交易统计每个地址的交易对象
+    df1 = pandas.read_csv('ntxFromTo.csv')
+    df2 = pandas.read_csv('itxFromTo.csv')
+    # addrlist = ['0x969244f550a683e6e3425c7cb87aa6afe5fda253','0x51af777899f0e81fbb69836e9255cc5bab7a5842','0x4bf722014e54aeab05fcf1519e6e4c0c3f742e43',
+    #             '0x1fd41f2da3fcd5e61c4a6b70d387e480b6c38dba','0x83053c32b7819f420dcfed2d218335fe430fe3b5']
+    classlist = np.arange(0,397)
+    df3 = pandas.read_csv('fig12.csv')[['Id','class']]
+    # print(classlist)
+    # return
+    exp = {}
+    # for c in classlist:
+    #     exp[c] = []
+    #     # filename = 'fig12-' + str(c) + '.csv'
+    #     # df = pd.read_csv(filename)
+    #     # addrlist = list(df['Id'])
+    #     # print(c)
+    #     mydf3 = df3[df3['class'] == c]#得出一类的地址，搜索每一类的地址的一跳
+    #     addrlist = list(mydf3['Id'])
+    #     # print(addrlist)
+    #     # print(type(addrlist))
+    #     for addr in addrlist:#addr不是
+    #         # print('t')
+    #         # print(addr)
+    #         for index, row in df1.iterrows():
+    #             if isinstance(row['from'], str) and row['from'] == addr and isinstance(row['to'], str):#找出每一类地址的一跳地址
+    #                 exp[c].append(row['to'])
+    #                 # print(row['to'])
+    #             if isinstance(row['to'], str) and row['to'] == addr and isinstance(row['from'], str):
+    #                 exp[c].append(row['from'])
+    #                 # print(row['from'])
+    #         for index, row in df2.iterrows():
+    #             if isinstance(row['from'], str) and row['from'] == addr and isinstance(row['to'], str):
+    #                 exp[c].append(row['to'])
+    #                 # print(row['to'])
+    #             if isinstance(row['to'], str) and row['to'] == addr and isinstance(row['from'], str):
+    #                 exp[c].append(row['from'])
+                    # print(row['from'])
+    #先统计每个地址的交易地址，然后再将每个地址的交易地址分组,降低时间复杂度
+    # scamaddr2addr = defaultdict(list)
+    # for index, row in df1.iterrows():
+    #     if isinstance(row['from'], str) and isinstance(row['to'], str):
+    #         scamaddr2addr[row['from']].append(row['to'])
+    #         scamaddr2addr[row['to']].append(row['from'])
+    # for index, row in df2.iterrows():
+    #     if isinstance(row['from'], str) and isinstance(row['to'], str):
+    #         scamaddr2addr[row['from']].append(row['to'])
+    #         scamaddr2addr[row['to']].append(row['from'])
+    # with open('scamaddr2addr.txt','w') as f:
+    #     print(scamaddr2addr,file=f)
+    # for c in classlist:
+    #     exp[c] = []
+    #     mydf3 = df3[df3['class'] == c]  # 得出一类的地址，搜索每一类的地址的一跳
+    #     addrlist = list(mydf3['Id'])
+    #     for addr in addrlist:
+    #         exp[c] += scamaddr2addr[addr]
+    # with open('fig12exp2FromTo.txt','w') as f:
+    #     print(exp,file=f)
+    with open('fig12exp2FromTo.txt','r') as f:#欺诈地址相关交易的每个地址的交易对象
+        exp = literal_eval(f.read())
+    for c in classlist:
+        print(str(c)+':')
+        # print(':')
+        # exp[addr] = list(set(exp[addr]))
+        print(len(exp[c]))
+def expansion():
+    with open('fig12exp2FromTo.txt','r') as f:#算出每组拓展前后的区别
+        exp = literal_eval(f.read())
+    with open('gephiGroup.txt','r') as f:
+        groupdict = literal_eval(f.read())
+
+    differ = {}
+    for index in range(0,397):
+        differ[index] = len(exp[index]) - len(groupdict[index])
+    differlist = list(differ.values())
+    maxdiffer = max(differlist)
+    groupindex = differlist.index(maxdiffer)
+    print(groupindex)#51
+    print(len(exp[groupindex]))#15712
+    print(len(groupdict[groupindex]))#708
+    print(maxdiffer)#15004
+    maxgroup = groupdict[groupindex]
+    maxgrouppartner = {}
+    with open('scamaddr2addr.txt', 'r') as f:
+        scamaddr2addr = literal_eval(f.read())
+    for addr in maxgroup:
+        maxgrouppartner[addr] = len(scamaddr2addr[addr])
+    maxgrouppartner = sorted(maxgrouppartner)
+    print(maxgrouppartner)
+#找出第51组的最多交易对象的地址，先找51组所有地址，然后在哪里中找51组所有的交易对象
+#51组全部是欺诈地址
 #利润超过100eth的组的数量
 #利润最高的组和它的利润，该组的平均利润
 #所有组的受害者
@@ -9455,24 +9673,30 @@ def es2csv():
     # filelist = [filelist[0]]
     #是一个dict，交易哈希，value是起点终点转账数额，时间戳，内部交易
     toaddr2value = {}#根据to地址得到地址对应的转账数目，不需要记录交易哈希
-    toaddr2victim = defaultdict(list)#统计未知地址的交易对象数量
-    for filename in filelist:
-        filename = filedir + '\\' + filename
-        with open(filename, 'r') as f:
-            try:
-                data = json.load(f)
-                for txhash,mylist in data.items():#转账数额是列表第三个
-                    # toaddr2value[mylist[1]] = toaddr2value.get(mylist[1],0) + int(mylist[2]) / 1000000000000000000
-                    toaddr2value[mylist[1]] = toaddr2value.get(mylist[1],0) + int(mylist[2]) / 1000000000000000000
-                    toaddr2victim[mylist[1]].append(mylist[0])
-            except Exception:
-                traceback.print_exc()
-
-    with open('unknownAddrProfit.txt','w') as f:#还需要知道和未知地址交易的地址，用于计算未知地址被判断为欺诈地址后的受害者数量
-        print(toaddr2value,file=f)
-    with open('unknownAddrVictim.txt', 'w') as f:
-        print(toaddr2value,file=f)
-
+    # toaddr2victim = defaultdict(list)#统计未知地址的交易对象数量
+    toaddr2victimNum = defaultdict(int)
+    with open('unknownAddrtxs.csv','w',newline='',encoding='utf-8') as f:
+        writer = csv.writer(f)
+        writer.writerow(['from','to','value'])
+        for filename in filelist:
+            filename = filedir + '\\' + filename
+            with open(filename, 'r') as f:
+                try:
+                    data = json.load(f)
+                    for txhash,mylist in data.items():#转账数额是列表第三个，将交易对象统计到csv文件中
+                        # toaddr2value[mylist[1]] = toaddr2value.get(mylist[1],0) + int(mylist[2]) / 1000000000000000000
+                        # toaddr2value[mylist[1]] = toaddr2value.get(mylist[1],0) + int(mylist[2]) / 1000000000000000000
+                        # toaddr2victim[mylist[1]].append(mylist[0])
+                        writer.writerow([mylist[0],mylist[1],mylist[2]])
+                        toaddr2victimNum[mylist[1]] += 1
+                except Exception:
+                    traceback.print_exc()
+    # with open('unknownAddrProfit.txt','w') as f:#还需要知道和未知地址交易的地址，用于计算未知地址被判断为欺诈地址后的受害者数量
+    #     print(toaddr2value,file=f)
+    # with open('unknownAddrVictim.txt', 'w') as f:
+    #     print(toaddr2victim,file=f)
+    with open('unknownAddrVictimNum.txt', 'w') as f:
+        print(toaddr2victimNum,file=f)
 if __name__ == '__main__':
     # try:
     #     print("ntxs1")
@@ -9702,8 +9926,15 @@ if __name__ == '__main__':
     # fig12expansion()
     # unknownNodeNtx()
     # unknownNodeNtx()
-    es2csv()
-    # fig12expansion2()
+    # es2csv()
+    # txsimplify()
+    # fig16aData()
+    # scamVictim()
+    # gephifig16b()
+    # beforeGroupProfit()
+    scamUnknownVictim()
+    # es2csv()
+    # expansion()
     # myimg2pdf()
     # normalAddrtx2csv1()
     # normalAddrtx2csv2()
