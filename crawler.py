@@ -8800,7 +8800,7 @@ def gephifig16a():
     x = profit2num.keys()
     y = profit2num.values()
     zipped = zip(x, y)
-    sort_zipped = sorted(zipped, key=lambda x: (x[0]))
+    sort_zipped = sorted(zipped, key=lambda x: (x[1]))
     result = zip(*sort_zipped)
     x, y = [list(x) for x in result]
     plt.figure(figsize=(6, 6.5))
@@ -8845,35 +8845,45 @@ def scamUnknownVictim():
     scamaddr2addr = defaultdict(list)
     scamVictimNum = defaultdict(int)
     unknownAddrVictimNum = defaultdict(int)
-    # for index, row in df1.iterrows():
-    #     if isinstance(row['from'], str) and isinstance(row['to'], str):
-    #         scamaddr2victim[row['to']].append(row['from'])
-    # for index, row in df2.iterrows():
-    #     if isinstance(row['from'], str) and isinstance(row['to'], str):
-    #         scamaddr2victim[row['to']].append(row['from'])
-    with open('scamaddr2addr.csv','w',newline='') as f:
-        writer = csv.writer(f)
-        writer.writerow(['from','to','value'])#转为用csv统计欺诈地址的交易对象
-        for index, row in df1.iterrows():
-            if isinstance(row['from'], str) and isinstance(row['to'], str):
-                writer.writerow([row['from'],row['to']])
-        for index, row in df2.iterrows():
-            if isinstance(row['from'], str) and isinstance(row['to'], str):
-                writer.writerow([row['from'], row['to']])
+    for index, row in df1.iterrows():
+        if isinstance(row['from'], str) and isinstance(row['to'], str):
+            scamaddr2victim[row['to']].append(row['from'])
+    for index, row in df2.iterrows():
+        if isinstance(row['from'], str) and isinstance(row['to'], str):
+            scamaddr2victim[row['to']].append(row['from'])
+    # with open('scamaddr2addr.csv','w',newline='') as f:
+    #     writer = csv.writer(f)
+    #     writer.writerow(['from','to','value'])#转为用csv统计欺诈地址的交易对象
+    #     for index, row in df1.iterrows():
+    #         if isinstance(row['from'], str) and isinstance(row['to'], str):
+    #             writer.writerow([row['from'],row['to']])
+    #     for index, row in df2.iterrows():
+    #         if isinstance(row['from'], str) and isinstance(row['to'], str):
+    #             writer.writerow([row['from'], row['to']])
     scamaddr2victim = dict(scamaddr2victim)
     scamaddr2addr = dict(scamaddr2addr)
     unknownAddrVictimNum = dict(unknownAddrVictimNum)
+    scamVictimNum = dict(scamVictimNum)
     for addr,mylist in scamaddr2victim.items():
         scamVictimNum[addr] = len(scamaddr2victim[addr])
     # for addr,mylist in unknownAddrVictim.items():
     #     unknownAddrVictimNum[addr] = len(unknownAddrVictim[addr])
-    # with open('scamvictim.txt','w') as f:
-    #     print(scamaddr2victim,file=f)
-    #
-    # with open('scamVictimNum.txt','w') as f:
-    #     print(scamVictimNum,file=f)
+    with open('scamvictim.txt','w') as f:
+        print(scamaddr2victim,file=f)
+
+    with open('scamVictimNum.txt','w') as f:
+        print(scamVictimNum,file=f)
     # with open('unknownAddrVictimNum.txt','w') as f:
     #     print(unknownAddrVictimNum,file=f)
+# def groupvictim():
+#     with open('scamVictimNum.txt','r') as f:
+#         scamVictimNum = literal_eval(f.read())
+#     with open('unknownAddrVictimNum.txt','r') as f:
+#         unknownAddrVictimNum = literal_eval(f.read())
+#     with open('fig12exp2FromTo.txt','r') as f:#欺诈地址相关交易的每个地址的交易对象
+#         exp = literal_eval(f.read())#每个组拓展后的地址
+#     groupvictim = {}
+#     for index,addrlist in exp.items():
 
 def beforeGroupProfit():#在拓展之前的组的利润
     with open('gephiGroup.txt','r') as f:
@@ -8896,31 +8906,41 @@ def beforeGroupProfit():#在拓展之前的组的利润
 def gephifig16b():
     with open('scamVictimNum.txt', 'r') as f:
         scamVictimNum = literal_eval(f.read())
-    with open('unknownAddrVictim.txt', 'r') as f:
-        unknownAddrVictim = literal_eval(f.read())
-
-    with open('fig12exp2FromTo.txt','r') as f:
-        groupdict = literal_eval(f.read())
+    with open('unknownAddrVictimNum.txt', 'r') as f:
+        unknownAddrVictimNum = literal_eval(f.read())
+    with open('fig12exp2FromTo.txt','r') as f:#拓展后的组
+        fig12exp2FromTo = literal_eval(f.read())
     group2victim = {}
-    for index,group in groupdict.items():
+    for index,group in fig12exp2FromTo.items():
         group2victim[index] = 0
-    for index,group in groupdict.items():
+    for index,group in fig12exp2FromTo.items():
         # group2profit[index] = 0
         for addr in group:
             if addr in scamVictimNum.keys():
-                group2victim[index] += unknownAddrVictim[addr]
-            elif addr in unknownAddrVictim.keys():
                 group2victim[index] += scamVictimNum[addr]
-            group2victim[index] += group2victim[addr]
+            elif addr in unknownAddrVictimNum.keys():
+                group2victim[index] += unknownAddrVictimNum[addr]
+            # group2victim[index] += group2victim[addr]
             # print(group2victim[addr])
     # print(group2profit)
-    profit2num = {}
-    for group, profit in group2victim.items():
-        profit2num[profit] = profit2num.get(profit, 0) + 1
+    # with open('fig16group2victim.txt','w') as f:
+    #     print(group2victim,file=f)
+    with open('fig16group2victim.txt','r') as f:
+        fig16group2victim = literal_eval(f.read())
+    mysum = sum(fig16group2victim.values())
+    print(mysum)
+    # return
+    maxvictim = max(fig16group2victim.values())
+    maxindex = list(fig16group2victim.values()).index(maxvictim)
+    print(maxvictim)
+    print(maxindex)
+    victim2num = {}
+    for group, victim in group2victim.items():
+        victim2num[victim] = victim2num.get(victim, 0) + 1
     # print(profit2num)
     # return
-    x = profit2num.keys()
-    y = profit2num.values()
+    x = victim2num.keys()#受害者数量
+    y = victim2num.values()#
     zipped = zip(x, y)
     sort_zipped = sorted(zipped, key=lambda x: (x[0]))
     result = zip(*sort_zipped)
@@ -8950,7 +8970,7 @@ def myimg2pdf():
     # print(savedFile)
     # return
     for filename in filelist:
-        if filename.endswith('fig14legend.jpg'):
+        if filename.startswith('gephifig16'):
             fileprefix = filename[:-4]
             savedFile = filedir + r'\pdf' + '\\' + fileprefix + r'.pdf'
             with open(savedFile,'wb') as f:
@@ -9705,15 +9725,64 @@ def es2csv():
                         # toaddr2value[mylist[1]] = toaddr2value.get(mylist[1],0) + int(mylist[2]) / 1000000000000000000
                         # toaddr2victim[mylist[1]].append(mylist[0])
                         writer.writerow([mylist[0],mylist[1],mylist[2]])
-                        toaddr2victimNum[mylist[1]] += 1
+                        toaddr2victimNum[mylist[1]] += 1#不能根据交易的次数进行统计，可能有的地址交易多次
                 except Exception:
                     traceback.print_exc()
     # with open('unknownAddrProfit.txt','w') as f:#还需要知道和未知地址交易的地址，用于计算未知地址被判断为欺诈地址后的受害者数量
     #     print(toaddr2value,file=f)
     # with open('unknownAddrVictim.txt', 'w') as f:
     #     print(toaddr2victim,file=f)
-    with open('unknownAddrVictimNum.txt', 'w') as f:
+    with open('unknownAddrVictimNum.txt', 'w') as f:#错误的受害者求法
         print(toaddr2victimNum,file=f)
+def unknownVictim():
+    # df = pd.read_csv('unknownAddrtxs.csv',low_memory=False)#只有from，to，value
+    with open('fig12exp2FromTo.txt','r') as f:#拓展后的组
+        fig12exp2FromTo = literal_eval(f.read())
+    #先统计受害者还是先去除同组地址，根据是否是同组地址选择是否统计
+    #记录当前地址所在组，查询交易对象是否在同组即可知道是否应该统计
+    #筛选df中交易对象为该地址的交易，然后判断交易对象
+    #根据交易的from和to去重
+    # df = df.drop_duplicates(subset=['from','to'])
+    # df.to_csv('unknownAddrtxsFromTo.csv')
+    df = pd.read_csv('unknownAddrtxsFromTo.csv',low_memory=False)
+    # print(df.shape[0])
+    addr2victim = defaultdict(int)
+    # for index,addrlist in fig12exp2FromTo.items():
+    #     for addr in addrlist:
+    #         conflictSet = fig12exp2FromTo[index]
+    #         txlist = df[(df['to'].notnull()) & (df['to'] == addr) & (df['from'].notnull()) & (~df['from'].isin(conflictSet))]
+    #         addr2victim[addr] = txlist.shape[0]#
+    df2 = list(pandas.read_csv('fig12.csv')[['Id']])
+    with open('addr2expgroup.txt','r') as f:#拓展后的组
+        addr2expgroup = literal_eval(f.read())
+    print(0)
+    for index,row in df.iterrows():#统计拓展后未知地址的受害者，未知地址的受害者可能是拓展后同一个分组的，可能不是拓展后的分组
+        print(2)
+        if isinstance(row['to'],str) and isinstance(row['from'],str):
+            print(1)
+            if row['from'] not in df2 and row['to'] in df2:
+                print(3)
+                addr2victim[row['to']] += 1
+            if row['from'] in addr2expgroup.keys():
+                print(4)
+                groupindex = addr2expgroup[row['from']]
+                if row['to'] in df2 and row['from'] in df2 and row['from'] not in fig12exp2FromTo[groupindex]:#fig12exp2FromTo是根据欺诈交易得到的分组，不是根据未知地址相关交易的
+                    addr2victim[row['to']] += 1
+                    print(5)
+    addr2victim = dict(addr2victim)
+    print(addr2victim)
+    with open('unknownVictim.txt','w') as f:
+        print(addr2victim,file=f)
+def addr2expgroup():
+    with open('fig12exp2FromTo.txt','r') as f:#拓展后的组
+        fig12exp2FromTo = literal_eval(f.read())
+    addr2group = defaultdict(int)
+    for index,addrlist in fig12exp2FromTo.items():
+        for addr in addrlist:
+            addr2group[addr] = index
+    addr2group = dict(addr2group)
+    with open('addr2expgroup.txt','w') as f:
+        print(addr2group,file=f)
 if __name__ == '__main__':
     # try:
     #     print("ntxs1")
@@ -9952,7 +10021,13 @@ if __name__ == '__main__':
     # scamUnknownVictim()
     # fig12expansion2FromTo()
     # es2csv()
-    fig16aStats()
+    # fig16aStats()
+    # gephifig16b()
+    myimg2pdf()
+    # unknownVictim()
+
+    # addr2expgroup()
+    # scamUnknownVictim()
     # util()
     # myimg2pdf()
     # normalAddrtx2csv1()
