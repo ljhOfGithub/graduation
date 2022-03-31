@@ -8789,7 +8789,7 @@ def gephifig16a():
                 group2profit[index] += unknownAddrProfit[addr]
             elif addr in addr2profit.keys():
                 group2profit[index] += addr2profit[addr]
-            print(addr2profit[addr])
+            # print(addr2profit[addr])
     with open('gephiGroup2profit.txt','w') as f:
         print(group2profit,file=f)
     profit2num = {}
@@ -8800,7 +8800,7 @@ def gephifig16a():
     x = profit2num.keys()
     y = profit2num.values()
     zipped = zip(x, y)
-    sort_zipped = sorted(zipped, key=lambda x: (x[1]))
+    sort_zipped = sorted(zipped, key=lambda x: (x[0]))
     result = zip(*sort_zipped)
     x, y = [list(x) for x in result]
     plt.figure(figsize=(6, 6.5))
@@ -10023,13 +10023,13 @@ if __name__ == '__main__':
     # es2csv()
     # fig16aStats()
     # gephifig16b()
-    myimg2pdf()
+    # myimg2pdf()
     # unknownVictim()
-
+    # gephifig16a()
     # addr2expgroup()
     # scamUnknownVictim()
     # util()
-    # myimg2pdf()
+    myimg2pdf()
     # normalAddrtx2csv1()
     # normalAddrtx2csv2()
     # getComponentNode()

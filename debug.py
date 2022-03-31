@@ -59,7 +59,35 @@ TypeError: new() received an invalid combination of arguments - got (float, int)
  * (Tensor other)
  * (tuple of ints size, *, torch.device device)
  * (object data, *, torch.device device)
+and the group with the longest living time is the group with
+0x668172d39da7fd4c552f430fc0b694e357c157
+as the root, involving a phishing fraud, and its living time is 
+3.4 
+years. Before the expansion, the group had only 
+8 addresses, but after the expansion, they have 
+$1,263$ 
+addresses. 
 
+
+After
+expanding as a baseline, the scam group with root of 
+% 0xd83605cf3aed2a56949c27f\-693c08aeda0e4d145
+0xa6e71bdc40952eb1c083e5ae4940d70886296724
+ is the most profitable group and its profit reaches 
+%  $380,824 $ 
+$223,615,694$
+ ETH and the average profit is 
+%  $513$ 
+ $637.54$
+ ETH per address. We also draw victim distribution graph which shown in Figure~\ref{fig:Scam group profit}(b). In total, 
+%  $2,743,220$ 
+ $105,762,720$
+ victims have been cheated by these scam groups, and the scam group with 
+%  0x3681828da105fc3c44e212f6\-c3dc51a0a5a6f5c6 
+ 0xc2d7cf95645d33006175b78989035c7c9061d3f9
+ as root has the largest number of victims and the number is 
+%  $627,332$. 
+ $19,298,384$
 """
 
 
