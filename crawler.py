@@ -679,49 +679,42 @@ def fig2():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
     #找每个地址第一次收到钱的时间戳，包括一般交易和内部交易
-    # df1 = pandas.read_csv('ntx1.csv')
-    # df2 = pandas.read_csv('ntx2.csv')
-    # df3 = pandas.read_csv('ntx3.csv')
-    # df4 = pandas.read_csv('ntx4.csv')
-    # df5 = pandas.read_csv('itx1.csv')
-    # df6 = pandas.read_csv('itx2.csv')
-    # df7 = pandas.read_csv('itx3.csv')
-    # df8 = pandas.read_csv('itx4.csv')
-    # df9 = pandas.read_csv('bntx1.csv')
-    # df10 = pandas.read_csv('bitx1.csv')
-    # frames = [df1,df2,df3,df4,df5,df6,df7,df8,df9,df10]
-    #
+
     # df = pandas.concat(frames)
-    # df = df.drop_duplicates()#去重
-    df1 = pandas.read_csv('ntx.csv')
-    df2 = pandas.read_csv('itx.csv')
-    frames = [df1,df2]
-    df = pandas.concat(frames)
-    df['timeStamp'] = df['timeStamp'].map(lambda x:datetime.datetime.fromtimestamp(x).strftime("%Y-%m"))
-    df = df.sort_values('timeStamp')
-    addr2time = {}
-    for addr in addrlist:
-        addr2time[addr] = []
-    for index, row in df.iterrows():
-        if isinstance(row['to'],str) and row['to'] in addrlist:
-            addr2time[row['to']].append(row['timeStamp'])
-    for addr,time in addr2time.items():
-        time.sort()
-    addr2mon = {}
-    for addr,time in addr2time.items():
-        if len(time) > 0:
-            addr2mon[addr] = time[0]
-    # print(addr2mon)
-    with open('fig2addr2mon.txt','w',encoding='utf-8') as f:#只存储了欺诈地址对应的月份，没存储unknown节点对应的月份
-        print(addr2mon,file=f)
+    # # df = df.drop_duplicates()#去重
+    # df1 = pandas.read_csv('ntx.csv')
+    # df2 = pandas.read_csv('itx.csv')
+    # frames = [df1,df2]
+    # df = pandas.concat(frames)
+    # df['timeStamp'] = df['timeStamp'].map(lambda x:datetime.datetime.fromtimestamp(x).strftime("%Y-%m"))
+    # df = df.sort_values('timeStamp')
+    # addr2time = {}
+    # for addr in addrlist:
+    #     addr2time[addr] = []
+    # for index, row in df.iterrows():
+    #     if isinstance(row['to'],str) and row['to'] in addrlist:
+    #         addr2time[row['to']].append(row['timeStamp'])
+    # for addr,time in addr2time.items():
+    #     time.sort()
+    # addr2mon = {}
+    # for addr,time in addr2time.items():
+    #     if len(time) > 0:
+    #         addr2mon[addr] = time[0]
+    # # print(addr2mon)
+    # with open('fig2addr2mon.txt','w',encoding='utf-8') as f:#只存储了欺诈地址对应的月份，没存储unknown节点对应的月份
+    #     print(addr2mon,file=f)
+    with open('fig2addr2mon.txt','r',encoding='utf-8') as f:
+        addr2mon = literal_eval(f.read())
     mon2count = {}
     for addr,mon in addr2mon.items():
         mon2count[mon] = mon2count.get(mon,0) + 1
-    # print(mon2count)
-    mon2count = sorted(mon2count.items(),key = lambda x:(x[0],x[1]))
-    with open('fig2mon2count.txt','w',encoding='utf-8') as f:
-        print(mon2count,file=f)
-    return
+    # # print(mon2count)
+    # mon2count = sorted(mon2count.items(),key = lambda x:(x[0],x[1]))
+    # with open('fig2mon2count.txt','w',encoding='utf-8') as f:
+    #     print(mon2count,file=f)
+    # return
+    # with open('fig2mon2count.txt','r',encoding='utf-8') as f:
+    #     mon2count = literal_eval(f.read())
     x = mon2count.keys()
     y = mon2count.values()
     zipped = zip(x, y)
@@ -733,6 +726,9 @@ def fig2():
     plt.xticks(rotation=30)
     x_major_locator = MultipleLocator(3)
     ax = plt.gca()
+    ax.set_ylabel('# of addrs')
+    ax.set_xlabel('Date')
+    plt.yscale('log')
     ax.xaxis.set_major_locator(x_major_locator)
     plt.savefig('fig2.jpg')
     plt.show()
@@ -8467,14 +8463,24 @@ def fig15a():
     with open('fig15addr2livinghours.txt', 'r', encoding='utf-8') as f:
         fig15addr2livinghours = literal_eval(f.read())
     addr2day = {}
+    with open('normalAddr.txt','r',encoding='utf-8') as f:
+        addrlist2 = literal_eval(f.read())
     for addr,living in fig15addr2livinghours.items():
-        addr2day[addr] = living / 24
+        if addr not in addrlist2:
+            addr2day[addr] = living / 24
+    # print(addr2day)
+    # addr2dayvalues = list(addr2day.values())
+    # print(max)
+    zipped = zip(addr2day.keys(), addr2day.values())
+    sort_zipped = sorted(zipped, key=lambda x: (x[1]))
+    print(sort_zipped)
     living2num = {}
     for addr,living in addr2day.items():
         living2num[living] = living2num.get(living,0) + 1
     print(len(fig15addr2livinghours))
     zipped = zip(living2num.keys(), living2num.values())
     sort_zipped = sorted(zipped, key=lambda x: (x[0]))
+    # print(sort_zipped)
     result = zip(*sort_zipped)
     plt.figure(figsize=(6, 6.5))
     x, y = [list(x) for x in result]
@@ -8485,7 +8491,7 @@ def fig15a():
     x_major_locator = MultipleLocator(200)
     ax.xaxis.set_major_locator(x_major_locator)
     ax.set_ylabel('CDF of Addresses')
-    ax.set_xlabel('the living time of address')
+    ax.set_xlabel('the living time of address(Days)')
     ax.set_xlim(1)
     plt.savefig('fig15a.jpg')
     plt.show()
@@ -8970,7 +8976,7 @@ def myimg2pdf():
     # print(savedFile)
     # return
     for filename in filelist:
-        if filename.startswith('gephifig16'):
+        if filename.startswith('fig2.jpg'):
             fileprefix = filename[:-4]
             savedFile = filedir + r'\pdf' + '\\' + fileprefix + r'.pdf'
             with open(savedFile,'wb') as f:
@@ -9783,6 +9789,28 @@ def addr2expgroup():
     addr2group = dict(addr2group)
     with open('addr2expgroup.txt','w') as f:
         print(addr2group,file=f)
+def tweet():
+    with open('addr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    addrlist = ['0xd0e929ea70a916e53b4606d7ea5280cb0ddaf7d1']
+    session = requests.Session()
+    classname = 'css-1dbjc4n'
+    xpath = '//*[@id="id__i76dt803nbg"]'
+
+
+    with webdriver.Chrome() as w:#只打开一个浏览器
+        for addr in addrlist:
+            url = "https://twitter.com/search?f=top&q=" + addr + "&src=typed_query"
+            w.get(url)
+            link = w.find_element_by_xpath(xpath)
+            url = "https://twitter.com/" + link
+            w.get(url)
+            
+            time.sleep(100)
+            # bs = BeautifulSoup(html, features="lxml")
+            w.back()
+            twtime = '//*[@id="react-root"]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div[12]/div/div[1]/article/div/div/div/div[3]/div[3]/div/div[1]/a[1]/span'
+#之前因为只使用requests被反爬了
 if __name__ == '__main__':
     # try:
     #     print("ntxs1")
@@ -10029,7 +10057,9 @@ if __name__ == '__main__':
     # addr2expgroup()
     # scamUnknownVictim()
     # util()
-    myimg2pdf()
+    # myimg2pdf()
+    fig15a()
+    # fig2()
     # normalAddrtx2csv1()
     # normalAddrtx2csv2()
     # getComponentNode()
@@ -10045,3 +10075,6 @@ if __name__ == '__main__':
 #gcn gdc tagcn
 #收集整理大量数据时，尽量保存中间文件，即使由于机器性能原因或者ide设置原因等中断运行，也能避免效率的降低。
 #涉及网络爬虫的工作中可能会出现由于当时的网络原因出现问题，包括但不限于整个代码停止运行
+
+#找和欺诈地址有关的推特，以及具体的欺诈地址举例
+# 以及欺诈报告相关报告和地址
