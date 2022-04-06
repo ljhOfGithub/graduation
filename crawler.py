@@ -722,15 +722,16 @@ def fig2():
     result = zip(*sort_zipped)
     x, y = [list(x) for x in result]
     print(result)
+    plt.figure(figsize=(6, 6))
     plt.plot(x,y)
     plt.xticks(rotation=30)
-    x_major_locator = MultipleLocator(3)
+    x_major_locator = MultipleLocator(4)
     ax = plt.gca()
     ax.set_ylabel('# of addrs')
     ax.set_xlabel('Date')
     plt.yscale('log')
     ax.xaxis.set_major_locator(x_major_locator)
-    plt.savefig('fig2.jpg')
+    plt.savefig('fig2.jpg',bbox_inches = 'tight')
     plt.show()
 def tab1n():#不同种地址的各种交易数量，没有每个地址三种交易的数量
     with open('typelist.txt', 'r') as f:
@@ -991,16 +992,19 @@ def mixfig3():
     y2 = month2count2.values()
     x3 = month2count3.keys()
     y3 = month2count3.values()
-    plt.plot(x1, y1, label='normal tx')
-    plt.plot(x2, y2, label='internal tx')
-    plt.plot(x3, y3, label='token tx')
+    plt.figure(figsize=(6, 6))
+    plt.plot(x1, y1, label='normal tx', ls='--', c='black')
+    plt.plot(x2, y2, label='internal tx', ls='-.', c='black')
+    plt.plot(x3, y3, label='token tx', ls='-', c='black')
     plt.xticks(rotation=30)
-    x_major_locator = MultipleLocator(3)
+    x_major_locator = MultipleLocator(4)
     ax = plt.gca()
     ax.xaxis.set_major_locator(x_major_locator)
+    ax.set_ylabel('# of txs')
+    ax.set_xlabel('Month')
     plt.yscale('log')
     plt.legend()
-    plt.savefig('fig3.jpg')
+    plt.savefig('fig3.jpg',bbox_inches = 'tight')
     plt.show()
 def fig221():
     with open('fig2addr2mon.txt','r',encoding='utf-8') as f:
@@ -1088,10 +1092,10 @@ def fig4():#每天的交易数量取最大值
     for day,num in day2num.items():
         x.append(day)
         y.append(num)
-    plt.figure(figsize=(6,5))
+    plt.figure(figsize=(6,6))
     plt.scatter(x, y, s=1)
     plt.xticks(rotation=30)
-    x_major_locator = MultipleLocator(90)
+    x_major_locator = MultipleLocator(100)
     ax = plt.gca()
     ax.set_ylabel('# of transactions')
     ax.set_xlabel('Date')
@@ -6752,10 +6756,10 @@ def mixfig6():
             y3[6] += 1
         if 720 <= living:
             y3[7] += 1
-    plt.figure(figsize=(8, 4))
-    plt.bar(x, y1, width, label="normal tx")
-    plt.bar(index+width, y2, width, label="internal tx")
-    plt.bar(index+width*2, y3, width, label="token tx")
+    plt.figure(figsize=(6, 6))
+    plt.bar(x, y1, width, label="normal tx", color=['0.1','0.1','0.1','0.1','0.1','0.1','0.1','0.1'])
+    plt.bar(index+width, y2, width, label="internal tx", color=['0.5','0.5','0.5','0.5','0.5','0.5','0.5','0.5'])
+    plt.bar(index+width*2, y3, width, label="token tx", color=['0.9','0.9','0.9','0.9','0.9','0.9','0.9','0.9'])
     for a, b in zip(x, y1):
         plt.text(a, b + 0.05, '%.0f' % b, ha='center', va='bottom', fontsize=7)
     x = index + width
@@ -6768,6 +6772,7 @@ def mixfig6():
     ax = plt.gca()
     plt.yscale('log')
     ax.set_xlabel('living time of scam address')
+    ax.set_ylabel('# of txs')
     plt.legend(loc='best')
     plt.savefig('fig6.jpg',bbox_inches = 'tight')
     plt.show()
@@ -7023,8 +7028,8 @@ def mixfig9Livingtime():
     cum = numpy.cumsum(y2)
     percentage2 = cum / list(cum)[-1]
     fig, ax = plt.subplots()
-    line1 = ax.plot(x1,percentage1,label='Living Time of Scam Addresses')
-    line2 = ax.plot(x2,percentage2,label='Living Time of Normal Addresses')
+    line1 = ax.plot(x1,percentage1,label='Living Time of Scam Addresses',ls='--')
+    line2 = ax.plot(x2,percentage2,label='Living Time of Normal Addresses',ls='-')
 
     x_major_locator = MultipleLocator(250)
     ax.xaxis.set_major_locator(x_major_locator)
@@ -8265,7 +8270,7 @@ def fig13evo():
     mledge0 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(list0)) | (mledge['Target'].notnull()) & (mledge['Target'].isin(list0))]
     list0 = list(mledge0['Source']) + list(mledge0['Target'])
 
-def fig13():
+def nxfig13():
     len1 = [29056,4688,3602,6884,4516,13908,4300,1228,5598,3344]
     len2 = [816,16,11,10,9,9,9,8,8,8]
     x = numpy.array([1,2,3,4,5,6,7,8,9,10])
@@ -8976,7 +8981,7 @@ def myimg2pdf():
     # print(savedFile)
     # return
     for filename in filelist:
-        if filename.startswith('fig2.jpg'):
+        if filename.startswith('fig9living.jpg'):
             fileprefix = filename[:-4]
             savedFile = filedir + r'\pdf' + '\\' + fileprefix + r'.pdf'
             with open(savedFile,'wb') as f:
@@ -9789,27 +9794,69 @@ def addr2expgroup():
     addr2group = dict(addr2group)
     with open('addr2expgroup.txt','w') as f:
         print(addr2group,file=f)
+import pdb
 def tweet():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    addrlist = ['0xd0e929ea70a916e53b4606d7ea5280cb0ddaf7d1']
+    addrlist = ['0xd0e929ea70a916e53b4606d7ea5280cb0ddaf7d1','0x53e00c6a2887f71bed5340ce369675ddaff4f42a','0x032fb380d84917d408ea172383cf214c28b4fe21']
     session = requests.Session()
     classname = 'css-1dbjc4n'
     xpath = '//*[@id="id__i76dt803nbg"]'
-
-
-    with webdriver.Chrome() as w:#只打开一个浏览器
+    noresult = '//*[@id="react-root"]/div/div/div[2]/main/div/div/div/div/div/div[2]/div/div/div/div[2]/text()[1]'
+    retry = '//*[@id="react-root"]/div/div/div[2]/main/div/div/div/div/div/div[2]/div/div/div[1]/span'
+    chromeOptions = webdriver.ChromeOptions()
+    # 设置代理
+    chromeOptions.add_argument("--proxy-server=https://127.0.0.1:1080")
+    chromeOptions.add_argument("--proxy-server=https://127.0.0.1:1080")
+    chromeOptions.add_argument("--proxy-server=socks5://127.0.0.1:1080")
+    # chromeOptions.add_argument("--proxy-server=socks4://127.0.0.1:1080")
+    # 一定要注意，=两边不能有空格，不能是这样--proxy-server = http://202.20.16.82:10152
+    with webdriver.Chrome('chromedriver',chrome_options=chromeOptions) as w:#只打开一个浏览器
         for addr in addrlist:
             url = "https://twitter.com/search?f=top&q=" + addr + "&src=typed_query"
             w.get(url)
-            link = w.find_element_by_xpath(xpath)
-            url = "https://twitter.com/" + link
-            w.get(url)
-            
-            time.sleep(100)
-            # bs = BeautifulSoup(html, features="lxml")
-            w.back()
-            twtime = '//*[@id="react-root"]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div[12]/div/div[1]/article/div/div/div/div[3]/div[3]/div/div[1]/a[1]/span'
+            time.sleep(10)
+            # pdb.set_trace()
+            try:
+                if w.find_element_by_xpath(retry):#多次跑发现第一次必定需要刷新
+                    w.refresh()
+                    time.sleep(10)
+                    try:
+                        if w.find_element_by_xpath(retry):
+                            print(addr)
+                            addrindex = addrlist.index(addr)
+                            print(addrindex)
+                            return
+                    except Exception:
+                        # print(addr)
+                        # addrindex = addrlist.index(addr)
+                        # print(addrindex)
+                        pass
+            except Exception:
+                pass
+            try:
+                if w.find_element_by_xpath(noresult):
+                    continue
+            except Exception:#如果异常则有结果，则用下一个if保存结果
+                pass
+            try:
+                if w.find_element_by_xpath(xpath):#不会触发else，因为会直接触发异常
+                    link = w.find_element_by_xpath(xpath)
+                    url = "https://twitter.com/" + link#进入推特详情页，应该不止一个link
+                    w.get(url)
+                    time.sleep(10)
+                # bs = BeautifulSoup(html, features="lxml")
+                    twtimeXpath = '//*[@id="react-root"]/div/div/div[2]/main/div/div/div/div[1]/div/section/div/div/div[12]/div/div[1]/article/div/div/div/div[3]/div[3]/div/div[1]/a[1]/span'
+                    twtime = w.find_element_by_xpath(twtimeXpath)
+                    w.back()  # 返回搜索结果页，然后读取下一个推特内容
+                    print(twtime)
+            except Exception:#前面已经处理了两种异常
+                print(addr)
+                addrindex = addrlist.index(addr)
+                print(addrindex)
+                traceback.print_exc()
+                # continue
+            #     pass
 #之前因为只使用requests被反爬了
 if __name__ == '__main__':
     # try:
@@ -10057,9 +10104,14 @@ if __name__ == '__main__':
     # addr2expgroup()
     # scamUnknownVictim()
     # util()
-    # myimg2pdf()
-    fig15a()
+    # fig4()
+    # mixfig9Livingtime()
+    myimg2pdf()
+    # mixfig6()
+    # fig15a()
+    # tweet()
     # fig2()
+    # mixfig3()
     # normalAddrtx2csv1()
     # normalAddrtx2csv2()
     # getComponentNode()
