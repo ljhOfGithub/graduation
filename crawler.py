@@ -1625,7 +1625,7 @@ def fig7nCdf():
     for addr,prof in addr2prof.items():
         if prof == max(proflist):
             print(addr)
-    return
+    # return
     maxp = max(proflist)
     # testprofit = []
     # for profit in proflist:
@@ -1645,14 +1645,15 @@ def fig7nCdf():
     cum = numpy.cumsum(y)
     percentage = cum / list(cum)[-1]
     line = ax.plot(x,percentage)
-    # plt.xscale('log')
+    plt.xscale('log')
     # x_major_locator = MultipleLocator(1000)
     # ax = plt.gca()
     # ax.xaxis.set_major_locator(x_major_locator)
     ax.set_ylabel('CDF of Addresses')
     ax.set_xlabel('the profit of address($)')
     ax.set_xlim(1)
-    plt.savefig('fig7nCdf2.jpg')
+    # plt.savefig('fig7nCdf2.jpg')#x轴取log前
+    plt.savefig('fig7nCdf2.jpg')#x轴取log后
     plt.show()
 
 def fig7i():#pdf图
@@ -1793,7 +1794,7 @@ def fig7iCdf():
     cum = numpy.cumsum(y)
     percentage = cum / list(cum)[-1]
     line = ax.plot(x, percentage)
-    # plt.xscale('log')
+    plt.xscale('log')
     # x_major_locator = MultipleLocator(1000)
     # ax = plt.gca()
     # ax.xaxis.set_major_locator(x_major_locator)
@@ -8981,7 +8982,7 @@ def myimg2pdf():
     # print(savedFile)
     # return
     for filename in filelist:
-        if filename.startswith('fig9living.jpg'):
+        if filename.endswith('Cdf2.jpg'):
             fileprefix = filename[:-4]
             savedFile = filedir + r'\pdf' + '\\' + fileprefix + r'.pdf'
             with open(savedFile,'wb') as f:
@@ -9858,6 +9859,34 @@ def tweet():
                 # continue
             #     pass
 #之前因为只使用requests被反爬了
+def twoaddr():
+    addr1 = '0xc8b759860149542a98a3eb57c14aadf59d6d89b9'
+    addr2 = '0x3b46c790ff408e987928169bd1904b6d71c00305'
+    df1 = pandas.read_csv('ntx.csv')
+    df2 = pandas.read_csv('itx.csv')
+    timestamp1 = 1546272000
+    timestamp2 = 1577808000
+    time2num1 = {}
+    time2num2 = {}
+    for index,row in df1.iterrows():
+        if (isinstance(row['to'],str) and row['to'] == addr1) or (isinstance(row['from'],str) and row['from'] == addr1) and row['timeStamp'] > timestamp1 and row['timeStamp'] < timestamp2:
+            mytime = datetime.datetime.fromtimestamp(row['timeStamp'])
+            time2num1[mytime] = time2num1.get(mytime,0) + 1
+        if (isinstance(row['to'],str) and row['to'] == addr2) or (isinstance(row['from'],str) and row['from'] == addr2) and row['timeStamp'] > timestamp1 and row['timeStamp'] < timestamp2:
+            mytime = datetime.datetime.fromtimestamp(row['timeStamp'])
+            time2num2[mytime] = time2num2.get(mytime,0) + 1
+    for index,row in df2.iterrows():
+        if (isinstance(row['to'],str) and row['to'] == addr1) or (isinstance(row['from'],str) and row['from'] == addr1) and row['timeStamp'] > timestamp1 and row['timeStamp'] < timestamp2:
+            mytime = datetime.datetime.fromtimestamp(row['timeStamp'])
+            time2num1[mytime] = time2num1.get(mytime,0) + 1
+        if (isinstance(row['to'],str) and row['to'] == addr2) or (isinstance(row['from'],str) and row['from'] == addr2) and row['timeStamp'] > timestamp1 and row['timeStamp'] < timestamp2:
+            mytime = datetime.datetime.fromtimestamp(row['timeStamp'])
+            time2num2[mytime] = time2num2.get(mytime,0) + 1
+    with open('twoaddrTime2num1.txt','w') as f:
+        print(time2num1,file=f)
+    with open('twoaddrTime2num2.txt','w') as f:
+        print(time2num2,file=f)
+
 if __name__ == '__main__':
     # try:
     #     print("ntxs1")
@@ -10106,7 +10135,10 @@ if __name__ == '__main__':
     # util()
     # fig4()
     # mixfig9Livingtime()
-    myimg2pdf()
+    # fig7iCdf()
+    # fig7nCdf()
+    # myimg2pdf()
+    twoaddr()
     # mixfig6()
     # fig15a()
     # tweet()
