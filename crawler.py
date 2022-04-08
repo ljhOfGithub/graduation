@@ -30,6 +30,8 @@ import os
 import pandas as pd
 import scipy.sparse as sp
 import torch
+#mlnode应该是scamRelNode，和欺诈交易有关的节点，将错就错
+#mlnode2应该是正常节点及其一跳节点
 def bloxyhack():
     pagenum = 177
     url2type = {}  # 将所有的链接和种类注解存入字典中再进行筛选
@@ -7599,7 +7601,7 @@ def getscamNodeEdgeCSV():
     # for index, row in df.iterrows():
     #     if isinstance(row['to'],str):
     #         addr = row['to']
-    #         nodecsv[addr]['indegree'] = nodecsv[addr].get('indegree', 0) + 1
+    #         nodecsv[addr]['indegree'] = nodecsv[addr].get('indegree', 0) + 1#nodecsv是欺诈交易中涉及的每个节点的各个属性，包括出度入度类型
     #         if row['to'] in scamaddrlist:
     #             nodecsv[addr]['type'] = 'scam'
     #         elif row['to'] in noraddrlist:
@@ -7623,7 +7625,7 @@ def getscamNodeEdgeCSV():
     # with open('mledge.txt','w',encoding='utf-8',newline='') as f:
     #     print(edgecsv,file=f)
 
-    with open('mlnode.txt', 'r', encoding='utf-8') as f:#统计欺诈节点相关交易涉及的所有节点的信息，命名有问题，不是用于机器学习的数据，用于scam group的数据
+    with open('mlnode.txt', 'r', encoding='utf-8') as f:#统计欺诈节点相关交易涉及的所有节点的信息，命名有问题，不是用于机器学习的数据，因为机器学习还要统计正常节点的数据，用于识别欺诈团伙scam group的数据
         nodecsv = literal_eval(f.read())
     with open('mledge.txt', 'r', encoding='utf-8') as f:#统计欺诈节点相关交易涉及的所有交易边的权重
         edgecsv = literal_eval(f.read())
@@ -7664,7 +7666,7 @@ def getnorIOAddr():#正常地址的一跳节点
             for addr2 in addrlist:
                 writer.writerow([addr,addr2])
 from collections import defaultdict
-def getnorNodeEdgeCSV():#正常节点及其一跳节点
+def getnorNodeEdgeCSV():#正常节点及其一跳节点,mlnode2不是机器学习用的数据，是正常节及其一跳节点区分类型后的csv
     addr2addr = pandas.read_csv('normaladdr2addr.csv')
     with open('addr.txt', 'r', encoding='utf-8') as f:
         scamaddrlist = literal_eval(f.read())
@@ -8287,7 +8289,7 @@ def nxfig13():
     plt.legend()
     plt.savefig('fig13.jpg')
     plt.show()
-def fig14():
+def fig14():#用nx画fig14,但是未知节点需要被欺诈节点转账,改为用gephi画
     # mlnode = pandas.read_csv('mlnode.csv')
     # mledge = pandas.read_csv('mledge.csv')
     # mledge2 = pandas.read_csv('mledge2.csv')
@@ -8295,24 +8297,24 @@ def fig14():
     # print(len(mlnode))
     # print(len(mledge))
     # mlnode14 = mlnode[(mlnode['type']!='normal')]
-    # # mlnode142 = mlnode2[(mlnode2['type']!='normal')]
+    # # mlnode142 = mlnode2[(mlnode2['type']!='normal')]#正常交易中的非正常节点
     # # frames = [mlnode14,mlnode142]
     # # mlnode14 = pandas.concat[frames]
-    # mlnodelist = list(mlnode14['Id'])#欺诈节点交易列表排除正常节点后的节点，包括欺诈节点和未知节点，要么欺诈要么未知
+    # mlnodelist = list(mlnode14['Id'])#欺诈节点交易列表排除正常节点后的节点，包括欺诈节点和未知节点，要么欺诈要么未知，但是未知节点需要被欺诈节点转账
     # mlnodescam = mlnode14[(mlnode14['type']=='scam')]
     # mlnodescamlist = list(mlnodescam['Id'])#edge导入gephi，如果边的节点不在mlnode14中则会显示null类
     # mledge14 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(mlnodelist)) & (mledge['Target'].notnull()) & (mledge['Target'].isin(mlnodelist))]
     # # mledge142 = mledge2[(mledge2['Source'].notnull()) & (mledge2['Source'].isin(mlnodelist)) & (mledge2['Target'].notnull()) & (mledge2['Target'].isin(mlnodelist))]
     # # frames = [mledge14,mledge142]
     # # mledge14 = pandas.concat(frames)
-    # mlnode14.to_csv('mlnodefig14.csv')#起点终点都是非正常节点
+    # mlnode14.to_csv('mlnodefig14.csv')#起点终点都是非正常节点的交易
     # mledge14.to_csv('mledgefig14.csv')
     # mledgescam14 = mledge14[(mledge14['Source'].notnull()) & (mledge14['Source'].isin(mlnodescamlist)) | (mledge14['Target'].notnull()) & (mledge14['Target'].isin(mlnodescamlist))]
     # mlnodeSusp = list(set(list(mledgescam14['Source']) + list(mledgescam14['Target'])))#根据相邻有罪原则得到的新的欺诈节点
     # print(len(mlnodeSusp))
     # return
 
-    # mlnode14 = pandas.read_csv('mlnodefig14.csv')
+    # mlnode14 = pandas.read_csv('mlnodefig14.csv')#这两个统计没有问题
     # mledge14 = pandas.read_csv('mledgefig14.csv')
     # G1 = nx.DiGraph()
     # ScamNodeList = []
@@ -8324,7 +8326,7 @@ def fig14():
     # for index,row in mlnode14.iterrows():
     #     if row['type'] == 'scam':
     #         ScamNodeList.append(row['Id'])
-    #         colorMap.append('yellow')
+    #         colorMap.append('yellow')#后来没有用colormap画图，但是用到了UnknownNodeList，这个统计是有问题的
     #     if row['type'] == 'unknown':
     #         UnknownNodeList.append(row['Id'])
     #         colorMap.append('pink')
@@ -8340,7 +8342,7 @@ def fig14():
     # with open('mlnodefig14SpecialNode.txt','w') as f:
     #     print(specialNodeList,file=f)
     # with open('mlnodefig14Edges.txt','w') as f:
-    #     print(edges,file=f)
+    #     print(edges,file=f)#简化后的欺诈交易和正常交易的边
     # with open('mlnodefig14ScamNode.txt','w') as f:
     #     print(ScamNodeList,file=f)
     # with open('mlnodefig14UnknownNode.txt','w') as f:
@@ -8399,6 +8401,40 @@ def fig14():
     #166513个节点
     #197687边
     #132129个可疑节点
+def rightfig14():#统计好可疑节点后用gephi画图而不是nx
+    mlnode14 = pandas.read_csv('mlnodefig14.csv')#非正常节点和节点种类（欺诈和未知），根据正常交易和欺诈交易统计的
+    mledge14 = pandas.read_csv('mledgefig14.csv')
+    ScamNodeList = []
+    ScamEdgeList = []
+    UnknownNodeList = []#未知的可疑节点
+    UnknownSusEdgeList = []#和未知可疑节点有关的交易
+    mlnode14list = list(mlnode14['Id'])#非正常节点，需要先统计由欺诈节点转账的‘可疑节点’，根据addr.txt和mledge.csv和mledge2.csv也就是mledge14.csv统计
+    with open('addr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    for index,row in mlnode14.iterrows():
+        if row['type'] == 'scam':
+            ScamNodeList.append(row['Id'])
+        if row['type'] == 'unknown':
+            UnknownNodeList.append(row['Id'])#统计正常交易和欺诈交易中的未知节点，下一行找未知的可疑节点，可以直接使用统计好的结果
+    UnknownSusRel = mledge14[(mledge14['Source'].notnull()) & (mledge14['Source'].isin(addrlist)) & (mledge14['Target'].notnull()) & (mledge14['Target'].isin(UnknownNodeList))]  # 转账接收节点是未知的
+    UnknownSusNodeList = list(set(list(UnknownSusRel['Source'] + list(UnknownSusRel['Target']))))#根据找到的可疑交易统计可疑节点
+
+    edges = []
+    for index,row in mledge14.iterrows():
+        mytuple = (row['Source'],row['Target'],row['Weight'])
+        edges.append(mytuple)
+        if row['Source'] in ScamNodeList or row['Target'] in ScamNodeList:
+            ScamEdgeList.append((row['Source'],row['Target'],))
+        if row['Source'] in UnknownSusNodeList or row['Target'] in UnknownSusNodeList:
+            UnknownSusEdgeList.append((row['Source'],row['Target'],))
+    # with open('mlnodefig14ScamNode.txt','w') as f:
+    #     print(ScamNodeList,file=f)
+    with open('mlnodefig14UnknownSusNode.txt','w') as f:#未知可疑节点
+        print(UnknownSusNodeList,file=f)
+    # with open('mlnodefig14ScamEdge.txt','w') as f:#欺诈节点和交易统计没出问题不用重新写
+    #     print(ScamEdgeList,file=f)
+    with open('mlnodefig14UnknownSusEdge.txt','w') as f:
+        print(UnknownSusEdgeList,file=f)
 
 def fig15():
     scamNodeDegree = pandas.read_csv('scamNodeDegree.csv')
@@ -8982,7 +9018,7 @@ def myimg2pdf():
     # print(savedFile)
     # return
     for filename in filelist:
-        if filename.endswith('Cdf2.jpg'):
+        if filename.endswith('fig5.jpg'):
             fileprefix = filename[:-4]
             savedFile = filedir + r'\pdf' + '\\' + fileprefix + r'.pdf'
             with open(savedFile,'wb') as f:
@@ -9871,22 +9907,142 @@ def twoaddr():
     for index,row in df1.iterrows():
         if (isinstance(row['to'],str) and row['to'] == addr1) or (isinstance(row['from'],str) and row['from'] == addr1) and row['timeStamp'] > timestamp1 and row['timeStamp'] < timestamp2:
             mytime = datetime.datetime.fromtimestamp(row['timeStamp'])
+            mytime = mytime.strftime("%Y-%m-%d %H:%M")
             time2num1[mytime] = time2num1.get(mytime,0) + 1
         if (isinstance(row['to'],str) and row['to'] == addr2) or (isinstance(row['from'],str) and row['from'] == addr2) and row['timeStamp'] > timestamp1 and row['timeStamp'] < timestamp2:
             mytime = datetime.datetime.fromtimestamp(row['timeStamp'])
+            mytime = mytime.strftime("%Y-%m-%d %H:%M")
             time2num2[mytime] = time2num2.get(mytime,0) + 1
     for index,row in df2.iterrows():
         if (isinstance(row['to'],str) and row['to'] == addr1) or (isinstance(row['from'],str) and row['from'] == addr1) and row['timeStamp'] > timestamp1 and row['timeStamp'] < timestamp2:
             mytime = datetime.datetime.fromtimestamp(row['timeStamp'])
+            mytime = mytime.strftime("%Y-%m-%d %H:%M")
             time2num1[mytime] = time2num1.get(mytime,0) + 1
         if (isinstance(row['to'],str) and row['to'] == addr2) or (isinstance(row['from'],str) and row['from'] == addr2) and row['timeStamp'] > timestamp1 and row['timeStamp'] < timestamp2:
             mytime = datetime.datetime.fromtimestamp(row['timeStamp'])
+            mytime = mytime.strftime("%Y-%m-%d %H:%M")
             time2num2[mytime] = time2num2.get(mytime,0) + 1
-    with open('twoaddrTime2num1.txt','w') as f:
+    with open('twoaddrTime2num1.txt','w') as f:#因为数据不全而统计错误
         print(time2num1,file=f)
     with open('twoaddrTime2num2.txt','w') as f:
         print(time2num2,file=f)
-
+    with open('twoaddrTime2num1.txt','r') as f:
+        twoaddrTime2num1 = literal_eval(f.read())
+    with open('twoaddrTime2num2.txt','r') as f:
+        twoaddrTime2num2 = literal_eval(f.read())
+    x = twoaddrTime2num1.keys()
+    y = twoaddrTime2num1.values()
+    zipped = zip(x, y)
+    sort_zipped = sorted(zipped, key=lambda x: (x[0]))#根据时间排序
+    result = zip(*sort_zipped)
+    x, y = [list(x) for x in result]
+    # print(result)
+    plt.figure(figsize=(6, 6))
+    plt.scatter(x, y, c='0.1')
+    x = twoaddrTime2num2.keys()
+    y = twoaddrTime2num2.values()
+    zipped = zip(x, y)
+    sort_zipped = sorted(zipped, key=lambda x: (x[0]))#根据时间排序
+    result = zip(*sort_zipped)
+    x, y = [list(x) for x in result]
+    plt.scatter(x, y, c='0.9')
+    plt.xticks(rotation=30)
+    x_major_locator = MultipleLocator(10)
+    ax = plt.gca()
+    ax.set_ylabel('# of txs')
+    ax.set_xlabel('Time')
+    # plt.yscale('log')
+    ax.xaxis.set_major_locator(x_major_locator)
+    plt.savefig('fig5.jpg', bbox_inches='tight')
+    plt.show()
+def twoaddrcsv():
+    addr1 = '0xc8b759860149542a98a3eb57c14aadf59d6d89b9'
+    addr2 = '0x3b46c790ff408e987928169bd1904b6d71c00305'
+    filename1 = addr1 + '_0.json'
+    filename2 = addr2 + '_0.json'#不直接通过json统计两个地址的min2num（各分钟的交易数）
+    with open('2addrtxs1.csv','w',newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(['from', 'to', 'timeStamp'])
+        with open(filename1,'r') as f:
+            try:
+                data = json.load(f)
+                for txhash, mylist in data.items():
+                    writer.writerow([mylist[0], mylist[1], mylist[3]])
+            except Exception:
+                traceback.print_exc()
+    with open('2addrtxs2.csv', 'w', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(['from', 'to', 'timeStamp'])
+        with open(filename2, 'r') as f:
+            try:
+                data = json.load(f)
+                for txhash, mylist in data.items():
+                    writer.writerow([mylist[0], mylist[1], mylist[3]])
+            except Exception:
+                traceback.print_exc()
+def twocsv2fig5():
+    addr1 = '0xc8b759860149542a98a3eb57c14aadf59d6d89b9'
+    addr2 = '0x3b46c790ff408e987928169bd1904b6d71c00305'
+    # df1 = pandas.read_csv('2addrtxs1.csv')
+    # df2 = pandas.read_csv('2addrtxs2.csv')
+    # time2num1 = {}
+    # time2num2 = {}
+    # for index,row in df1.iterrows():
+    #     if (isinstance(row['to'], str) and row['to'] == addr1) or (isinstance(row['from'], str) and row['from'] == addr1) and row['timeStamp'] < '01-28':
+    #         mytime = list(row['timeStamp'][5:-9])
+    #         mytime[5] = ' '
+    #         mytime = ''.join(mytime)
+    #         time2num1[mytime] = time2num1.get(mytime, 0) + 1
+    #     if (isinstance(row['to'], str) and row['to'] == addr2) or (isinstance(row['from'], str) and row['from'] == addr2):
+    #         mytime = list(row['timeStamp'][5:-9])
+    #         mytime[5] = ' '
+    #         mytime = ''.join(mytime)
+    #         time2num2[mytime] = time2num2.get(mytime, 0) + 1
+    # for index,row in df2.iterrows():
+    #     if (isinstance(row['to'], str) and row['to'] == addr1) or (isinstance(row['from'], str) and row['from'] == addr1) and row['timeStamp'] < '01-28':
+    #         mytime = list(row['timeStamp'][5:-9])
+    #         mytime[5] = ' '
+    #         mytime = ''.join(mytime)
+    #         time2num1[mytime] = time2num1.get(mytime, 0) + 1
+    #     if (isinstance(row['to'], str) and row['to'] == addr2) or (isinstance(row['from'], str) and row['from'] == addr2):
+    #         mytime = list(row['timeStamp'][5:-9])
+    #         mytime[5] = ' '
+    #         mytime = ''.join(mytime)
+    #         time2num2[mytime] = time2num2.get(mytime, 0) + 1
+    # with open('twoaddrTime2num1.txt','w') as f:
+    #     print(time2num1,file=f)
+    # with open('twoaddrTime2num2.txt','w') as f:
+    #     print(time2num2,file=f)
+    with open('twoaddrTime2num1.txt','r') as f:
+        twoaddrTime2num1 = literal_eval(f.read())
+    with open('twoaddrTime2num2.txt','r') as f:
+        twoaddrTime2num2 = literal_eval(f.read())
+    x = twoaddrTime2num1.keys()
+    y = twoaddrTime2num1.values()
+    zipped = zip(x, y)
+    sort_zipped = sorted(zipped, key=lambda x: (x[0]))#根据时间排序
+    result = zip(*sort_zipped)
+    x, y = [list(x) for x in result]
+    # print(result)
+    plt.figure(figsize=(6, 6))
+    plt.scatter(x, y, c='0.2', marker='o', label=addr1)
+    x = twoaddrTime2num2.keys()
+    y = twoaddrTime2num2.values()
+    zipped = zip(x, y)
+    sort_zipped = sorted(zipped, key=lambda x: (x[0]))#根据时间排序
+    result = zip(*sort_zipped)
+    x, y = [list(x) for x in result]
+    plt.scatter(x, y, c='0.9', marker='o', label=addr2)
+    plt.xticks(rotation=30)
+    x_major_locator = MultipleLocator(150)
+    ax = plt.gca()
+    ax.set_ylabel('# of txs')
+    ax.set_xlabel('Time')
+    # plt.yscale('log')
+    ax.xaxis.set_major_locator(x_major_locator)
+    plt.legend()
+    plt.savefig('fig5.jpg', bbox_inches='tight')
+    plt.show()
 if __name__ == '__main__':
     # try:
     #     print("ntxs1")
@@ -10138,7 +10294,10 @@ if __name__ == '__main__':
     # fig7iCdf()
     # fig7nCdf()
     # myimg2pdf()
-    twoaddr()
+    rightfig14()
+    # twoaddr()
+    # twoaddrcsv()
+    # twocsv2fig5()
     # mixfig6()
     # fig15a()
     # tweet()
