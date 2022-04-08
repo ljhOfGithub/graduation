@@ -8296,7 +8296,7 @@ def fig14():#用nx画fig14,但是未知节点需要被欺诈节点转账,改为�
     # mlnode2 = pandas.read_csv('mlnode2.csv')
     # print(len(mlnode))
     # print(len(mledge))
-    # mlnode14 = mlnode[(mlnode['type']!='normal')]
+    # mlnode14 = mlnode[(mlnode['type']!='normal')]#欺诈交易中的非正常节点
     # # mlnode142 = mlnode2[(mlnode2['type']!='normal')]#正常交易中的非正常节点
     # # frames = [mlnode14,mlnode142]
     # # mlnode14 = pandas.concat[frames]
@@ -8307,8 +8307,8 @@ def fig14():#用nx画fig14,但是未知节点需要被欺诈节点转账,改为�
     # # mledge142 = mledge2[(mledge2['Source'].notnull()) & (mledge2['Source'].isin(mlnodelist)) & (mledge2['Target'].notnull()) & (mledge2['Target'].isin(mlnodelist))]
     # # frames = [mledge14,mledge142]
     # # mledge14 = pandas.concat(frames)
-    # mlnode14.to_csv('mlnodefig14.csv')#起点终点都是非正常节点的交易
-    # mledge14.to_csv('mledgefig14.csv')
+    # mlnode14.to_csv('mlnodefig14.csv')#两种交易中的所有非正常节点
+    # mledge14.to_csv('mledgefig14.csv')#起点终点都是非正常节点的交易
     # mledgescam14 = mledge14[(mledge14['Source'].notnull()) & (mledge14['Source'].isin(mlnodescamlist)) | (mledge14['Target'].notnull()) & (mledge14['Target'].isin(mlnodescamlist))]
     # mlnodeSusp = list(set(list(mledgescam14['Source']) + list(mledgescam14['Target'])))#根据相邻有罪原则得到的新的欺诈节点
     # print(len(mlnodeSusp))
@@ -8360,7 +8360,7 @@ def fig14():#用nx画fig14,但是未知节点需要被欺诈节点转账,改为�
     with open(r'C:\Users\ljh\Desktop\fig14node.csv', 'w', newline='') as f:
         writer = csv.writer(f)
         writer.writerow(['Id', 'type', 'indegree', 'outdegree', 'degree'])
-        for index, row in mlnode14.iterrows():
+        for index, row in mlnode14.iterrows():#打印的是欺诈交易和正常交易的
             writer.writerow([row['Id'], row['type'], row['indegree'], row['outdegree'], row['degree']])
     with open(r'C:\Users\ljh\Desktop\fig14edge.csv', 'w', newline='') as f:
         writer = csv.writer(f)
@@ -8411,18 +8411,19 @@ def rightfig14():#统计好可疑节点后用gephi画图而不是nx
     mlnode14list = list(mlnode14['Id'])#非正常节点，需要先统计由欺诈节点转账的‘可疑节点’，根据addr.txt和mledge.csv和mledge2.csv也就是mledge14.csv统计
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    for index,row in mlnode14.iterrows():
-        if row['type'] == 'scam':
-            ScamNodeList.append(row['Id'])
-        if row['type'] == 'unknown':
-            UnknownNodeList.append(row['Id'])#统计正常交易和欺诈交易中的未知节点，下一行找未知的可疑节点，可以直接使用统计好的结果
+    with open('mlnodefig14ScamNode.txt','r') as f:
+        ScamNodeList = literal_eval(f.read())
+    with open('mlnodefig14UnknownNode.txt','r') as f:
+        UnknownNodeList = literal_eval(f.read())
+    # for index,row in mlnode14.iterrows():
+    #     if row['type'] == 'scam':
+    #         ScamNodeList.append(row['Id'])
+    #     if row['type'] == 'unknown':
+    #         UnknownNodeList.append(row['Id'])#统计正常交易和欺诈交易中的未知节点，下一行找未知的可疑节点，可以直接使用统计好的结果
     UnknownSusRel = mledge14[(mledge14['Source'].notnull()) & (mledge14['Source'].isin(addrlist)) & (mledge14['Target'].notnull()) & (mledge14['Target'].isin(UnknownNodeList))]  # 转账接收节点是未知的
-    UnknownSusNodeList = list(set(list(UnknownSusRel['Source'] + list(UnknownSusRel['Target']))))#根据找到的可疑交易统计可疑节点
+    UnknownSusNodeList = list(set(list(UnknownSusRel['Source']) + list(UnknownSusRel['Target'])))#根据找到的可疑交易统计可疑节点
 
-    edges = []
     for index,row in mledge14.iterrows():
-        mytuple = (row['Source'],row['Target'],row['Weight'])
-        edges.append(mytuple)
         if row['Source'] in ScamNodeList or row['Target'] in ScamNodeList:
             ScamEdgeList.append((row['Source'],row['Target'],))
         if row['Source'] in UnknownSusNodeList or row['Target'] in UnknownSusNodeList:
