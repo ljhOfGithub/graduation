@@ -30,6 +30,7 @@ import os
 import pandas as pd
 import scipy.sparse as sp
 import torch
+
 #mlnode应该是scamRelNode，和欺诈交易有关的节点，将错就错
 #mlnode2应该是正常节点及其一跳节点
 def bloxyhack():
@@ -8047,13 +8048,6 @@ def fig11():
     plt.savefig('fig11.jpg')
     plt.show()
 
-def addlegend():
-    # data = pandas.read_csv('C:\\Users\\ljh\\Desktop\\node.csv')
-    I = mpimg.imread('C:\\Users\\ljh\\Desktop\\fig12.jpg')
-    plt.legend(('test','tt'),fontsize='100')
-    plt.imshow(I)
-    plt.show()
-
 def taxoNormalAddr():
     normalAddr = pandas.read_csv('ethereum_tagged_address.csv',encoding='ISO-8859-1')
     minerAddr = []
@@ -8303,12 +8297,12 @@ def fig14():#用nx画fig14,但是未知节点需要被欺诈节点转账,改为�
     # mlnodelist = list(mlnode14['Id'])#欺诈节点交易列表排除正常节点后的节点，包括欺诈节点和未知节点，要么欺诈要么未知，但是未知节点需要被欺诈节点转账
     # mlnodescam = mlnode14[(mlnode14['type']=='scam')]
     # mlnodescamlist = list(mlnodescam['Id'])#edge导入gephi，如果边的节点不在mlnode14中则会显示null类
-    # mledge14 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(mlnodelist)) & (mledge['Target'].notnull()) & (mledge['Target'].isin(mlnodelist))]
+    # mledge14 = mledge[(mledge['Source'].notnull()) & (mledge['Source'].isin(mlnodelist)) & (mledge['Target'].notnull()) & (mledge['Target'].isin(mlnodelist))]#两种交易的所有和非正常节点有关的节点
     # # mledge142 = mledge2[(mledge2['Source'].notnull()) & (mledge2['Source'].isin(mlnodelist)) & (mledge2['Target'].notnull()) & (mledge2['Target'].isin(mlnodelist))]
     # # frames = [mledge14,mledge142]
     # # mledge14 = pandas.concat(frames)
-    # mlnode14.to_csv('mlnodefig14.csv')#两种交易中的所有非正常节点
-    # mledge14.to_csv('mledgefig14.csv')#起点终点都是非正常节点的交易
+    # mlnode14.to_csv('mlnodefig14.csv')#两种交易中的所有非正常节点，需要改为欺诈节点和可疑节点
+    # mledge14.to_csv('mledgefig14.csv')#两种交易中起点终点都是非正常节点的交易
     # mledgescam14 = mledge14[(mledge14['Source'].notnull()) & (mledge14['Source'].isin(mlnodescamlist)) | (mledge14['Target'].notnull()) & (mledge14['Target'].isin(mlnodescamlist))]
     # mlnodeSusp = list(set(list(mledgescam14['Source']) + list(mledgescam14['Target'])))#根据相邻有罪原则得到的新的欺诈节点
     # print(len(mlnodeSusp))
@@ -8403,7 +8397,7 @@ def fig14():#用nx画fig14,但是未知节点需要被欺诈节点转账,改为�
     #132129个可疑节点
 def rightfig14():#统计好可疑节点后用gephi画图而不是nx
     mlnode14 = pandas.read_csv('mlnodefig14.csv')#非正常节点和节点种类（欺诈和未知），根据正常交易和欺诈交易统计的
-    mledge14 = pandas.read_csv('mledgefig14.csv')
+    mledge14 = pandas.read_csv('mledgefig14.csv')#
     ScamNodeList = []
     ScamEdgeList = []
     UnknownNodeList = []#未知的可疑节点
@@ -8422,20 +8416,43 @@ def rightfig14():#统计好可疑节点后用gephi画图而不是nx
     #         UnknownNodeList.append(row['Id'])#统计正常交易和欺诈交易中的未知节点，下一行找未知的可疑节点，可以直接使用统计好的结果
     UnknownSusRel = mledge14[(mledge14['Source'].notnull()) & (mledge14['Source'].isin(addrlist)) & (mledge14['Target'].notnull()) & (mledge14['Target'].isin(UnknownNodeList))]  # 转账接收节点是未知的
     UnknownSusNodeList = list(set(list(UnknownSusRel['Source']) + list(UnknownSusRel['Target'])))#根据找到的可疑交易统计可疑节点
-
-    for index,row in mledge14.iterrows():
-        if row['Source'] in ScamNodeList or row['Target'] in ScamNodeList:
-            ScamEdgeList.append((row['Source'],row['Target'],))
-        if row['Source'] in UnknownSusNodeList or row['Target'] in UnknownSusNodeList:
-            UnknownSusEdgeList.append((row['Source'],row['Target'],))
-    # with open('mlnodefig14ScamNode.txt','w') as f:
-    #     print(ScamNodeList,file=f)
-    with open('mlnodefig14UnknownSusNode.txt','w') as f:#未知可疑节点
-        print(UnknownSusNodeList,file=f)
-    # with open('mlnodefig14ScamEdge.txt','w') as f:#欺诈节点和交易统计没出问题不用重新写
-    #     print(ScamEdgeList,file=f)
-    with open('mlnodefig14UnknownSusEdge.txt','w') as f:
-        print(UnknownSusEdgeList,file=f)
+    # for index,row in mledge14.iterrows():#开销最大的操作
+    #     if row['Source'] in ScamNodeList or row['Target'] in ScamNodeList:
+    #         ScamEdgeList.append((row['Source'],row['Target'],))
+    #     if row['Source'] in UnknownSusNodeList or row['Target'] in UnknownSusNodeList:
+    #         UnknownSusEdgeList.append((row['Source'],row['Target'],))
+    # # with open('mlnodefig14ScamNode.txt','w') as f:
+    # #     print(ScamNodeList,file=f)
+    # with open('mlnodefig14UnknownSusNode.txt','w') as f:#未知可疑节点
+    #     print(UnknownSusNodeList,file=f)
+    # # with open('mlnodefig14ScamEdge.txt','w') as f:#欺诈节点和交易统计没出问题不用重新写
+    # #     print(ScamEdgeList,file=f)
+    # with open('mlnodefig14UnknownSusEdge.txt','w') as f:
+    #     print(UnknownSusEdgeList,file=f)
+    with open('mlnodefig14UnknownSusNode.txt','r') as f:
+        UnknownSusNodeList = literal_eval(f.read())
+    with open('mlnodefig14UnknownSusEdge.txt','r') as f:
+        UnknownSusEdgeList = literal_eval(f.read())
+    # print(len(UnknownSusNodeList))#33664
+    # print(len(UnknownSusEdgeList))#111203
+    scamAndSusNodeList = addrlist + UnknownSusNodeList
+    scamAndSusNodeCsv = mlnode14[mlnode14['Id'].isin(scamAndSusNodeList)]#欺诈和可疑节点列表
+    scamAndSusNodeCsv.to_csv('scamAndSusNode.csv')
+    scamAndSusEdge = mledge14[(mledge14['Source'].notnull()) & (mledge14['Source'].isin(scamAndSusNodeList)) & (mledge14['Target'].notnull()) & (mledge14['Target'].isin(scamAndSusNodeList))]
+    scamAndSusEdge.to_csv('scamAndSusEdge.csv')
+    #先统计欺诈节点和可疑节点
+    with open(r'C:\Users\ljh\Desktop\fig14susNode.csv', 'w', newline='') as f:#写入桌面的gephi的csv文件画图
+        writer = csv.writer(f)
+        writer.writerow(['Id', 'type', 'indegree', 'outdegree', 'degree'])#35319
+        # scamAndSusNodeCsv = pd.read_csv('scamAndSusNode.csv')
+        for index, row in scamAndSusNodeCsv.iterrows():
+            writer.writerow([row['Id'], row['type'], row['indegree'], row['outdegree'], row['degree']])
+    with open(r'C:\Users\ljh\Desktop\fig14susEdge.csv', 'w', newline='') as f:#写入桌面的gephi的csv文件画图
+        writer = csv.writer(f)
+        writer.writerow(['Source', 'Target', 'Weight'])
+        # scamAndSusEdge = pd.read_csv('scamAndSusEdge.csv')
+        for index, row in scamAndSusEdge.iterrows():
+            writer.writerow([row['Source'], row['Target'], row['Weight']])#38935 45084
 
 def fig15():
     scamNodeDegree = pandas.read_csv('scamNodeDegree.csv')
@@ -9019,7 +9036,7 @@ def myimg2pdf():
     # print(savedFile)
     # return
     for filename in filelist:
-        if filename.endswith('fig5.jpg'):
+        if filename.endswith('fig14sus.jpg'):
             fileprefix = filename[:-4]
             savedFile = filedir + r'\pdf' + '\\' + fileprefix + r'.pdf'
             with open(savedFile,'wb') as f:
@@ -9833,7 +9850,7 @@ def addr2expgroup():
     with open('addr2expgroup.txt','w') as f:
         print(addr2group,file=f)
 import pdb
-def tweet():
+def tweetcrawler():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
     addrlist = ['0xd0e929ea70a916e53b4606d7ea5280cb0ddaf7d1','0x53e00c6a2887f71bed5340ce369675ddaff4f42a','0x032fb380d84917d408ea172383cf214c28b4fe21']
@@ -9896,6 +9913,50 @@ def tweet():
                 # continue
             #     pass
 #之前因为只使用requests被反爬了
+def tweetcsv():
+    t1 = pd.read_csv('t.csv')
+    t2 = pd.read_csv('t2.csv')
+    t3 = pd.read_csv('t3.csv')
+    t4 = pd.read_csv('t4.csv')
+    t5 = pd.read_csv('t5.csv')
+    t6 = pd.read_csv('t6.csv')
+    t7 = pd.read_csv('t7.csv')
+    t8 = pd.read_csv('t8.csv')
+    # print(t1.shape[0])
+    # frames = [t1,t2,t3,t4,t5,t6,t7,t8]
+    # df = pd.concat(frames)
+    # df.to_csv('scamTweet.csv')
+    df = pd.read_csv('scamTweet.csv')
+    print(df.shape[0])#954
+    re = '/(^|[^@\w])@(\w{1,15})\b/\sˆ0x[a-fA-F0-9]40$'#匹配用户名和以太坊地址,还是手动筛选检查
+    for row,index in df.iterrows():
+        tweet = row['tweet']
+#604个欺诈报告，100个引诱打钱，28个非英语，111+111=222个只有用户名和地址
+def website():
+    with open('addr.txt','r',encoding='utf-8') as f:
+        addrlist = literal_eval(f.read())
+    t1 = pd.read_csv('t.csv')
+    for addr in addrlist:
+        filename = r'D:\chrome_download\Search-Engines-Scraper-master\mycsv' + '\\' + addr + '.csv'
+        keywords = ['scam','fraud','blacklist','etherscan','breadcrumb','Explorer','github','ethplorer']#需要排除的关键字
+        df = pd.read_csv(filename)
+
+        for index,row in df.iterrows():
+            try:
+                tag = []
+                for keyword in keywords:
+                    myindex = keywords.index(keyword)
+                    if keyword not in row['domain'].lower() and keyword not in row['URL'].lower() and keyword not in row['title'].lower() and keyword not in row['text'].lower():
+                        # print(row)
+                        tag[myindex] = 0#不含某个关键词，则该位为0
+                if all(t == 0 for t in tag):#所有域都没有关键词则打印index
+                    print(filename)
+                    print(index)
+            except:
+                # print(index)
+                pass
+
+
 def twoaddr():
     addr1 = '0xc8b759860149542a98a3eb57c14aadf59d6d89b9'
     addr2 = '0x3b46c790ff408e987928169bd1904b6d71c00305'
@@ -10044,6 +10105,7 @@ def twocsv2fig5():
     plt.legend()
     plt.savefig('fig5.jpg', bbox_inches='tight')
     plt.show()
+
 if __name__ == '__main__':
     # try:
     #     print("ntxs1")
@@ -10295,7 +10357,9 @@ if __name__ == '__main__':
     # fig7iCdf()
     # fig7nCdf()
     # myimg2pdf()
-    rightfig14()
+    # tweetcsv()
+    website()
+    # rightfig14()
     # twoaddr()
     # twoaddrcsv()
     # twocsv2fig5()
