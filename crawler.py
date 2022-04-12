@@ -9935,21 +9935,22 @@ def tweetcsv():
 def website():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
-    t1 = pd.read_csv('t.csv')
     testaddr = []#需要手动筛选关键词的地址列表
     for addr in addrlist:
         try:
             filename = r'D:\chrome_download\Search-Engines-Scraper-master\mycsv' + '\\' + addr + '.csv'
             keywords = ['scam','fraud','blacklist','etherscan','breadcrumb','Explorer','github','ethplorer']#需要排除的关键字
             df = pd.read_csv(filename)
+            import pdb
+            # pdb.set_trace()
             #某个地址csv的所有行都不包含关键字的时候打印该地址
-            tag = [True] * df.shape[0]#检测地址csv每行是否含有关键词
+            addrtag = [True] * len(addrlist)#检测地址csv每行是否含有关键词，长度是地址列表长度
             testaddrrow = []
-            testaddrrow[0] = addr
+            testaddrrow.append(addr)
             for index,row in df.iterrows():
                 try:
-                    # tag = [1] * len(keywords)
-                    rowtag = [True] * len(keywords)
+                    # addrtag = [1] * len(keywords)
+                    rowtag = [True] * df.shape[0]
                     domain = row['domain'].lower()
                     URL = row['URL'].lower()
                     title = row['title'].lower()
@@ -9959,10 +9960,10 @@ def website():
                         text = ''
                     # for keyword in keywords:#遍历每个关键词改成用all方法
                     # rowindex = keywords.index(keyword)#检测行是否含有关键词
-                    domaintag = all([keyword not in row['domain'].lower() for keyword in keywords])#domain域不包含任何一个关键词tag才为True
-                    URLtag = all([keyword not in row['URL'].lower() for keyword in keywords])
-                    titletag = all([keyword not in row['title'].lower() for keyword in keywords])
-                    texttag = all([keyword not in row['text'].lower() for keyword in keywords])
+                    domaintag = all([keyword not in domain.lower() for keyword in keywords])#domain域不包含任何一个关键词tag才为True
+                    URLtag = all([keyword not in URL.lower() for keyword in keywords])
+                    titletag = all([keyword not in title.lower() for keyword in keywords])
+                    texttag = all([keyword not in text.lower() for keyword in keywords])
                     # domaintag = keyword not in row['domain'].lower()
                     # URLtag = keyword not in row['URL'].lower()
                     # titletag = keyword not in row['title'].lower()
@@ -9973,13 +9974,15 @@ def website():
                     # elif not isinstance(row['text'],str):
                     #     texttag = False
                     #     text = ''
-                        #不含某个关键词，则该位为False
+                    #不含某个关键词，则该位为False
                     rowtag = [domaintag, URLtag, titletag, texttag]#域名tag=True表示含有关键词，=0False表示不含任何一个关键词
                     if all(t == False for t in rowtag):#每个tag都是0False表示该行所有域都不含关键词
-                        tag[index] = False#该行不含关键词，需要记录不含关键词的行方便手动提取关键词，打包地址和不含关键词的行索引到testaddr中，用列表打包
+                        addrtag[index] = False#该行不含关键词，需要记录不含关键词的行方便手动提取关键词，打包地址和不含关键词的行索引到testaddr中，用列表打包
                     elif any(t == True for t in rowtag):
                         testaddrrow.append(index)#任何一个域含有关键词则记录该行号
-                        tag[index] = True#True表示该行需要记录
+                        addrtag[index] = True#True表示该行需要记录
+                    # print(rowtag)
+                    # print(addrtag)
                 except:
                     # print(index)
                     print(type(row['domain']))
@@ -9991,13 +9994,15 @@ def website():
                     print(row)
                     import traceback
                     traceback.print_exc()
-            if any(t == True for t in tag):#不是csv的所有行所有域都没有关键词则打印地址和index
-                testaddr.append(testaddrrow)#添加该行的地址和行号
-                # print(index)
-                # pass
         except:
             # print(addr)
-            pass
+            # pass
+            import traceback
+            traceback.print_exc()
+    if any(t == True for t in addrtag):#不是csv的所有行所有域都没有关键词则打印地址和index
+        testaddr.append(testaddrrow)#添加该行的地址和行号
+        # print(index)
+        # pass
     with open('website.txt', 'w') as f:
         print(testaddr,file=f)
 def twoaddr():
