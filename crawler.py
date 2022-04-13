@@ -9952,7 +9952,7 @@ def website():
                             'coinpan','etherchain','ethereum.stackexchange','nomics.com','coinvietnam.vn','pancakeswap.finance','hack',
                             'recentcoin.com','conspi.ru','certik.com','/accounts/','tokenview.com','token-profile.token','urlscan.io','phish',
                             'thebittimes.com','polygonscan.com','stole','books.google.com','pdfcoffee.com','scribd.com','x.blockeye','thebittimes.com',
-                            'ftmscan.com','ethvm.com']#需要排除的关键字
+                            'ftmscan.com','ethvm.com','fraud','/token/','rekt.news']#需要排除的关键字
                 df = pd.read_csv(filename)
                 import pdb
                 # pdb.set_trace()
@@ -10078,6 +10078,11 @@ def website():
 #https://medium.com/@HannahD11802153/vechain-foundation-airdrop-ff921b73d187
 #http://119.29.176.244:8001/position/kappitoken 无
 #https://t.me/s/HBC_announcement?before=22
+#https://www.jeuxvideo.com/forums/42-3011927-64524787-1-0-1-0-airdrop-x-stable-coin.htm airdrop
+#https://m.facebook.com/Diamond-Project-156763648321824/?ref=page_internal ico
+#https://tgstat.com/channel/@icointel
+#https://telemetr.io/uk/channels/1092338095-icointel
+#https://www.icoannouncement.io/listing/yearn-hold-finance-yhfi/ presale
 
 def twoaddr():
     addr1 = '0xc8b759860149542a98a3eb57c14aadf59d6d89b9'
