@@ -9952,7 +9952,9 @@ def website():
                             'coinpan','etherchain','ethereum.stackexchange','nomics.com','coinvietnam.vn','pancakeswap.finance','hack',
                             'recentcoin.com','conspi.ru','certik.com','/accounts/','tokenview.com','token-profile.token','urlscan.io','phish',
                             'thebittimes.com','polygonscan.com','stole','books.google.com','pdfcoffee.com','scribd.com','x.blockeye','thebittimes.com',
-                            'ftmscan.com','ethvm.com','fraud','/token/','rekt.news']#需要排除的关键字
+                            'ftmscan.com','ethvm.com','fraud','/token/','rekt.news','coincheck.blog','reentrancy','attack','mobile.twitter.com',
+                            'groups.google.com','blockglobe24.com','ymsmhj.com','panewslab.com','btcfans.com','spamreports.report','accesspegasus.com',
+                            'jinse.com']#需要排除的关键字
                 df = pd.read_csv(filename)
                 import pdb
                 # pdb.set_trace()
@@ -10005,6 +10007,11 @@ def website():
     #     print(addr2tag,file=f)
     # print(addr2tag)
     #得出的csv很多重复，不是重启搜索引擎程序出现问题，爬虫本身有问题
+#文件：0x23cb06dc044f4c9937866a5928c2427639f390a0 0xbb835bd2259d34e4ea77ef39ba63ec1d93a047e0 0x7d52327b12afaead317552a1e96bc55eb8e0e52c 0x479cc10103b079ace9e9bb2db1f81cdcd5cdf642 0x63f32b8ec6e4dea892149834a7b8d7c9e67b4a0a
+# 0x938fdac116de11faf8e682e93dec3c849895e380 0xdba8f7ba4be466e03bc7d7c6e86f95b36da1b642 0x54189eab44661be1b081b4535c050230a787d816 0xdf8ee0a230894e7e512dc3e1c9f5df520bd6b84e 0x72dc6ad43749a9fa2ae381ed35b5fd8f6604c7bf
+# 0x3715b1ed9bbd5e165af97619b5c5e13e39f55504 0xe7eb3ddff9591915e65f06bc4cda8eee0224e461 0x92132d45119fae2f375db1cb835bb4ec46a9e71c 0x4ac6307a85d83962503f86457de9c331a6926f48 0xeeeeeeeeb3086c7b26b2027f1d42e83c36d49489
+# 0xbb7ef8418e9a74c0c731aaaab688aabc9b7af857 0xc0b9c8dcbabbe0f0febff1a823d87615392aa844 0x8d18b40c3b095f2d8ea99bf3a814c7182e2f8efd 0x4c8093c75fc778008d96f865f770233d6acf724e
+# 0x6350fb4a8bc3cda203cfe00f87ba0f7b3bf61600
 #手动筛选：
 #https://teletype.in/@ethereum2.0/_7Slcqiy
 #https://tgraph.io/Ethereum-20-News-03-04
@@ -10083,6 +10090,80 @@ def website():
 #https://tgstat.com/channel/@icointel
 #https://telemetr.io/uk/channels/1092338095-icointel
 #https://www.icoannouncement.io/listing/yearn-hold-finance-yhfi/ presale
+#https://www.haobi8.com/biwd/29982/ 科普
+#https://tgstat.com/channel/@icointel
+#https://telemetr.io/uk/channels/1092338095-icointel
+#https://www.norkerens.es/cu/136gv83220h/ 无
+#https://asd.lucianomanzalini.it/ho/391gv11901x/ 无
+#https://huriueigremoer.xyz/do/638ts27210u/ 无
+#https://www1.melipop.es/xu/891hg121302z/ 无
+#https://www.coinlore.com/coin/iungo
+#http://119.29.176.244:8001/position/iungo/7day
+#https://t.me/s/HYIPcontract tele
+#https://nftrade.com/users/bsc/0x776d5986b34304984f0263c8c718ce73a0515d15?search=&sort=listed_desc nft相关
+#http://119.29.176.244:8001/position/pumpfarm/7day 无
+#https://forum.bitcoin.com/ethereum/dogcash-dog-airdrop-round-1-t117211.html airdrop
+#https://forumbitcoin.co.id/threads/dogcash-dog-airdrop-round-1.101021/
+#https://sw-ke.facebook.com/TheMasterofCrypto1/posts/343655919623054 外
+#http://www.qb03.com/news/show-2244.html 无法访问
+#http://smeasp.com/shipu/yaowen/13299.html 无法访问
+#https://sx.qinyuequan.com/forum.php?mod=viewthread&tid=178540&mobile=2 无
+#https://www.coinlore.com/coin/yang
+#https://nitter.domain.glass/WePowerN/status/967415097969774592 无
+#https://www.tokenpost.kr/article-25900 外
+#https://cobak.co.kr/community/1/post/296007 外
+#https://tgstat.com/ru/channel/@airdropycckux 外
+#https://www.globees.co.uk/contact
+#https://docs.google.com/spreadsheets/d/1sp6Ft_VUjt0L4ks6x77Z02Lt0TW8eBCj82MDnnfm01A/edit
+#https://m.blog.naver.com/lch8422/221091626786 外
+#https://forum.benchmark.rs/threads/ico-initial-coin-offering-diskusija.406332/page-2 外
+#https://crypto500.news/yieldfinancefarm-next-generation-rewards-maximizing-defi-farm-2nd-yif-presale-is-live/ rewards
+#https://cryptonewsbtc.org/2020/12/24/yieldfinancefarm-next-generation-rewards-maximizing-defi-farm-2nd-yif-presale-is-live/ 无
+#https://bitco.news/yieldfinancefarm-next-generation-awards-making-the-most-of-defi-farm-2nd-presale-yif-live.html
+#https://es.bitcoinethereumnews.com/technology/yieldfinancefarm-next-generation-rewards-maximizing-defi-farm-2nd-yif-presale-is-live/
+#https://gitter.im/ethereum/welcome/archives/2018/03/19 社交媒体
+#https://sysadmins.ru/topic535581-20.html 外
+#https://forum.bitcoin.com/japanese/tenx-ico-50-t29406.html token sale
+#https://fundaria.com/bounty/spreadsheet.php bounty
+#https://opensea.io/0x29d7d1dd5b6f9c864d9db560d72a247c178ae86b?tab=activity nft opensea airdrop
+#http://119.29.176.244:8001/position/tomatosfinance/7day
+#https://www.coinlore.com/coin/tls-token
+#https://textrunet.ru/raznoe/https-www-yandex-ru-koshelek-kak-sozdat-yandeks-koshelek-yandeks-kyu.html 外
+#https://telegra.ph/Vitalik-Buterin-Founder-of-Ethereum-Soon-the-ether-will-pass-the-5000-mark-BTC-ETH-10-06 giveaway
+#https://www.reddit.com/r/dutch/comments/jw4wn1/bitcoins_spam/ 外
+#https://www.coinlore.com/coin/archetypal-network
+#https://docs.google.com/spreadsheets/d/1w7KdVRPrCphMnTNWxc2EpKLCdQ6s3bd0UarSZ5fKLz8
+#https://accapidocs.icomplyico.com/ 出现在api中
+#https://telegra.ph/Vitalik-Buterin-Announces-100000-Ether-Giveaway-for-COVID-19-04-24 giveaway
+#https://about.me/vitalik.buterin 返利
+#https://tgstat.com/uz/channel/@airdrop_rex
+#http://119.29.176.244:8001/position/kvaultfinance/7day 无
+#https://textrunet.ru/raznoe/https-www-yandex-ru-koshelek-kak-sozdat-yandeks-koshelek-yandeks-kyu.html 重复
+#https://www.facebook.com/kenhtintuctiendientu/photos/a.970253126364351/2693221900734123/?type=3 外
+#https://medium.com/@horizon0x/horizon0x-ann-ddbb420af878 返利
+#https://iconow.net/ico-1995/ ico 返利
+#https://archived.moe/biz/thread/16821303 匿名论坛
+#https://telegra.ph/Ethereum-Foundation-50000-ETH-Giveaway-Airdrop-12-01 giveaway
+#http://panemicav2.rf.gd/ 触发metamask钓鱼检测
+#https://teletype.in/@vitaliketh/q9Zw1wh-e giveaway airdrop
+#https://tgstat.com/channel/@HyipCoins_airdrop/1302
+#https://www.reddit.com/r/airdrops/comments/aucdbz/salvus_solutions_airdrop/ airdrop
+#https://socialgrep.com/search?query=salvus airdrop
+#https://i.warosu.org/biz/thread/22802914
+#https://buybitcoin.lol/messages3.html
+#https://t.me/s/EthereumPrivateChannel
+#https://ne-np.facebook.com/hashtag/ether_private/
+#https://eth-promo.wixsite.com/special-gift-event
+#https://medium.com/@techteamlibracredit/welcome-to-libra-credit-community-d004b1731f9b
+#https://tgstat.com/channel/@ClipClapsAnnouncements
+#https://telemetr.io/en/channels/1245666043-clipclapsannouncements
+#https://ne-np.facebook.com/groups/1873948109582411//
+#https://www.haobi8.com/biwd/34041/ 科普
+#http://ethereumforum.ru/threads/48/ 无
+#https://nenettegarcia.com/jpr1u7v/who-is-the-publisher/smart-contract-address-ethereum.html 无
+#https://telemetr.io/es/channels/1339444938-wbtc_network
+#https://www.coinlore.com/coin/sense
+#https://hi-in.facebook.com/coinalphax4r/posts/-new-born-metacom-token-on-ethereum-smart-chain-token-name-metacom-symbol-meta-s/184823243816795/ 外
 
 def twoaddr():
     addr1 = '0xc8b759860149542a98a3eb57c14aadf59d6d89b9'
