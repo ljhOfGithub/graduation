@@ -9949,7 +9949,8 @@ def website():
                             'github.com','eth.tokenview','coinmarketcap','blockchain.info','cn.vechainstats','/account/','/address/',
                             'stackoverflow','saoniuhuo.com','minergate.com','gitlab','dokumen.tips','bitcoinabuse','github','blockchair',
                             'icy.tools','bitcointalk','abc.bi','/contracts/','arxiv','tradeblock','pure.rug.nl','rs.booksc.org','coincarp.com',
-                            'coinpan','etherchain','ethereum.stackexchange','nomics.com','coinvietnam.vn']#需要排除的关键字
+                            'coinpan','etherchain','ethereum.stackexchange','nomics.com','coinvietnam.vn','pancakeswap.finance','hack',
+                            'recentcoin.com','conspi.ru','certik.com']#需要排除的关键字
                 df = pd.read_csv(filename)
                 import pdb
                 # pdb.set_trace()
@@ -10039,7 +10040,17 @@ def website():
 #https://eslilin854645586.wordpress.com/page/8/ 无
 #https://medium.com/matic-network-official/matic-network-token-sale-launch-3ec86fc3d46
 #https://www.coinlore.com/coin/giftedhands
-
+#https://www.coinlore.com/coin/crad-cash
+#https://medium.com/@torchain.io/new-bonus-added-586ae05ab602
+#https://telegra.ph/UNI-Foundation-5000000-UNISWAP-Giveaway-09-18
+#https://beta.peakd.com/@ashwim/re-techguru-re-ashwim-experty-ico-hacked-more-than-usd150-000-stolen-20180130t042403564z
+#https://forum.gipsyteam.ru/index.php?viewtopic=132721&st=80 无
+#https://www.coinlore.com/coin/giga-watt-token
+#https://medium.com/@toktz244?source=rss-25b17f3bb816------2
+#https://gitter.im/kovan-testnet/faucet?at=5addb0656d7e07082b237ded
+#https://gitter.im/ethereum/go-ethereum/archives/2017/09/20
+#https://telegra.ph/Ethereum-Foundation-100000-ETH-Giveaway-Airdrop-11-22
+#https://id.linkedin.com/pulse/petchains-bunga-tulip
 def twoaddr():
     addr1 = '0xc8b759860149542a98a3eb57c14aadf59d6d89b9'
     addr2 = '0x3b46c790ff408e987928169bd1904b6d71c00305'
