@@ -9950,7 +9950,9 @@ def website():
                             'stackoverflow','saoniuhuo.com','minergate.com','gitlab','dokumen.tips','bitcoinabuse','github','blockchair',
                             'icy.tools','bitcointalk','abc.bi','/contracts/','arxiv','tradeblock','pure.rug.nl','rs.booksc.org','coincarp.com',
                             'coinpan','etherchain','ethereum.stackexchange','nomics.com','coinvietnam.vn','pancakeswap.finance','hack',
-                            'recentcoin.com','conspi.ru','certik.com']#需要排除的关键字
+                            'recentcoin.com','conspi.ru','certik.com','/accounts/','tokenview.com','token-profile.token','urlscan.io','phish',
+                            'thebittimes.com','polygonscan.com','stole','books.google.com','pdfcoffee.com','scribd.com','x.blockeye','thebittimes.com',
+                            'ftmscan.com','ethvm.com']#需要排除的关键字
                 df = pd.read_csv(filename)
                 import pdb
                 # pdb.set_trace()
@@ -10051,6 +10053,32 @@ def website():
 #https://gitter.im/ethereum/go-ethereum/archives/2017/09/20
 #https://telegra.ph/Ethereum-Foundation-100000-ETH-Giveaway-Airdrop-11-22
 #https://id.linkedin.com/pulse/petchains-bunga-tulip
+#https://bitcoinf.forum2x2.ru/t390-topic
+#https://telegram-store.com/catalog/channels/medibeu/80
+#https://tgstat.com/channel/@Medibeu
+#https://www.truegoldcoin.com/
+#https://telegra.ph/Huobi-04-13
+#https://ethgiveaway.droppages.com/
+#https://ethereumdev.medium.com/ethereum-2-0-deposit-contract-871a1b32ecfb
+#https://telegra.ph/Huo-03-12 借着科普的名义把欺诈地址嵌入到文章中，火币，好币
+#https://telegra.ph/HT-03-11
+#https://mobile.twitter.com/nftglhm
+#https://www.haobi8.com/biwd/25101/
+#https://t.me/s/powerpoolcvp?before=129
+#https://id.linkedin.com/pulse/petchains-bunga-tulip
+#https://www.ptcs.io/
+#https://payment-address-coins.netlify.app/
+#http://rafajunior99.blogspot.com/2018/05/hashcard-ico-hshc-token-crypto-to-fiat.html
+#https://t.me/s/tradecryptonow?before=1031
+#https://telegra.ph/ethereum-foundation-airdrop-eth-02-12-2
+#https://www.coinlore.com/pl/coin/kimex
+#https://smart-car.tech/business-essentials/paywithbitcoin.html 收款二维码
+#https://seekoin.com/addr-14aDScg4SeF4GDNLTpXezGPsfKkhoENweV
+#https://telegra.ph/HT-09-14
+#https://medium.com/@HannahD11802153/vechain-foundation-airdrop-ff921b73d187
+#http://119.29.176.244:8001/position/kappitoken 无
+#https://t.me/s/HBC_announcement?before=22
+
 def twoaddr():
     addr1 = '0xc8b759860149542a98a3eb57c14aadf59d6d89b9'
     addr2 = '0x3b46c790ff408e987928169bd1904b6d71c00305'
