@@ -9949,7 +9949,7 @@ def website():
                             'github.com','eth.tokenview','coinmarketcap','blockchain.info','cn.vechainstats','/account/','/address/',
                             'stackoverflow','saoniuhuo.com','minergate.com','gitlab','dokumen.tips','bitcoinabuse','github','blockchair',
                             'icy.tools','bitcointalk','abc.bi','/contracts/','arxiv','tradeblock','pure.rug.nl','rs.booksc.org','coincarp.com',
-                            ]#需要排除的关键字
+                            'coinpan','etherchain','ethereum.stackexchange','nomics.com','coinvietnam.vn']#需要排除的关键字
                 df = pd.read_csv(filename)
                 import pdb
                 # pdb.set_trace()
@@ -10033,6 +10033,13 @@ def website():
 #https://t.me/s/legitetheriumsales?before=25
 #https://telegra.ph/Ethereum-20-Foundation-100000-ETH-Giveaway-Airdrop-07-06
 #http://119.29.176.244:8001/position/tomatosfinance/7day
+#https://m.facebook.com/pg/Crypter%C3%ACum-112903863757045/posts/
+#https://t.me/s/EthereumPrivateChannel
+#https://peakd.com/itismycoinblog/@m0nika66/ethereum-private-ethpt-secured-and-decentralized-innovative-cryptocurrrency
+#https://eslilin854645586.wordpress.com/page/8/ 无
+#https://medium.com/matic-network-official/matic-network-token-sale-launch-3ec86fc3d46
+#https://www.coinlore.com/coin/giftedhands
+
 def twoaddr():
     addr1 = '0xc8b759860149542a98a3eb57c14aadf59d6d89b9'
     addr2 = '0x3b46c790ff408e987928169bd1904b6d71c00305'
