@@ -9936,21 +9936,27 @@ def website():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
     testaddr = []#需要手动筛选关键词的地址列表
-    listtag = [False] * len(addrlist)
     addr2tag = defaultdict()#表示所有地址的关键词情况
+    # addrlist = ['0xf832a212d1c81b89e2dabc79c728e6a294ea5edd']
     with open('website.csv','w',encoding='utf-8',newline='') as f:
         writer = csv.writer(f)
         writer.writerow(["addr", "tagline"])
         for addr in addrlist:
             try:
                 filename = r'D:\chrome_download\Search-Engines-Scraper-master\mycsv' + '\\' + addr + '.csv'
-                keywords = ['scam','fraud','blacklist','etherscan','breadcrumb','explorer','github','ethplorer']#需要排除的关键字
+                keywords = ['scam','fraud','blacklist','etherscan','breadcrumb','explorer','ethplorer','bscscan','xplorer','blockchain.com',
+                            '0xzx.com','app.','zerion','wallet','uniswap123','eth1.bcfn','kycaml.yezcoin','dex.guru','coingecko','ack.pl',
+                            'github.com','eth.tokenview','coinmarketcap','blockchain.info','cn.vechainstats','/account/','/address/',
+                            'stackoverflow','saoniuhuo.com','minergate.com','gitlab','dokumen.tips','bitcoinabuse','github','blockchair',
+                            'icy.tools','bitcointalk','abc.bi','/contracts/','arxiv','tradeblock','pure.rug.nl','rs.booksc.org','coincarp.com',
+                            ]#需要排除的关键字
                 df = pd.read_csv(filename)
                 import pdb
                 # pdb.set_trace()
                 #某个地址csv的所有行都不包含关键字的时候打印该地址
                 testaddrrow = []
                 addrtag = [True] * df.shape[0]  # 检测地址csv每行是否含有关键词，长度是csv文件长度
+                df = df[26:]#df的序号和csv用excel打开的行号的关系：序号=行号-2
                 for index,row in df.iterrows():
                     try:
                         domain = row['domain'].lower()
@@ -9962,34 +9968,71 @@ def website():
                             text = ''
                         # for keyword in keywords:#遍历每个关键词改成用all方法
                         # rowindex = keywords.index(keyword)#检测行是否含有关键词
-                        domaintag = all([keyword not in domain.lower() for keyword in keywords])#domain域不包含任何一个关键词tag才为True
+                        domaintag = all([keyword not in domain.lower() for keyword in keywords])#domain域不包含任何一个关键词tag才为True，含有任何一个关键词则为False
                         URLtag = all([keyword not in URL.lower() for keyword in keywords])
                         titletag = all([keyword not in title.lower() for keyword in keywords])
                         texttag = all([keyword not in text.lower() for keyword in keywords])
+                        import pdb
+                        # pdb.set_trace()
                         #addrtag表示某个地址的行关键词情况，长度是csv文件的长度
                         #rowtag表示某个地址某行的关键词情况，长度是4
                         #addr2tag表示地址列表的关键词情况，长度是地址列表长度
                         #testaddrrow表示地址中特殊的关键词行，作为addr2tag的值，和addrtag作用类似，addrtag记录某个地址所有的行情况，testaddrrow记录特殊的行索引
+                        #testaddr表示所有地址的关键词行
                         rowtag = [domaintag, URLtag, titletag, texttag]#域名tag=True表示含有关键词，=0False表示不含任何一个关键词，该行的关键词状况
-                        if all(t == False for t in rowtag):#每个tag都是0False表示该行所有域都不含关键词，该行所有域都存在关键词
-                            addrtag[index] = False#该行不含关键词，需要记录不含关键词的行方便手动提取关键词，打包地址和不含关键词的行索引到testaddr中，用列表打包
-                        elif any(t == True for t in rowtag):
+                        if any([t == False for t in rowtag]):#每个tag都是0False表示该行所有域都不含关键词，该行任何一个域存在关键词则不记录
+                            addrtag[index] = False#该行含关键词，需要记录都不含关键词的行方便手动提取关键词，打包地址和不含关键词的行索引到testaddr中，用列表打包
+                        elif all([t == True for t in rowtag]):#含有任何一个关键词t=False则不记录，都不含有关键词才记录
                             testaddrrow.append(index)#该行任何一个域含有关键词则记录该行号
-                            addrtag[index] = True#True表示该行需要记录
+                            addrtag[index] = True#True表示该行需要记录，该行都不含关键词
                     except:
                         import traceback
                         traceback.print_exc()
             except:
                 import traceback
                 traceback.print_exc()
-            if any(t == True for t in addrtag):#不是csv的所有行所有域都没有关键词则打印地址和index
-                testaddr.append(testaddrrow)#如果该地址的csv中有需要记录的行，则添加该行的地址和行号
+            if any([t == True for t in addrtag]):#处理完一个地址后，某一行没有关键词则打印地址和index
+                testaddr.append(testaddrrow)#
             writer.writerow([addr, testaddrrow])#处理完一个地址后输出csv
             addr2tag[addr] = testaddrrow
+    # addr2tag = dict(addr2tag)
     # with open('website.txt', 'w') as f:
     #     print(testaddr,file=f)
-    with open('webaddr2tag.txt', 'w') as f:
-        print(addr2tag,file=f)
+    # with open('webaddr2tag.txt', 'w') as f:
+    #     print(addr2tag,file=f)
+    # print(addr2tag)
+    #得出的csv很多重复，不是重启搜索引擎程序出现问题，爬虫本身有问题
+#手动筛选：
+#https://teletype.in/@ethereum2.0/_7Slcqiy
+#https://tgraph.io/Ethereum-20-News-03-04
+#https://medium.com/@RiseICO/crowdsales-is-live-now-c01de3db4d09
+#https://www.sweety.cn/175200/%E4%BB%A3%E5%B8%81%E9%94%80%E5%94%AE%E6%AD%A3%E5%9C%A8%E8%BF%9B%E8%A1%8C%E4%B8%AD.html 无
+#https://top100token.com/newborn/0x003Eb9C77B5B896fcC27aDEAd606d23DeF34510e 无
+#https://coinpan.com/free/108934444 分析
+#https://thebittimes.com/token-VB-ETH-0x1d755f741377ddb79ba7efa5beaf0305672e6707.html
+#https://7asabco.org/showthread.php?t=52496
+#https://gafsa.jeun.fr/t45505-topic
+#https://impumelelo.net/site/c3f67f-callisto-network-twitter 无
+#https://medium.com/@cryptolasi/callisto-network-d1b510e2f709
+#https://blog.kakaocdn.net/dn/bO3hG0/btqtY8oDEoi/U6YpW01XgbcZrqX1S8Bya1/20190330칼리스토 재정보고서.pdf?attach=1&knm=tfile.pdf
+#https://www.scribd.com/document/565498341/Callisto-Network-WP-1-6-1
+#https://ww2.easycars24.pl/de-lu/895388637.php 无
+#https://steemit.com/ico/@oxygen77/obzor-proekta-etheera
+#https://thebitcoinstreetjournal.com/ethereum-ceo-vitalik-buterin-eth-giveaway-2/
+#https://telemetr.io/en/channels/1273640839-yolkfinancechannel 无
+#https://nenettegarcia.com/jpr1u7v/who-is-the-publisher/smart-contract-address-ethereum.html
+#https://tgstat.com/channel/@hotairdropper
+#https://www.coinlore.com/coin/void
+#https://www.coincarp.com/currencies/fuzetoken/richlist/
+#https://medium.com/@thursdayninjatoken/how-to-claim-your-thur-airdrop-phase-1-c888af0bfe80
+#https://archived.moe/biz/thread/14585469
+#https://m.facebook.com/devolperandroid/photos/a.698660063926775/757322908060490/?type=3&source=54
+#https://t.me/s/Crypto_Earn_BoT1?before=1964
+#https://steemkr.com/kr/@ai1love/2tkorr 不知道是不是
+#http://m.maybugs.com/news/articleView.html?idxno=662702 不知道是不是
+#https://t.me/s/legitetheriumsales?before=25
+#https://telegra.ph/Ethereum-20-Foundation-100000-ETH-Giveaway-Airdrop-07-06
+#http://119.29.176.244:8001/position/tomatosfinance/7day
 def twoaddr():
     addr1 = '0xc8b759860149542a98a3eb57c14aadf59d6d89b9'
     addr2 = '0x3b46c790ff408e987928169bd1904b6d71c00305'
