@@ -15,6 +15,10 @@ apikey = "ZF9TQA39PFPPUD7VCDK2Q9ZVD2M72N2HGZ"
 apikey = "P3FE926UGARGQF8HKPM4XWJ38CJAGX5WHZ"
 import json
 import traceback
+import telethon
+from telethon import TelegramClient, events
+import asyncio
+import asyncio.subprocess
 from scipy import stats
 import numpy as np
 import seaborn as sns
@@ -30,7 +34,25 @@ import os
 import pandas as pd
 import scipy.sparse as sp
 import torch
-
+import re
+def testSele():
+    url = 'https://bitcointalk.org/index.php?topic=5392806.0'
+    # url = 'https://bitcointalk.org/index.php?board=238.0'
+    # driver = webdriver.Chrome()
+    with open('testpage.html','r',encoding='utf-8') as f:
+        pageSource = f.read()
+    # driver.get(url)
+    # time.sleep(5)
+    # myRe = 'https://t.me/*'
+    myRe = r"(https?:\/\/)?(www[.])?(telegram|t)\.me\/([a-zA-Z0-9_-]*)\/?"
+    # pageSource = driver.page_source
+    # with open('testpage.txt','w',encoding='utf-8') as f:
+    #     print(pageSource,file=f)
+    telegroup = re.findall(myRe,pageSource)
+    print(telegroup)
+    telegroup = [link[0] + link[2] + '.me/' + link[3] for link in telegroup]
+    print(telegroup)
+    # driver.quit()
 #mlnode应该是scamRelNode，和欺诈交易有关的节点，将错就错
 #mlnode2应该是正常节点及其一跳节点
 def bloxyhack():
@@ -10313,6 +10335,18 @@ def twocsv2fig5():
     plt.legend()
     plt.savefig('fig5.jpg', bbox_inches='tight')
     plt.show()
+def tgcrawler():
+    admin_id = 12314567  # your chat id
+    api_id = 10754897  # your telegram api id
+    api_hash = 'e42a8b8fa4fc81078852b8ed3a14feb1'  # your telegram api hash
+    bot_token = '5304906015:AAEAj2ihzk8Edkfm3J3z6bzGu4HmBWebrYM'  # your bot_token
+
+async def main():
+    api_id = 10754897  # your telegram api id
+    api_hash = 'e42a8b8fa4fc81078852b8ed3a14feb1'  # your telegram api hash
+    client = TelegramClient('session_name', api_id, api_hash)
+    await client.start()
+
 
 if __name__ == '__main__':
     # try:
@@ -10566,7 +10600,9 @@ if __name__ == '__main__':
     # fig7nCdf()
     # myimg2pdf()
     # tweetcsv()
-    website()
+    # website()
+    # asyncio.run(main())
+    testSele()
     # rightfig14()
     # twoaddr()
     # twoaddrcsv()
