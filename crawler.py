@@ -74,16 +74,31 @@ def testSele():
     with open('tglink.csv','w',newline='') as f:
         writer = csv.writer(f)
         writer.writerow(['link'])
+        count = 0
+        tglinks = []
         for index,row in df.iterrows():
-            tpurl = row['link']
-            driver.get(tpurl)
-            time.sleep(5)
-            pageSource = driver.page_source
-            tgRe = r"(https?:\/\/)?(www[.])?(telegram|t)\.me\/([a-zA-Z0-9_-]*)\/?"  # 搜索一个topic下面的telegram链接
-            telegroup = re.findall(tgRe, pageSource)
-            telegroup = [link[0] + link[2] + '.me/' + link[3] for link in telegroup]
-            telegroup = list(set(telegroup))
-            writer.writerow([telegroup])
+            try:
+                count += 1
+                print(count)
+                tpurl = row['link']
+                driver.get(tpurl)
+                time.sleep(5)
+                pageSource = driver.page_source
+                tgRe = r"(https?:\/\/)?(www[.])?(telegram|t)\.me\/([a-zA-Z0-9_-]*)\/?"  # 搜索一个topic下面的telegram链接
+                telegroup = re.findall(tgRe, pageSource)
+                for link in telegroup:
+                    tglink = link[0] + link[2] + '.me/' + link[3]
+                    if tglink not in tglinks:
+                        print(tglink)
+                        tglinks.append(tglink)
+                        writer.writerow([tglink])
+                # telegroup = [link[0] + link[2] + '.me/' + link[3] for link in telegroup]
+                # telegroup = list(set(telegroup))
+                # writer.writerow([telegroup])
+            except:
+                traceback.print_exc()
+                print(row['link'])
+
     driver.quit()
     # with open('testpage.html','r',encoding='utf-8') as f:
     #     pageSource = f.read()
