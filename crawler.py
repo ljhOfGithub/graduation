@@ -35,7 +35,16 @@ import pandas as pd
 import scipy.sparse as sp
 import torch
 import re
+import logging
 def testSele():
+    logging.basicConfig(level=logging.DEBUG,  # 控制台打印的日志级别
+                        filename='tg.log',
+                        filemode='a',  ##模式，有w和a，w就是写模式，每次都会重新写日志，覆盖之前的日志
+                        # a是追加模式，默认如果不写的话，就是追加模式
+                        format=
+                        '%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s'
+                        # 日志格式
+                        )
     # tpurl = 'https://bitcointalk.org/index.php?topic=5392806.0'
     # url = 'https://bitcointalk.org/index.php?board=238.40'
     # with open('testpage2.html','w',encoding='utf-8') as f:
@@ -71,15 +80,18 @@ def testSele():
     #             traceback.print_exc()
     # return
     df = pd.read_csv('topic.csv')
-    with open('tglink.csv','w',newline='') as f:
+    haltnum = 1271
+    df = df.iloc[haltnum:,]
+    filename = 'tglink' + str(haltnum) + '.csv'
+    with open(filename,'w',newline='') as f:
         writer = csv.writer(f)
         writer.writerow(['link'])
-        count = 0
+        count = haltnum
         tglinks = []
         for index,row in df.iterrows():
             try:
-                count += 1
                 print(count)
+                count += 1
                 tpurl = row['link']
                 driver.get(tpurl)
                 time.sleep(5)
@@ -96,9 +108,10 @@ def testSele():
                 # telegroup = list(set(telegroup))
                 # writer.writerow([telegroup])
             except:
-                traceback.print_exc()
-                print(row['link'])
-
+                # traceback.print_exc()
+                # print(row['link'])
+                logging.debug(row['link'])
+                logging.debug(str(traceback.format_exc()))
     driver.quit()
     # with open('testpage.html','r',encoding='utf-8') as f:
     #     pageSource = f.read()
@@ -106,7 +119,7 @@ def testSele():
     #从所有的topic链接中再提取tg链接
     # with open('testpage.html','w',encoding='utf-8') as f:
     #     print(pageSource,file=f)
-
+#337 347 389 431 475 486 537 891 1271 1281
 #mlnode应该是scamRelNode，和欺诈交易有关的节点，将错就错
 #mlnode2应该是正常节点及其一跳节点
 def bloxyhack():
