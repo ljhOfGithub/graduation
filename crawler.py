@@ -37,7 +37,7 @@ import torch
 import re
 import logging
 def testSele():
-    logging.basicConfig(level=logging.ERROR,  # 控制台打印的日志级别，如果是DEBUG会打印和ERROR无关的信息
+    logging.basicConfig(level=logging.DEBUG,  # 控制台打印的日志级别，最低，低于设置的则不输出
                         filename='tg.log',
                         filemode='a',  ##模式，有w和a，w就是写模式，每次都会重新写日志，覆盖之前的日志
                         # a是追加模式，默认如果不写的话，就是追加模式
@@ -80,7 +80,7 @@ def testSele():
     #             traceback.print_exc()
     # return
     df = pd.read_csv('topic.csv')
-    haltnum = 1405
+    haltnum = 1887
     df = df.iloc[haltnum:,]
     filename = 'tglink' + str(haltnum) + '.csv'
     with open(filename,'w',newline='') as f:
@@ -110,7 +110,7 @@ def testSele():
             except:
                 traceback.print_exc()
                 print(row['link'])
-                logging.error(row['link'])
+                logging.error(count)
                 logging.error(str(traceback.format_exc()))
     driver.quit()
     # with open('testpage.html','r',encoding='utf-8') as f:
@@ -119,7 +119,7 @@ def testSele():
     #从所有的topic链接中再提取tg链接
     # with open('testpage.html','w',encoding='utf-8') as f:
     #     print(pageSource,file=f)
-#337 347 389 431 475 486 537 891 1271 1281 1393 1405
+#337 347 389 431 475 486 537 891 1271 1281 1393 1405 1801 1804 1820 1830
 #mlnode应该是scamRelNode，和欺诈交易有关的节点，将错就错
 #mlnode2应该是正常节点及其一跳节点
 def bloxyhack():
