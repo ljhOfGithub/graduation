@@ -36,19 +36,50 @@ import scipy.sparse as sp
 import torch
 import re
 def testSele():
-    url = 'https://bitcointalk.org/index.php?topic=5392806.0'
-    # url = 'https://bitcointalk.org/index.php?board=238.0'
-    # driver = webdriver.Chrome()
+    # tpurl = 'https://bitcointalk.org/index.php?topic=5392806.0'
+    # url = 'https://bitcointalk.org/index.php?board=238.40'
+    # with open('testpage2.html','w',encoding='utf-8') as f:
+    #     print(pageSource,file=f)
+    # with open('testpage2.html','r',encoding='utf-8') as f:
+    #     pageSource = f.read()
+    # print(pageSource)
+    chromeOptions = webdriver.ChromeOptions()
+    # chromeOptions.add_argument("--proxy-server=https://127.0.0.1:1080")
+    driver = webdriver.Chrome(chrome_options=chromeOptions)
+    with open('topic.csv','w',newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(['link'])
+        tplinks = []
+        for pagenum in range(0,397,4):
+            try:
+                bdurl = 'https://bitcointalk.org/index.php?board=238.' + str(pagenum) + '0'
+                driver.get(bdurl)
+                time.sleep(5)
+                pageSource = driver.page_source
+                bdRe = r'https://bitcointalk.org/index.php\?topic=[0-9]*'#在board中筛选topic的链接
+                tpGroup = re.findall(bdRe,pageSource)#在每一页board中筛选topic的链接
+                #每一页都要置空topic链接
+                for tp in tpGroup:
+                    if tp.startswith('https://bitcointalk.org/index.php?topic=') and tp != 'https://bitcointalk.org/index.php?topic=':
+                        tplink = tp[0:40+7]#提取出topic链接
+                        if tplink not in tplinks:#不重复的topic链接写入csv和列表
+                            writer.writerow([tplink])
+                            tplinks.append(tplink)#添加topic链接
+                tplinks = list(set(tplinks))#去重
+                # print(tplinks)
+            except:
+                traceback.print_exc()
+                # pass
+    return
+    url = 'https://bitcointalk.org/index.php?board=238.' + '0'
     with open('testpage.html','r',encoding='utf-8') as f:
         pageSource = f.read()
-    # driver.get(url)
-    # time.sleep(5)
     # myRe = 'https://t.me/*'
-    myRe = r"(https?:\/\/)?(www[.])?(telegram|t)\.me\/([a-zA-Z0-9_-]*)\/?"
-    # pageSource = driver.page_source
-    # with open('testpage.txt','w',encoding='utf-8') as f:
+    #从所有的topic链接中再提取tg链接
+    tgRe = r"(https?:\/\/)?(www[.])?(telegram|t)\.me\/([a-zA-Z0-9_-]*)\/?"#搜索一个topic下面的telegram链接
+    # with open('testpage.html','w',encoding='utf-8') as f:
     #     print(pageSource,file=f)
-    telegroup = re.findall(myRe,pageSource)
+    telegroup = re.findall(tgRe,pageSource)
     print(telegroup)
     telegroup = [link[0] + link[2] + '.me/' + link[3] for link in telegroup]
     print(telegroup)
