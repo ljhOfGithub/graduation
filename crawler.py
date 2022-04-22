@@ -10055,7 +10055,7 @@ def website():
                             'thebittimes.com','polygonscan.com','stole','books.google.com','pdfcoffee.com','scribd.com','x.blockeye','thebittimes.com',
                             'ftmscan.com','ethvm.com','fraud','/token/','rekt.news','coincheck.blog','reentrancy','attack','mobile.twitter.com',
                             'groups.google.com','blockglobe24.com','ymsmhj.com','panewslab.com','btcfans.com','spamreports.report','accesspegasus.com',
-                            'jinse.com']#需要排除的关键字
+                            'jinse.com','骗','黑客','騙','监测','盗']#需要排除的关键字
                 df = pd.read_csv(filename)
                 import pdb
                 # pdb.set_trace()
@@ -10265,6 +10265,16 @@ def website():
 #https://telemetr.io/es/channels/1339444938-wbtc_network
 #https://www.coinlore.com/coin/sense
 #https://hi-in.facebook.com/coinalphax4r/posts/-new-born-metacom-token-on-ethereum-smart-chain-token-name-metacom-symbol-meta-s/184823243816795/ 外
+#https://medium.com/@crypto_disrupt/rightbtc-release-their-official-api-87a5ee825995 科普
+#https://www.reddit.com/user/bilogate/comments/ 报告
+#https://zhuanlan.zhihu.com/p/36128198 报告
+#https://www.facebook.com/mympv2/ 返利
+#https://www.bleepingcomputer.com/news/security/beware-of-fake-john-mcafee-and-tesla-cryptocurrency-giveaways/ 报告
+#https://www.hetianlab.com/html/news/news-2019062601.html 报
+#https://nsanedown.superproxy.me/tags/tesla/ 报
+#https://4hou.win/wordpress/?cat=3969 报
+
+
 
 def twoaddr():
     addr1 = '0xc8b759860149542a98a3eb57c14aadf59d6d89b9'
@@ -10679,10 +10689,10 @@ if __name__ == '__main__':
     # fig7nCdf()
     # myimg2pdf()
     # tweetcsv()
-    # website()
+    website()
     # asyncio.run(main())
     # testSele()
-    alltg()
+    # alltg()
     # rightfig14()
     # twoaddr()
     # twoaddrcsv()
