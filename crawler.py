@@ -9137,7 +9137,7 @@ def myimg2pdf():
     # print(savedFile)
     # return
     for filename in filelist:
-        if filename.endswith('fig14sus.jpg'):
+        if filename.startswith('model_') and filename.endswith('.jpg'):
             fileprefix = filename[:-4]
             savedFile = filedir + r'\pdf' + '\\' + fileprefix + r'.pdf'
             with open(savedFile,'wb') as f:
@@ -10436,6 +10436,90 @@ async def main():
     client = TelegramClient('session_name', api_id, api_hash)
     await client.start()
 
+def gcnFig():
+    precision = pd.read_csv('model_gcn_precision.csv')
+    recall = pd.read_csv('model_gcn_recall.csv')
+    f1 = pd.read_csv('model_gcn_f1.csv')
+    x1 = precision['epoch']
+    y1 = precision['value']
+    x2 = recall['epoch']
+    y2 = recall['value']
+    x3 = f1['epoch']
+    y3 = f1['value']
+    plt.figure(figsize=(6, 6))
+    plt.plot(x1, y1, label='precision', ls='--', c='black')
+    plt.plot(x2, y2, label='recall', ls='-.', c='black')
+    plt.plot(x3, y3, label='f1', ls='-', c='black')
+    plt.xticks(rotation=30)
+    ax = plt.gca()
+    ax.set_ylabel('GCN')
+    ax.set_xlabel('Epoch')
+    plt.legend()
+    plt.savefig('model_gcn.jpg', bbox_inches='tight')
+    plt.show()
+def gdcFig():
+    precision = pd.read_csv('model_gdc_precision.csv')
+    recall = pd.read_csv('model_gdc_recall.csv')
+    f1 = pd.read_csv('model_gdc_f1.csv')
+    x1 = precision['epoch']
+    y1 = precision['value']
+    x2 = recall['epoch']
+    y2 = recall['value']
+    x3 = f1['epoch']
+    y3 = f1['value']
+    plt.figure(figsize=(6, 6))
+    plt.plot(x1, y1, label='precision', ls='--', c='black')
+    plt.plot(x2, y2, label='recall', ls='-.', c='black')
+    plt.plot(x3, y3, label='f1', ls='-', c='black')
+    plt.xticks(rotation=30)
+    ax = plt.gca()
+    ax.set_ylabel('GDC')
+    ax.set_xlabel('Epoch')
+    plt.legend()
+    plt.savefig('model_gdc.jpg', bbox_inches='tight')
+    plt.show()
+def tagcnFig():
+    precision = pd.read_csv('model_tagcn_precision.csv')
+    recall = pd.read_csv('model_tagcn_recall.csv')
+    f1 = pd.read_csv('model_tagcn_f1.csv')
+    x1 = precision['epoch']
+    y1 = precision['value']
+    x2 = recall['epoch']
+    y2 = recall['value']
+    x3 = f1['epoch']
+    y3 = f1['value']
+    plt.figure(figsize=(6, 6))
+    plt.plot(x1, y1, label='precision', ls='--', c='black')
+    plt.plot(x2, y2, label='recall', ls='-.', c='black')
+    plt.plot(x3, y3, label='f1', ls='-', c='black')
+    plt.xticks(rotation=30)
+    ax = plt.gca()
+    ax.set_ylabel('TAGCN')
+    ax.set_xlabel('Epoch')
+    plt.legend()
+    plt.savefig('model_tagcn.jpg', bbox_inches='tight')
+    plt.show()
+def clustergcnFig():
+    precision = pd.read_csv('model_cluster_gcn_precision.csv')
+    recall = pd.read_csv('model_cluster_gcn_recall.csv')
+    f1 = pd.read_csv('model_cluster_gcn_f1.csv')
+    x1 = precision['epoch']
+    y1 = precision['value']
+    x2 = recall['epoch']
+    y2 = recall['value']
+    x3 = f1['epoch']
+    y3 = f1['value']
+    plt.figure(figsize=(6, 6))
+    plt.plot(x1, y1, label='precision', ls='--', c='black')
+    plt.plot(x2, y2, label='recall', ls='-.', c='black')
+    plt.plot(x3, y3, label='f1', ls='-', c='black')
+    plt.xticks(rotation=30)
+    ax = plt.gca()
+    ax.set_ylabel('CLUSTER-GCN')
+    ax.set_xlabel('Epoch')
+    plt.legend()
+    plt.savefig('model_cluster-gcn.jpg', bbox_inches='tight')
+    plt.show()
 
 if __name__ == '__main__':
     # try:
@@ -10687,9 +10771,13 @@ if __name__ == '__main__':
     # mixfig9Livingtime()
     # fig7iCdf()
     # fig7nCdf()
-    # myimg2pdf()
+    myimg2pdf()
     # tweetcsv()
-    website()
+    # website()
+    # gcnFig()
+    # gdcFig()
+    # tagcnFig()
+    # clustergcnFig()
     # asyncio.run(main())
     # testSele()
     # alltg()
