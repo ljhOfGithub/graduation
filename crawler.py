@@ -783,7 +783,6 @@ def fig2():
     with open('addr.txt','r',encoding='utf-8') as f:
         addrlist = literal_eval(f.read())
     #找每个地址第一次收到钱的时间戳，包括一般交易和内部交易
-
     # df = pandas.concat(frames)
     # # df = df.drop_duplicates()#去重
     # df1 = pandas.read_csv('ntx.csv')
@@ -1289,8 +1288,9 @@ def fig43intxnum():#fig4.4.1
             y2[6] += intx2scamnum[intxnum]
         if 2000 <= intxnum:
             y2[7] += intx2scamnum[intxnum]
-    plt.bar(x, y1, width, label="normal address in tx num")
-    plt.bar(index + width, y2, width, label="scam address in tx num")
+    plt.figure(figsize=(6, 5))
+    plt.bar(x, y1, width, label="normal address in tx num",color='0.3')
+    plt.bar(index + width, y2, width, label="scam address in tx num",color='0.9')
 
     for a, b in zip(x, y1):
         plt.text(a, b + 0.05, '%.0f' % b, ha='center', va='bottom', fontsize=7)
@@ -1303,6 +1303,7 @@ def fig43intxnum():#fig4.4.1
     ax = plt.gca()
     plt.yscale('log')
     ax.set_xlabel('in txs of normal/scam address')
+    ax.set_ylabel('# of addr')
     plt.legend(loc='best')
     plt.savefig('fig43intx.jpg', bbox_inches='tight')
     plt.show()
@@ -1321,7 +1322,6 @@ def fig43outtxnum():
     #     print(outtx2nornum,file=f)
     # with open('outtx2scamnum.txt', 'w') as f:
     #     print(outtx2scamnum,file=f)
-
     with open('outtx2nornum.txt', 'r') as f:
         outtx2nornum = literal_eval(f.read())
     with open('outtx2scamnum.txt', 'r') as f:
@@ -1366,8 +1366,9 @@ def fig43outtxnum():
             y2[6] += outtx2scamnum[intxnum]
         if 2000 <= intxnum:
             y2[7] += outtx2scamnum[intxnum]
-    plt.bar(x, y1, width, label="normal address out tx num")
-    plt.bar(index + width, y2, width, label="scam address out tx num")
+    plt.figure(figsize=(6, 5))
+    plt.bar(x, y1, width, label="normal address out tx num",color='0.3')
+    plt.bar(index + width, y2, width, label="scam address out tx num",color='0.9')
 
     for a, b in zip(x, y1):
         plt.text(a, b + 0.05, '%.0f' % b, ha='center', va='bottom', fontsize=7)
@@ -1375,11 +1376,11 @@ def fig43outtxnum():
     for a, b in zip(x, y2):
         plt.text(a, b + 0.05, '%.0f' % b, ha='center', va='bottom', fontsize=7)
     x = index + width * 2
-
     plt.xticks(rotation=30)
     ax = plt.gca()
     plt.yscale('log')
     ax.set_xlabel('out txs of normal/scam address')
+    ax.set_ylabel('# of addr')
     plt.legend(loc='best')
     plt.savefig('fig43outtx.jpg', bbox_inches='tight')
     plt.show()
@@ -1667,12 +1668,11 @@ def fig7n():#pdf图
     #     addr2prof[addr] = addr2prof[addr]
     # for addr,prof in addr2prof.items():
     #     prof2num2[prof] = prof2num2.get(prof,0) + 1
-
     x = []
     y = []
     with open('fig7n.txt','r') as f:
         prof2num = literal_eval(f.read())
-    print(3257/sum(prof2num.values()))
+    # print(3257/sum(prof2num.values()))
     return
     # fig, ax = plt.subplots()
     for prof in profaxis:
@@ -1801,7 +1801,6 @@ def fig7i():#pdf图
     #     print(addr2prof,file=f)
     # print(hashlist)
     # print(valuesum)
-
     #'0xa6074142f75502f24a050e0ed6d45a303d713051d56433f007e661d18d045900'是0xa9bf70a420d364e923c74448d9d817d3f2a77822欺诈最多的交易hash
     prof2num = {}
     profaxis = ['0-100k', '100k-200k', '200k-300k', '300k-400k', '400k-500k', '500k-600k', '600k-700k', '700k-800k',
@@ -9137,7 +9136,7 @@ def myimg2pdf():
     # print(savedFile)
     # return
     for filename in filelist:
-        if filename.startswith('model_') and filename.endswith('.jpg'):
+        if filename.startswith('fig43') and filename.endswith('.jpg'):
             fileprefix = filename[:-4]
             savedFile = filedir + r'\pdf' + '\\' + fileprefix + r'.pdf'
             with open(savedFile,'wb') as f:
@@ -10771,6 +10770,9 @@ if __name__ == '__main__':
     # mixfig9Livingtime()
     # fig7iCdf()
     # fig7nCdf()
+    # myimg2pdf()
+    fig43intxnum()
+    fig43outtxnum()
     myimg2pdf()
     # tweetcsv()
     # website()
