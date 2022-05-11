@@ -10804,6 +10804,7 @@ if __name__ == '__main__':
     # fig15a()
     # scamAvgIncomeOutcome()
     # norAddrA3LivingTime()
+    
 #gcn gdc tagcn
 #收集整理大量数据时，尽量保存中间文件，即使由于机器性能原因或者ide设置原因等中断运行，也能避免效率的降低。
 #涉及网络爬虫的工作中可能会出现由于当时的网络原因出现问题，包括但不限于整个代码停止运行
